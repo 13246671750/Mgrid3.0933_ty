@@ -66,7 +66,7 @@ import comm_service.service;
 public class MGridActivity extends Activity {
 
 	public WakeLock mWakeLock;
-	public SgVideoView svv=null;
+	public SgVideoView svv=null; 
 	private int sleepTime=2*60*60;
 	public static boolean isPlaymv=false;
 	public static boolean isPlaygif=false;
@@ -176,8 +176,8 @@ public class MGridActivity extends Activity {
 		};
 		getApplicationContext().registerReceiver(BroastcastScreenOn, filter);
 		
-		
-		UsbReceiver usb=new UsbReceiver(context);
+//		   
+//		UsbReceiver usb=new UsbReceiver(context);
 		
 		// 点亮 屏幕
 //		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
