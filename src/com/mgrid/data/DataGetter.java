@@ -2118,6 +2118,7 @@ public class DataGetter extends Thread {
 
 			try {
 				time = Integer.parseInt(items[2]);
+			
 				SimpleDateFormat formatter = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");
 				Date date = new Date(time * 1000);

@@ -52,7 +52,6 @@ import com.mgrid.data.DataGetter;
 import com.mgrid.util.CameraUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
-import com.sg.common.UsbReceiver;
 import com.sg.common.UtExpressionParser.stBindingExpression;
 import com.sg.common.UtIniReader;
 import com.sg.uis.SgAlarmAction;
@@ -65,37 +64,36 @@ import comm_service.service;
 @SuppressLint("InlinedApi")
 public class MGridActivity extends Activity {
 
-	public WakeLock mWakeLock;
-	public SgVideoView svv=null; 
-	private int sleepTime=2*60*60;
-	public static boolean isPlaymv=false;
-	public static boolean isPlaygif=false;
-	public static boolean isSleep=false;
-     
-	public static Context context=null;
-	public static String XmlFile="";
-	
-	public  Handler mTimeHandler=new Handler();
-	public  Runnable runTime=new Runnable() {
+	public WakeLock mWakeLock;// 锁屏类
+	public SgVideoView svv = null; // 播放视频
+
+	private int sleepTime = 2 * 60 * 60;// 屏保视频休眠时间
+
+	public static boolean isPlaymv = false;
+	public static boolean isPlaygif = false;
+	public static boolean isSleep = false;
+
+	public static Context context = null;
+	public static String XmlFile = "";
+	long starttime=0;
+	public Handler mTimeHandler = new Handler();
+	public Runnable runTime = new Runnable() {
 		public void run() {
-			if(svv!=null)
-			{
-			 svv.pauseMv();
-			 releaseWakeLock();
-			 isSleep=true;
-	//		 SgImage.isChangColor=true;
-	//		 onPageChange(m_sMainPage);
+			if (svv != null) {
+				svv.pauseMv();
+				releaseWakeLock();
+				isSleep = true;
 			}
 		}
-	} ;
-	
-	
+	};
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		context=this;
-		
+	    starttime=System.currentTimeMillis();
+		context = this;
+
 		m_oViewGroups = new HashMap<String, MainWindow>();
 		m_oPageList = new ArrayList<String>();
 		whatLanguage = whatLanguage();
@@ -108,7 +106,31 @@ public class MGridActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
 				WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);// 对该window进行硬件加速.
 
-		// System.out.println("呵呵");
+		// 设置屏幕宽高
+		mContainer = new ContainerView(this);
+
+		MainWindow.SCREEN_WIDTH = 1024; // VTU screen width
+		MainWindow.SCREEN_HEIGHT = 768; // VTU screen height
+
+		setBroadcastReceiver(); // 注册广播
+		
+//		xianChengChi.execute(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//
+//				parseMgridIni(); // 解析Mgrid.ini文件
+//				
+//			}
+//		});
+		parseMgridIni();
+		parseView();
+
+
+	} // end of onCreate
+
+	// 广播注册
+	private void setBroadcastReceiver() {
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_SCREEN_ON);// 监听屏幕 开
 		filter.addAction(Intent.ACTION_SCREEN_OFF);// 监听屏幕 关
@@ -116,98 +138,65 @@ public class MGridActivity extends Activity {
 		BroadcastReceiver BroastcastScreenOn = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context arg0, Intent arg1) {
-				// TODO Auto-generated method stub
 
-				if (arg1.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-					// dialog=ProgressDialog.show(MGridActivity.this, "提示",
-					// "请稍候点击");
+				if (arg1.getAction().equals(Intent.ACTION_SCREEN_ON)) { // 监听屏幕亮
+					// 拍照功能是否开启
 					if (m_bTakePhoto) {
-//						Intent cameraIntent = new Intent(MGridActivity.this,
-//								CameraActivity.class);
-//						startActivity(cameraIntent);
-					    final CameraUtils cameraUtils=new CameraUtils(getApplicationContext());
-					    MGridActivity.xianChengChi.execute(new Runnable() {
-							
+						// 打开拍照工具
+						final CameraUtils cameraUtils = new CameraUtils(
+								getApplicationContext());
+						MGridActivity.xianChengChi.execute(new Runnable() {
+
 							@Override
 							public void run() {
-							
-								 cameraUtils.openCamera();
+								// 拍照并保存
+								cameraUtils.openCamera();
 							}
 						});
-					   
+					}
+				}
 
+				if (arg1.getAction().equals(Intent.ACTION_SCREEN_OFF)) {// 监听屏幕熄灭
+					if (!isLoading && isPlaygif) {// 判断是否加载完成并且开启屏保gif功能
+						onPageChange("gif.xml");
+						if (isChangGif) {
+							SgImage.isChangColor = false;
+							acquireWakeLock();
+						}
 					}
 
-				}
-				if (arg1.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-					if(!isLoading&&isPlaygif)
-					{
-					 onPageChange("gif.xml");
-					 if (isChangGif) {
-						 
-						SgImage.isChangColor = false; 
-					    acquireWakeLock();
-						//System.out.println("我gif");
-					 }
-				    }
-					if(!isLoading&&isPlaymv)
-					{
-					
-					 if (isChangGif) {
-						 
-						 if(isSleep)
-						 {
-							 SgImage.isChangColor=true;
-							 onPageChange(m_sMainPage);						 
-							 
-						 }else
-						 {
-							    onPageChange("mv.xml");
+					if (!isLoading && isPlaymv) {// 判断是否加载完成并且开启屏保mv功能
+						if (isChangGif) {
+							if (isSleep) {
+								SgImage.isChangColor = true;
+								onPageChange(m_sMainPage);
+							} else {
+								onPageChange("mv.xml");
 								SgImage.isChangColor = false;
 								acquireWakeLock();
-								mTimeHandler.postDelayed(runTime, sleepTime*1000);
-						 }
-						 
-					
-					 }
+								mTimeHandler.postDelayed(runTime,
+										sleepTime * 1000);
+							}
+
+						}
 					}
 				}
 			}
 		};
 		getApplicationContext().registerReceiver(BroastcastScreenOn, filter);
-		
-//		   
-//		UsbReceiver usb=new UsbReceiver(context);
-		
-		// 点亮 屏幕
-//		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-//		mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
-//				| PowerManager.SCREEN_DIM_WAKE_LOCK
-//				| PowerManager.ON_AFTER_RELEASE, "SimpleTimer");
+	}
 
-		// new UsbReceiver(this);
-       
-		
-		
+	// 获取系统语言
+	private boolean whatLanguage() {
+		Locale locale = getResources().getConfiguration().locale;
+		String language = locale.getLanguage();
+		if (language.endsWith("zh"))
+			return true;
+		else
+			return false;
+	}
 
-		// 设置屏幕宽高
-		mContainer = new ContainerView(this);
-
-		MainWindow.SCREEN_WIDTH = 1024; // VTU screen width
-		MainWindow.SCREEN_HEIGHT = 768; // VTU screen height
-
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-
-		// 找出屏蔽的设备
-		// LabelUtils labelUtils=new LabelUtils(MGridActivity.this);
-		// if(LabelList==null)
-		// LabelList = labelUtils.getButtonId();
-
-		// }
-		// });
+	private void parseMgridIni() {
 
 		// 解析Mgrid.ini
 		UtIniReader iniReader = null;
@@ -232,32 +221,25 @@ public class MGridActivity extends Activity {
 		m_sMainPage = iniReader.getValue("SysConf", "MainPage");
 		m_UserName = iniReader.getValue("SysConf", "UserName", "admin");
 		m_PassWord = iniReader.getValue("SysConf", "PassWord", "12348765");
-		String	playWay = iniReader.getValue("SysConf", "playWay");
-		String  time= iniReader.getValue("SysConf", "playTime");
-		if(time!=null)
-		{
+		String playWay = iniReader.getValue("SysConf", "playWay");
+		String time = iniReader.getValue("SysConf", "playTime");
+		if (time != null) {
 			try {
-				sleepTime=Integer.parseInt(time)*60;
+				sleepTime = Integer.parseInt(time) * 60;
 			} catch (Exception e) {
-				showToast("休眠时间出错了");
-				sleepTime=2*60*60;
-			}	
-			System.out.println(sleepTime+":休眠时间");
+
+				sleepTime = 2 * 60 * 60;
+			}
 		}
-		    
-		    if(playWay!=null)
-		    {
-		    	if(playWay.equals("gif"))
-		    	{
-		    		isPlaygif=true;
-		    	}
-		    	else if(playWay.equals("mv"))
-		    	{
-		    		isPlaymv=true;
-		    	}
-		    }
-		
-		
+
+		if (playWay != null) {
+			if (playWay.equals("gif")) {
+				isPlaygif = true;
+			} else if (playWay.equals("mv")) {
+				isPlaymv = true;
+			}
+		}
+
 		m_pageUserName = iniReader.getValue("SysConf", "MaskPageUser", "admin");
 		m_MaskCount = Integer.parseInt(iniReader.getValue("SysConf",
 				"MaskCount", "0"));
@@ -324,23 +306,24 @@ public class MGridActivity extends Activity {
 			m_bTakeEMail = false;
 		}
 		try {
-			
-			mailProtocol= iniReader.getValue("SysConf", "MailProtocol");
-			myEmailSMTPHost= iniReader.getValue("SysConf", "MyEmailSMTPHost");
-			myEmailAccount= iniReader.getValue("SysConf", "MyEmailAccount");
-			myEmailPassword= iniReader.getValue("SysConf", "MyEmailPassword");
-			receiveMailAccount= iniReader.getValue("SysConf", "ReceiveMailAccount");
-			Subject= iniReader.getValue("SysConf", "Subject");
-			fromName= iniReader.getValue("SysConf", "FromName");
-			
+
+			mailProtocol = iniReader.getValue("SysConf", "MailProtocol");
+			myEmailSMTPHost = iniReader.getValue("SysConf", "MyEmailSMTPHost");
+			myEmailAccount = iniReader.getValue("SysConf", "MyEmailAccount");
+			myEmailPassword = iniReader.getValue("SysConf", "MyEmailPassword");
+			receiveMailAccount = iniReader.getValue("SysConf",
+					"ReceiveMailAccount");
+			Subject = iniReader.getValue("SysConf", "Subject");
+			fromName = iniReader.getValue("SysConf", "FromName");
+
 		} catch (Exception e) {
-			 mailProtocol="smtp";   //协议
-		     myEmailSMTPHost = "smtp.qq.com"; 
-			 myEmailAccount = "453938089@qq.com"; //发送邮箱账号
-		     myEmailPassword = "sgipglsayogvcaih";	//授权码
-			 receiveMailAccount = "leisiyang521@163.com"; //接收邮箱账号
-			 Subject="标题";   //邮箱标题
-			 fromName="发件人名称";  //发件人名称
+			mailProtocol = "smtp"; // 协议
+			myEmailSMTPHost = "smtp.qq.com";
+			myEmailAccount = "453938089@qq.com"; // 发送邮箱账号
+			myEmailPassword = "sgipglsayogvcaih"; // 授权码
+			receiveMailAccount = "leisiyang521@163.com"; // 接收邮箱账号
+			Subject = "标题"; // 邮箱标题
+			fromName = "发件人名称"; // 发件人名称
 		}
 
 		CFGTLS.BITMAP_HIGHQUALITY = m_bBitmapHIghQuality;
@@ -356,11 +339,32 @@ public class MGridActivity extends Activity {
 			service.PORT = port;
 		} catch (java.lang.NumberFormatException e) {
 		}
+	}
 
+	public void acquireWakeLock() {
+		if (mWakeLock == null) {
+			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
+					| PowerManager.SCREEN_DIM_WAKE_LOCK
+					| PowerManager.ON_AFTER_RELEASE, "SimpleTimer");
+			mWakeLock.acquire();
+		}
+	}
+
+	public void releaseWakeLock() {
+		if (mWakeLock != null && mWakeLock.isHeld()) {
+			System.out.println("我解开了锁");
+			mWakeLock.release();
+			mWakeLock = null;
+		}
+	}
+	
+	private void parseView()
+	{
 		String line = "";
 		MainWindow page = null;
 		BufferedReader reader = null;
-
+ 
 		try {
 			reader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(Environment
@@ -549,6 +553,7 @@ public class MGridActivity extends Activity {
 								Toast.LENGTH_LONG).show();
 						isLoading = false;
 						isNOChangPage = true;
+						System.out.println("所用时间："+(System.currentTimeMillis()-starttime));
 					}
 
 				} // end of run
@@ -569,46 +574,9 @@ public class MGridActivity extends Activity {
 
 		DataGetter.currentPage = m_sMainPage;
 		mDataGetter = new DataGetter();
-		// System.out.println("123我是主线程MgridActivity的onCreate");
 		mDataGetter.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 		mDataGetter.start();
-
-		// xmlPhoneNumber=getXmlPhoneNumber();
-	} // end of onCreate
-
-	// 获取系统语言
-	private boolean whatLanguage() {
-		Locale locale = getResources().getConfiguration().locale;
-		String language = locale.getLanguage();
-		if (language.endsWith("zh"))
-			return true;
-		else
-			return false;
 	}
-	
-	
-    public void acquireWakeLock()
-    {
-    	if(mWakeLock==null)
-    	{
-    		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-    		mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
-			| PowerManager.SCREEN_DIM_WAKE_LOCK
-			| PowerManager.ON_AFTER_RELEASE, "SimpleTimer");
-    		mWakeLock.acquire();
-    	}
-    }
-    
-    public void releaseWakeLock()
-    {
-    	if(mWakeLock!=null&&mWakeLock.isHeld())
-    	{
-    		System.out.println("我解开了锁");
-    		mWakeLock.release();
-    		mWakeLock=null;
-    	}
-    }
-	
 
 	// 得到机器的IP地址
 	public static String getLocalIP() {
@@ -748,9 +716,9 @@ public class MGridActivity extends Activity {
 		// mContainer.bringChildToFront(mContainer.mCurrentView);
 
 		DataGetter.currentPage = pagename;
-		
+
 		isChangGif = true;
-		isSleep=false;
+		isSleep = false;
 		// LabelUtils labelUtils=new LabelUtils(MGridActivity.this);
 		// labelUtils.setDoubleButton(m_oSgSgRenderManager);
 		// //为了DoubleImageButton控件而生
@@ -769,11 +737,9 @@ public class MGridActivity extends Activity {
 				if (sg != null) {
 					sa.updateText(sg.TimeLapse);
 				}
-			}
-			else if(obj.getType().equals("SgVideoView"))
-			{
-				
-				svv=(SgVideoView) obj;
+			} else if (obj.getType().equals("SgVideoView")) {
+
+				svv = (SgVideoView) obj;
 				svv.startMv();
 			}
 			obj.initFinished();
@@ -821,7 +787,7 @@ public class MGridActivity extends Activity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		//restartApplication();
+		// restartApplication();
 		releaseWakeLock();
 
 	}
@@ -830,14 +796,14 @@ public class MGridActivity extends Activity {
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-		
+
 		// showTaskUI(true);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		// mWakeLock.acquire();
 
 	}
@@ -865,18 +831,16 @@ public class MGridActivity extends Activity {
 	public static boolean m_bErrMsgParser = true;
 	public static boolean m_bCanZoom = true;
 	public static boolean m_bTakePhoto = false;
-	
+
 	public static boolean m_bTakeEMail = false; // 是否实时告警邮件发送
-	public static String mailProtocol="smtp";   //协议
-	public static String myEmailSMTPHost = "smtp.qq.com"; 
-	public static String myEmailAccount = "453938089@qq.com"; //发送邮箱账号
-	public static String myEmailPassword = "sgipglsayogvcaih";	//授权码
-	public static String receiveMailAccount = "leisiyang521@163.com"; //接收邮箱账号
-	public static String Subject="标题";   //邮箱标题
-	public static String fromName="发件人名称";  //发件人名称
+	public static String mailProtocol = "smtp"; // 协议
+	public static String myEmailSMTPHost = "smtp.qq.com";
+	public static String myEmailAccount = "453938089@qq.com"; // 发送邮箱账号
+	public static String myEmailPassword = "sgipglsayogvcaih"; // 授权码
+	public static String receiveMailAccount = "leisiyang521@163.com"; // 接收邮箱账号
+	public static String Subject = "标题"; // 邮箱标题
+	public static String fromName = "发件人名称"; // 发件人名称
 
-
-	
 	public ArrayList<String> m_oPageList = null;
 	private Intent m_oTaskIntent = null;
 	private MainWindow m_oSgSgRenderManager = null;
@@ -925,9 +889,8 @@ public class MGridActivity extends Activity {
 	// CopyOnWriteArrayList
 	public static HashMap<String, stBindingExpression> m_DoubleButton = null;
 	// public static Map<IObject, stBindingExpression> m_Label=null;
-	
-	public static String usbName="";
-	
+
+	public static String usbName = "";
 
 	public static Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -938,14 +901,14 @@ public class MGridActivity extends Activity {
 				// 关闭ProgressDialog
 				break;
 			case 2:
-				String s=(String) msg.obj;
-				if(context!=null)
-		         new AlertDialog.Builder(context)
-				.setTitle("错误")
-				.setMessage("页面："+MGridActivity.XmlFile+"\n"+
-						"读取表达式 异常，停止加载！\n详情：" + s)
-				.show();
-				
+				String s = (String) msg.obj;
+				if (context != null)
+					new AlertDialog.Builder(context)
+							.setTitle("错误")
+							.setMessage(
+									"页面：" + MGridActivity.XmlFile + "\n"
+											+ "读取表达式 异常，停止加载！\n详情：" + s).show();
+
 				break;
 			case 3:
 				Toast.makeText(context, "没有前置摄像头", Toast.LENGTH_LONG).show();
