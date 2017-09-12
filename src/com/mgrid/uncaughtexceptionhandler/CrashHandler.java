@@ -54,6 +54,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		final String result = writer.toString();
 		System.err.println("“Ï≥££∫" + result);
 		save(result);
+		MGridActivity.handler.sendEmptyMessage(1);
 		// new Thread() {
 		// @Override
 		// public void run() {

@@ -133,6 +133,7 @@ public class CameraUtils {
 							e.printStackTrace();
 						}finally{
 							releaseCamera();// Õ∑≈Camera
+							
 						}
 					}
 				});
@@ -152,6 +153,7 @@ public class CameraUtils {
 				camera = null;
 				isPreviewing = false;
 				System.out.println(" Õ∑≈¡À");
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

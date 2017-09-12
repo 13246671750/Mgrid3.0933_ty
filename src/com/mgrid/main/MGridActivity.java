@@ -25,6 +25,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -50,6 +51,8 @@ import android.widget.Toast;
 
 import com.mgrid.data.DataGetter;
 import com.mgrid.util.CameraUtils;
+import com.mgrid.util.dialog.DialogThridUtils;
+import com.mgrid.util.dialog.WeiboDialogUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.UtExpressionParser.stBindingExpression;
@@ -75,8 +78,14 @@ public class MGridActivity extends Activity {
 
 	public static Context context = null;
 	public static String XmlFile = "";
-	long starttime=0;
+	
+	public static Dialog mWeiboDialog;
+	public static Dialog mDialog;
+	long starttime = 0;
 	public Handler mTimeHandler = new Handler();
+	
+
+	
 	public Runnable runTime = new Runnable() {
 		public void run() {
 			if (svv != null) {
@@ -86,12 +95,19 @@ public class MGridActivity extends Activity {
 			}
 		}
 	};
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-	    starttime=System.currentTimeMillis();
+		mWeiboDialog = WeiboDialogUtils.createLoadingDialog(MGridActivity.this, "加载中...");
+		init();
+
+	} 
+	
+	private void init() {
+		starttime = System.currentTimeMillis();
 		context = this;
 
 		m_oViewGroups = new HashMap<String, MainWindow>();
@@ -109,25 +125,25 @@ public class MGridActivity extends Activity {
 		// 设置屏幕宽高
 		mContainer = new ContainerView(this);
 
-		MainWindow.SCREEN_WIDTH = 1024; // VTU screen width
-		MainWindow.SCREEN_HEIGHT = 768; // VTU screen height
+		MainWindow.SCREEN_WIDTH = 1024; 
+		MainWindow.SCREEN_HEIGHT = 768;
 
 		setBroadcastReceiver(); // 注册广播
-		
-//		xianChengChi.execute(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//
-//				parseMgridIni(); // 解析Mgrid.ini文件
-//				
-//			}
-//		});
+
+		// xianChengChi.execute(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		//
+		// parseMgridIni(); // 解析Mgrid.ini文件
+		//
+		// }
+		// });
 		parseMgridIni();
 		parseView();
+		runDataGetter();
 
-
-	} // end of onCreate
+	}
 
 	// 广播注册
 	private void setBroadcastReceiver() {
@@ -145,14 +161,15 @@ public class MGridActivity extends Activity {
 						// 打开拍照工具
 						final CameraUtils cameraUtils = new CameraUtils(
 								getApplicationContext());
-						MGridActivity.xianChengChi.execute(new Runnable() {
-
-							@Override
-							public void run() {
+				
+//						MGridActivity.xianChengChi.execute(new Runnable() {
+//
+//							@Override
+//							public void run() {
 								// 拍照并保存
 								cameraUtils.openCamera();
-							}
-						});
+//							}
+//						});
 					}
 				}
 
@@ -353,18 +370,34 @@ public class MGridActivity extends Activity {
 
 	public void releaseWakeLock() {
 		if (mWakeLock != null && mWakeLock.isHeld()) {
-			System.out.println("我解开了锁");
 			mWakeLock.release();
 			mWakeLock = null;
 		}
 	}
-	
-	private void parseView()
+
+	private void parseView() {
+
+		parsePageList();
+		loadMainPage();
+		loadOtherPage();
+	}
+
+	private void runDataGetter() {
+		mContainer
+				.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
+
+		DataGetter.currentPage = m_sMainPage;
+		mDataGetter = new DataGetter();
+		mDataGetter.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+		mDataGetter.start();
+	}
+
+	private void parsePageList() // 解析Pagelist
 	{
 		String line = "";
 		MainWindow page = null;
 		BufferedReader reader = null;
- 
+
 		try {
 			reader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(Environment
@@ -377,119 +410,125 @@ public class MGridActivity extends Activity {
 				if ((line = reader.readLine()) == null)
 					break;
 
-				line = line.trim();
+				line = line.trim(); // 移除两边的空白字符
 				if (line.isEmpty())
 					continue;
 
 				m_oPageList.add(line);
-
-				if (!line.equals(m_sMainPage)) {
-					continue;
-				}
-
-				page = new MainWindow(this);
-				page.m_strRootFolder = m_sRootFolder;// 路径
-				page.m_bHasRandomData = m_bHasRandomData;// 是否使用随机数据
-				page.loadPage(line);
-				page.active(false);
-
-				page.setVisibility(View.GONE);
-				m_oViewGroups.put(line, page);
-				mContainer.addView(page, 1024, 768);
 
 			}
 
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			new AlertDialog.Builder(this)
-					.setTitle("错误")
-					.setMessage(
-							"加载页面 [ " + line + " ] 出现异常，停止加载！\n详情："
-									+ e.toString()).show();
+
 		}
+	}
 
-		m_oSgSgRenderManager = m_oViewGroups.get(m_sMainPage);
-		if (null == m_oSgSgRenderManager) {
-			new AlertDialog.Builder(this).setTitle("错误")
-					.setMessage("找不到主页 [ " + m_sMainPage + " ] ！").show();
-		}
+	private void loadMainPage() {
+		for (int i = 0; i < m_oPageList.size(); i++) {
+			String name = m_oPageList.get(i);
+			MainWindow page = null;
+			if (name.equals(m_sMainPage)) {
+				page = new MainWindow(this);
+				page.m_strRootFolder = m_sRootFolder;// 路径
+				page.m_bHasRandomData = m_bHasRandomData;// 是否使用随机数据
+				try {
+					page.loadPage(name);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					new AlertDialog.Builder(this)
+							.setTitle("错误")
+							.setMessage(
+									"加载页面 [ " + name + " ] 出现异常，停止加载！\n详情："
+											+ e.toString()).show();
+				}
+				page.active(false);
+				page.setVisibility(View.GONE);
+				m_oViewGroups.put(name, page);
+				mContainer.addView(page, 1024, 768);
+				m_oSgSgRenderManager = m_oViewGroups.get(m_sMainPage);
+				if (null == m_oSgSgRenderManager) {
+					new AlertDialog.Builder(this).setTitle("错误")
+							.setMessage("找不到主页 [ " + m_sMainPage + " ] ！")
+							.show();
+				}
+				if (0 != mContainer.getChildCount()
+						&& null != m_oSgSgRenderManager) {
+					// m_oPageList.trimToSize();
 
-		if (0 != mContainer.getChildCount() && null != m_oSgSgRenderManager) {
-			// m_oPageList.trimToSize();
+					m_oSgSgRenderManager.active(true);
+					// setContentView(m_oSgSgRenderManager);
 
-			m_oSgSgRenderManager.active(true);
-			// setContentView(m_oSgSgRenderManager);
+					mContainer.setClipChildren(false);
+					mContainer.mCurrentView = m_oSgSgRenderManager;
+					m_oSgSgRenderManager.setVisibility(View.VISIBLE);
+					// m_oSgSgRenderManager.requestFocus();
 
-			mContainer.setClipChildren(false);
-			mContainer.mCurrentView = m_oSgSgRenderManager;
-			m_oSgSgRenderManager.setVisibility(View.VISIBLE);
-			// m_oSgSgRenderManager.requestFocus();
+					requestWindowFeature(Window.FEATURE_NO_TITLE); // 取消标题
+					getWindow().getDecorView().setSystemUiVisibility(
+							View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);// 全屏设置
+					getWindow()
+							.setFlags(
+									WindowManager.LayoutParams.FLAG_FULLSCREEN
+											| WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+									WindowManager.LayoutParams.FLAG_FULLSCREEN
+											| WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+					// Window级控制硬件加速
+					// setTheme(android.R.style.Theme_Black_NoTitleBar_Fullscreen);
 
-			requestWindowFeature(Window.FEATURE_NO_TITLE); // 取消标题
-			getWindow().getDecorView().setSystemUiVisibility(
-					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);// 全屏设置
-			getWindow()
-					.setFlags(
-							WindowManager.LayoutParams.FLAG_FULLSCREEN
-									| WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-							WindowManager.LayoutParams.FLAG_FULLSCREEN
-									| WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-			// Window级控制硬件加速
-			// setTheme(android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+					setContentView(mContainer);
+					mContainer.requestFocus();
 
-			setContentView(mContainer);
-			mContainer.requestFocus();
+					showTaskUI(false);
 
-			showTaskUI(false);
+					getWindow().setSoftInputMode(
+							WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);// 解决android软键盘挡住输入框问题！
+				} else {
 
-			getWindow().setSoftInputMode(
-					WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);// 解决android软键盘挡住输入框问题！
-
-			if (m_oPageList.size() == 1) {
-				tmp_flag_loading = false;
-				DataGetter.bIsLoading = false;
-				isLoading = false;
-				Toast.makeText(this, "加载完毕", Toast.LENGTH_LONG).show();
+					requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+					requestWindowFeature(Window.FEATURE_PROGRESS);
+					setContentView(R.layout.main);
+					setProgressBarVisibility(true);
+					setProgressBarIndeterminateVisibility(true);
+				}
 
 			} else {
-				String strPageName = m_oPageList.get(m_sMainPage
-						.equals(m_oPageList.get(0)) ? 1 : 0);
-				strPageName = strPageName
-						.substring(0, strPageName.length() - 4);
-				showLoadProgToast("进度  [ " + (tmp_load_pageseek + 1) + "/"
-						+ m_oPageList.size() + " ] , 正在加载  [ " + strPageName
-						+ " ]  ...", Toast.LENGTH_SHORT);
+				break;
 			}
+		}
+	}
 
-			final Handler handler = new Handler();
-			Runnable runnable = new Runnable() {
-				public void run() {
-					// m_oSgSgRenderManager.notifylistflush();
+	private void loadOtherPage() {
+		final Handler handler = new Handler();
+		Runnable runnable = new Runnable() {
+			public void run() {
+				// m_oSgSgRenderManager.notifylistflush();
 
-					String pagename = m_oPageList.get(tmp_load_pageseek);
+				String pagename = m_oPageList.get(tmp_load_pageseek);
 
-					if (pagename.equals(m_sMainPage)) {
+				if (pagename.equals(m_sMainPage)) {
 
-						MainWindow mainPage = m_oViewGroups.get(pagename);
-						mainPage.m_oPrevPage = tmp_load_prevpage;
-						if (null != tmp_load_prevpage)
-							tmp_load_prevpage.m_oNextPage = mainPage;
-						tmp_load_prevpage = mainPage;
+					MainWindow mainPage = m_oViewGroups.get(pagename);
+					mainPage.m_oPrevPage = tmp_load_prevpage;
+					if (null != tmp_load_prevpage)
+						tmp_load_prevpage.m_oNextPage = mainPage;
+					tmp_load_prevpage = mainPage;
 
-						tmp_load_pageseek++;
-						if (m_oPageList.size() > tmp_load_pageseek)
-							pagename = m_oPageList.get(tmp_load_pageseek);
-						else {
-							tmp_flag_loading = false;
-							DataGetter.bIsLoading = false;
-							Toast.makeText(MGridActivity.this, "加载完毕",
-									Toast.LENGTH_LONG).show();
-							isLoading = false;
-							return;
-						}
+					tmp_load_pageseek++;
+					if (m_oPageList.size() > tmp_load_pageseek)
+						pagename = m_oPageList.get(tmp_load_pageseek);
+					else {
+						tmp_flag_loading = false;
+						DataGetter.bIsLoading = false;
+						Toast.makeText(MGridActivity.this, "加载完毕",
+								Toast.LENGTH_LONG).show();
+						isLoading = false;
+						return;
 					}
-
+					handler.postDelayed(this, tmp_load_int_time);
+				}else
+				{
 					MainWindow page = new MainWindow(MGridActivity.this);
 					page.m_strRootFolder = m_sRootFolder;
 					page.m_bHasRandomData = m_bHasRandomData;
@@ -508,9 +547,8 @@ public class MGridActivity extends Activity {
 						new AlertDialog.Builder(MGridActivity.this)
 								.setTitle("错误")
 								.setMessage(
-										"加载页面 [ " + pagename
-												+ " ] 出现异常，停止加载！\n详情："
-												+ e.toString()).show();
+										"加载页面 [ " + pagename + " ] 出现异常，停止加载！\n详情："
+												+ e.toString()).show(); 
 						return;
 					}
 
@@ -522,60 +560,32 @@ public class MGridActivity extends Activity {
 					tmp_load_pageseek++;
 
 					if (m_oPageList.size() > tmp_load_pageseek) {
-						String nextPage = m_oPageList.get(tmp_load_pageseek);
-						if (m_sMainPage.equals(nextPage)) {
-							if (m_oPageList.size() > tmp_load_pageseek + 1) {
-								nextPage = m_oPageList
-										.get(tmp_load_pageseek + 1);
-								nextPage = nextPage.substring(0,
-										nextPage.length() - 4);
-								showLoadProgToast("进度  [ "
-										+ (tmp_load_pageseek + 1) + "/"
-										+ m_oPageList.size() + " ] , 正在加载  [ "
-										+ nextPage + " ]  ...",
-										Toast.LENGTH_SHORT);
-							}
-						} else {
-							nextPage = nextPage.substring(0,
-									nextPage.length() - 4);
-							showLoadProgToast("进度  [ "
-									+ (tmp_load_pageseek + 1) + "/"
-									+ m_oPageList.size() + " ] , 正在加载  [ "
-									+ nextPage + " ]  ...", Toast.LENGTH_SHORT);
-						}
 
 						handler.postDelayed(this, tmp_load_int_time);
+						
 					} else {
 						tmp_flag_loading = false;
 						DataGetter.bIsLoading = false;
 						isChangPage = true;
+						MGridActivity.handler.sendEmptyMessage(1);
 						Toast.makeText(MGridActivity.this, "加载完毕",
 								Toast.LENGTH_LONG).show();
 						isLoading = false;
 						isNOChangPage = true;
-						System.out.println("所用时间："+(System.currentTimeMillis()-starttime));
+						
+						
+						System.out.println("所用时间："
+								+ (System.currentTimeMillis() - starttime));
 					}
+				}
 
-				} // end of run
-			};
+			
 
-			handler.postDelayed(runnable, tmp_load_int_time);
-			// */
-		} else {
-			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-			requestWindowFeature(Window.FEATURE_PROGRESS);
-			setContentView(R.layout.main);
-			setProgressBarVisibility(true);
-			setProgressBarIndeterminateVisibility(true);
-		}
+			} // end of run
+		};
 
-		mContainer
-				.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
+		handler.postDelayed(runnable, tmp_load_int_time);
 
-		DataGetter.currentPage = m_sMainPage;
-		mDataGetter = new DataGetter();
-		mDataGetter.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-		mDataGetter.start();
 	}
 
 	// 得到机器的IP地址
@@ -817,7 +827,7 @@ public class MGridActivity extends Activity {
 	}
 
 	// 加载用
-	public int tmp_load_int_time = 200;
+	public int tmp_load_int_time = 0;
 	public int tmp_load_pageseek = 0;
 	public boolean tmp_flag_loading = true;
 	public MainWindow tmp_load_prevpage = null;
@@ -897,8 +907,9 @@ public class MGridActivity extends Activity {
 			// handler接收到消息后就会执行此方法
 			switch (msg.what) {
 			case 1:
-				dialog.dismiss();
-				// 关闭ProgressDialog
+				
+				WeiboDialogUtils.closeDialog(mWeiboDialog);
+				DialogThridUtils.closeDialog(mDialog);
 				break;
 			case 2:
 				String s = (String) msg.obj;

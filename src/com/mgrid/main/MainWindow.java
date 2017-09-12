@@ -528,10 +528,6 @@ public class MainWindow extends ViewGroup {
 		while (iter.hasNext()) {
 			String strKey = iter.next();
 			IObject obj = m_mapUIs.get(strKey);
-            if(obj.getType().equals("SgCircleChart"))
-            {
-            	int i=0;
-            }
 			m_oCaculateThread.addExpression(obj.getUniqueID(), obj.getType(),
 					obj.getBindingExpression());
 
