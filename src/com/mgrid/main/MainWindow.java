@@ -150,11 +150,19 @@ public class MainWindow extends ViewGroup {
 					break;
 
 				case 1:
+					if(MGridActivity.whatLanguage)
 					Toast.makeText(context, "设置成功",
 							Toast.LENGTH_SHORT).show();
+					else
+						Toast.makeText(context, "Success",
+								Toast.LENGTH_SHORT).show();
 					String uid=((String) msg.obj).replace("设置成功.", "");
+					if(uid==null) return;
 					
 					final IObject obj_Y = m_mapUIs.get(uid);
+					
+					if(obj_Y==null) return;
+					
 					MGridActivity.xianChengChi.execute(new Runnable() {
 					
 					@Override
@@ -180,8 +188,12 @@ public class MainWindow extends ViewGroup {
 					break;
 
 				case 2:
+					if(MGridActivity.whatLanguage)
 					new AlertDialog.Builder(context).setTitle("错误")
 							.setMessage((String) msg.obj).show();
+					else
+					new AlertDialog.Builder(context).setTitle("Title")
+						    .setMessage("Fail").show();
 					break;
 
 				default:

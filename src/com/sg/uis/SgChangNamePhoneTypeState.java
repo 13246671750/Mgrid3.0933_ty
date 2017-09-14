@@ -150,10 +150,10 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 		// btState.setBackgroundResource(android.R.drawable.btn_default);
 		btDelete.setBackgroundResource(android.R.drawable.btn_default_small);
 
-		etName.setPadding(0, 0, 0, 0);
-		etPhone.setPadding(0, 0, 0, 0);
-		etState.setPadding(0, 0, 0, 0);
-		etType.setPadding(0, 0, 0, 0);
+		etName.setPadding(0, 10, 0, 0);
+		etPhone.setPadding(0, 10, 0, 0);
+		etState.setPadding(0,10, 0, 0);
+		etType.setPadding(0, 10, 0, 0);
 
 		tvName.setPadding(0, 0, 0, 0);
 		tvPhone.setPadding(0, 0, 0, 0);
@@ -162,21 +162,21 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 		tvTagorder.setPadding(0, 0, 0, 0);
 
 		// btState.setPadding(0, 0, 0, 0);
-		btDelete.setPadding(0, 0, 0, 0);
+		btDelete.setPadding(0, 10, 0, 0);
 
-		tvName.setTextSize(20);
-		tvPhone.setTextSize(20);
-		tvState.setTextSize(20);
-		tvType.setTextSize(20);
-		tvTagorder.setTextSize(20);
+		tvName.setTextSize(15);
+		tvPhone.setTextSize(15);
+		tvState.setTextSize(15);
+		tvType.setTextSize(15);
+		tvTagorder.setTextSize(15);
 
 		// btState.setTextSize(20);
-		btDelete.setTextSize(20);
+		btDelete.setTextSize(15);
 
-		etName.setTextSize(20);
-		etPhone.setTextSize(20);
-		etState.setTextSize(20);
-		etType.setTextSize(20);
+		etName.setTextSize(15);
+		etPhone.setTextSize(15);
+		etState.setTextSize(15);
+		etType.setTextSize(15);
 
 		tvName.setText(Name);
 		tvPhone.setText(Phone);
@@ -290,7 +290,10 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 					if (pn.equals(name) && np.equals(phone)) {
 						users.removeChild(element1);
 						saveXmlData();
+						if(MGridActivity.whatLanguage)
 						Toast.makeText(getContext(), "删除成功", 500).show();
+						else
+							Toast.makeText(getContext(), "Success", 500).show();
 						btDelete.setEnabled(false);
 						etName.setText("");
 						etPhone.setText("");
@@ -318,7 +321,10 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 				}
 
 				if (isdelete) {
+					if(MGridActivity.whatLanguage)
 					Toast.makeText(getContext(), "删除失败", 500).show();
+					else
+						Toast.makeText(getContext(), "Fail", 500).show();
 				}
 
 			}
@@ -432,7 +438,10 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 
 		if(list1==null||list2==null)
 		{
+			if(MGridActivity.whatLanguage)
 			Toast.makeText(getContext(), "读取文件出错，可能没有这个文件", 200).show();
+			else
+				Toast.makeText(getContext(), "NO File", 200).show();
 			return;
 		}
 		if (this.getText().equals(Show)) {
@@ -459,7 +468,10 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 			}
 			if(isAdd)
 			{
+				if(MGridActivity.whatLanguage)
 			Toast.makeText(getContext(), "该列暂未添加号码", 200).show();
+				else
+					Toast.makeText(getContext(), "NO Phone", 200).show();
 			this.setText(Add);	
 			}
 		}
@@ -493,16 +505,29 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 						}
 
 						isSave = true;
+						if(MGridActivity.whatLanguage)
 						Toast.makeText(getContext(), "修改成功", Toast.LENGTH_SHORT)
 								.show();
+						else {
+							Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT)
+							.show();
+						}
 					} else {
+						if(MGridActivity.whatLanguage)
 						Toast.makeText(getContext(), "号码位数不对",
 								Toast.LENGTH_SHORT).show();
+						else
+							Toast.makeText(getContext(), "Please input full", Toast.LENGTH_SHORT)
+							.show();
 					}
 
 				} else {
+					if(MGridActivity.whatLanguage)
 					Toast.makeText(getContext(), "请输入完整", Toast.LENGTH_SHORT)
 							.show();
+					else
+						Toast.makeText(getContext(), "Please input full", Toast.LENGTH_SHORT)
+						.show();
 				}
 			}
 		} else if (this.getText().equals(Add)) {
@@ -527,20 +552,35 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 
 					users.appendChild(user);
 					isSave = true;
+					if(MGridActivity.whatLanguage)
 					Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT)
 							.show();
-					this.setText("修改");
+					else
+						Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT)
+						.show();
+					this.setText(Alter);
 					btDelete.setEnabled(true);
 				} else {
+					if(MGridActivity.whatLanguage)
 					Toast.makeText(getContext(), "号码位数不对", Toast.LENGTH_SHORT)
 							.show();
+					else
+						Toast.makeText(getContext(), "phone num error", Toast.LENGTH_SHORT)
+						.show();
 				}
 			} else {
+				if(MGridActivity.whatLanguage)
 				Toast.makeText(getContext(), "请输入完整", Toast.LENGTH_SHORT)
 						.show();
+				else
+					Toast.makeText(getContext(), "Please input full", Toast.LENGTH_SHORT)
+					.show();
 			}
 		} else {
+			if(MGridActivity.whatLanguage)
 			Toast.makeText(getContext(), "请输入完整", Toast.LENGTH_SHORT).show();
+			else
+				Toast.makeText(getContext(), "Please input full", Toast.LENGTH_SHORT).show();	
 		}
 
 		if (isSave) {
@@ -667,6 +707,13 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 			m_cFontColor = Color.parseColor(strValue);
 			this.setTextColor(m_cFontColor);
 			btDelete.setTextColor(m_cFontColor);
+			tvName.setTextColor(m_cFontColor);
+			tvPhone.setTextColor(m_cFontColor);
+			tvState.setTextColor(m_cFontColor);
+			tvType.setTextColor(m_cFontColor);
+			tvTagorder.setTextColor(m_cFontColor);
+			
+			
 		} else if ("CmdExpression".equals(strName)) {
 			m_strCmdExpression = strValue;
 		} else if ("IsValueRelateSignal".equals(strName)) {
@@ -678,6 +725,24 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 			m_fButtonWidthRate = Float.parseFloat(strValue);
 		} else if ("Labelorder".equals(strName)) {
 			tvTagorder.setText(strValue);
+		}else if("FontSize".equals(strName))
+		{
+			 fontSize=Integer.parseInt(strValue);
+			 tvName.setTextSize(fontSize);
+				tvPhone.setTextSize(fontSize);
+				tvState.setTextSize(fontSize);
+				tvType.setTextSize(fontSize);
+				tvTagorder.setTextSize(fontSize);
+
+				// btState.setTextSize(20);
+				btDelete.setTextSize(fontSize);
+
+				etName.setTextSize(fontSize);
+				etPhone.setTextSize(fontSize);
+				etState.setTextSize(fontSize);
+				etType.setTextSize(fontSize);
+				this.setTextSize(fontSize);
+			
 		}
 	}
 
@@ -807,6 +872,8 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 	public void setNumber(int number) {
 		xmlPhoneNumber = number;
 	}
+	
+	int fontSize=15;
 
 	// 记录触摸坐标，过滤滑动操作。解决滑动误操作点击问题。
 	public float m_xscal = 0;

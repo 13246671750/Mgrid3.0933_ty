@@ -60,7 +60,7 @@ public class AutoSigList extends View implements IObject {
 		ridobuttons[3] = new RadioButton(context);
 		ridobuttons[3].setText("1 year");
 		for (int i = 0; i < 4; i++) {
-			ridobuttons[i].setTextColor(Color.BLACK);
+			ridobuttons[i].setTextColor(m_nFontColor);
 			ridobuttons[i].setOnClickListener(l);
 		}
 	}
@@ -309,6 +309,10 @@ public class AutoSigList extends View implements IObject {
 		} else if ("FontColor".equals(strName)) {
 			m_nFontColor = Color.parseColor(strValue);
 			this.setFontColor(m_nFontColor);
+			for (int i = 0; i < 4; i++) {
+				ridobuttons[i].setTextColor(m_nFontColor);
+			}
+			
 		} else if ("LineColor".equals(strName)) {
 			m_nLineColor = Color.parseColor(strValue);
 			this.setLineColor(m_nLineColor);

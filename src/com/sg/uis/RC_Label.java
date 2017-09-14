@@ -251,6 +251,9 @@ public class RC_Label extends TextView implements IObject {
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
 			m_cFontColor = Color.parseColor(strValue);
+			for (int i = 0; i < 3; i++) {
+				ridobuttons[i].setTextColor(m_cFontColor);
+			}
 		} else if ("LineColor".equals(strName)) {
 			m_cLineColor = Color.parseColor(strValue);
 		} else if ("BackgroundColor".equals(strName)) {

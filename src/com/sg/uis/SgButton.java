@@ -48,6 +48,12 @@ import data_model.ipc_control;
 /** 按钮 */
 public class SgButton extends TextView implements IObject {
 
+	
+	private String Prompt = "";
+	private String problem = "";
+	private String OK = "";
+	private String ON = "";
+	
 	public SgButton(Context context) {
 		super(context);
 		this.setClickable(true);
@@ -85,6 +91,21 @@ public class SgButton extends TextView implements IObject {
 
 		m_oPaint = new Paint();
 		m_rBBox = new Rect();
+		
+		if (MGridActivity.whatLanguage) {
+
+			Prompt = "提示";
+			problem = "是否确定?";
+			OK = "确认:";
+			ON = "取消";
+
+		} else {
+
+			Prompt = "Hint";
+			problem = "Are you sure? ";
+			OK = "yes";
+			ON = "cancel";
+		}
 
 		// setBackgroundResource(com.mgrid.main.R.drawable.sg_button_up);
 		// setBackgroundDrawable(new
@@ -262,9 +283,9 @@ public class SgButton extends TextView implements IObject {
 			} else if ("删除历史".equals(m_strClickEvent)) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						getContext());
-				builder.setTitle("提示");
-				builder.setMessage("是否确认删除历史记录?");
-				builder.setPositiveButton("确认",
+				builder.setTitle(Prompt);
+				builder.setMessage(problem);
+				builder.setPositiveButton(OK,
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -275,14 +296,14 @@ public class SgButton extends TextView implements IObject {
 								showHint();
 							}
 						});
-				builder.setNegativeButton("取消",
+				builder.setNegativeButton(ON,
 						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
 
-								Toast.makeText(getContext(), "您已取消", 1000)
-										.show();
+//								Toast.makeText(getContext(), "You have cancelled ", 1000)
+//										.show();
 							}
 						});
 				builder.create().show();
@@ -532,9 +553,9 @@ public class SgButton extends TextView implements IObject {
 			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						getContext());
-				builder.setTitle("提示");
-				builder.setMessage("是否确定?");
-				builder.setPositiveButton("确认",
+				builder.setTitle(Prompt);
+				builder.setMessage(problem);
+				builder.setPositiveButton(OK,
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -554,14 +575,14 @@ public class SgButton extends TextView implements IObject {
 
 							}
 						});
-				builder.setNegativeButton("取消",
+				builder.setNegativeButton(ON,
 						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
 
-								Toast.makeText(getContext(), "您已取消", 1000)
-										.show();
+//								Toast.makeText(getContext(),
+//										"You have cancelled", 1000).show();
 							}
 						});
 				builder.create().show();
@@ -578,6 +599,9 @@ public class SgButton extends TextView implements IObject {
 				.getContext());
 		// 把activity_login中的控件定义在View中
 		final View textEntryView = factory.inflate(R.layout.page_xml, null);
+		
+		
+		
 		// 将LoginActivity中的控件显示在对话框中
 		new AlertDialog.Builder(m_rRenderWindow.getContext())
 		// 对话框的标题
@@ -647,6 +671,7 @@ public class SgButton extends TextView implements IObject {
 
 	//
 	private void showHint() {
+		if(MGridActivity.whatLanguage)
 		new AlertDialog.Builder(getContext())
 				.setTitle("删除" + isDelete + ",请自行重启机器")
 				.setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -657,6 +682,17 @@ public class SgButton extends TextView implements IObject {
 
 					}
 				}).create().show();
+		else
+			new AlertDialog.Builder(getContext())
+		.setTitle("Delete Success, Please Restart")
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				// TODO Auto-generated method stub
+
+			}
+		}).create().show();	
 	}
 
 	// 重启应用

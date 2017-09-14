@@ -84,6 +84,8 @@ public class MGridActivity extends Activity {
 	long starttime = 0;
 	public Handler mTimeHandler = new Handler();
 	
+	private String Load="";
+	
 
 	
 	public Runnable runTime = new Runnable() {
@@ -101,7 +103,7 @@ public class MGridActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mWeiboDialog = WeiboDialogUtils.createLoadingDialog(MGridActivity.this, "加载中...");
+	//	mWeiboDialog = WeiboDialogUtils.createLoadingDialog(MGridActivity.this, "加载中...");
 		init();
 
 	} 
@@ -113,6 +115,15 @@ public class MGridActivity extends Activity {
 		m_oViewGroups = new HashMap<String, MainWindow>();
 		m_oPageList = new ArrayList<String>();
 		whatLanguage = whatLanguage();
+		
+		
+		if(whatLanguage)
+		{
+			Load="加载完";
+		}else
+		{
+			Load="Loaded";
+		}
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);// 强制为横屏
 
@@ -521,7 +532,7 @@ public class MGridActivity extends Activity {
 					else {
 						tmp_flag_loading = false;
 						DataGetter.bIsLoading = false;
-						Toast.makeText(MGridActivity.this, "加载完毕",
+						Toast.makeText(MGridActivity.this, Load,
 								Toast.LENGTH_LONG).show();
 						isLoading = false;
 						return;
@@ -568,7 +579,7 @@ public class MGridActivity extends Activity {
 						DataGetter.bIsLoading = false;
 						isChangPage = true;
 						MGridActivity.handler.sendEmptyMessage(1);
-						Toast.makeText(MGridActivity.this, "加载完毕",
+						Toast.makeText(MGridActivity.this, Load,
 								Toast.LENGTH_LONG).show();
 						isLoading = false;
 						isNOChangPage = true;
@@ -869,6 +880,10 @@ public class MGridActivity extends Activity {
 	// xml文件号码的个数
 	// public static int xmlPhoneNumber=0;
 
+	
+	//信号数据存储时间
+	public static int saveTime;
+	
 	// 用户名和密码
 	public static String m_UserName;
 	public static String m_PassWord;

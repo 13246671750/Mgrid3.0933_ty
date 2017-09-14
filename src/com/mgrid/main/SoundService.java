@@ -19,7 +19,7 @@ public class SoundService extends Service {
 		mp.setLooping(true); 
 		String song = Environment.getExternalStorageDirectory().getPath()  + "/vtu_pagelist/Alarm.wav";
        // System.out.println(song);
-				try {
+		try {
             mp.setDataSource(song);
             mp.prepare();
             mp.start();
@@ -31,13 +31,13 @@ public class SoundService extends Service {
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
+		
 		super.onDestroy();
 		mp.release();
         stopSelf();

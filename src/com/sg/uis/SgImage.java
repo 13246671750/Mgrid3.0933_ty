@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mgrid.data.DataGetter;
@@ -41,12 +42,27 @@ import com.sg.common.UtGifHelper;
 /** 图片类(jpg png gif) */
 @SuppressLint({ "InflateParams", "ShowToast", "ClickableViewAccessibility" })
 public class SgImage extends View implements IObject {
+
+	private String denglu = "";
+	private String yes = "";
+	private String no = "";
+	private String systemExit = "";
+	private String pwText="";
+	
+	private String Text1="";
+	private String Text2="";
+	
+	private String userName="";
+	private String PWD="";
+	
+	
+
 	public SgImage(Context context) {
 		super(context);
 		this.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				if (isChangColor&&isChangColor1) {
+				if (isChangColor && isChangColor1) {
 					switch (event.getAction()) {
 
 					case MotionEvent.ACTION_DOWN:
@@ -71,19 +87,17 @@ public class SgImage extends View implements IObject {
 					default:
 						break;
 					}
-				}else
-				{
+				} else {
 					switch (event.getAction()) {
 
 					case MotionEvent.ACTION_DOWN:
-						
 
 						m_xscal = event.getX();
 						m_yscal = event.getY();
 						break;
 
 					case MotionEvent.ACTION_UP:
-						
+
 						float xslip = Math.abs(event.getX() - m_xscal);
 						float yslip = Math.abs(event.getY() - m_yscal);
 
@@ -99,6 +113,33 @@ public class SgImage extends View implements IObject {
 				return true;
 			}
 		});
+
+		if (MGridActivity.whatLanguage) {
+
+			denglu = "用户权限登录";
+			yes = "确认";
+			no = "取消";
+			systemExit = "系统维护";
+			pwText="密码";
+			Text1="请等待加载完成！！";
+			Text2="用户名或密码错误";
+			userName="用户名：";
+			PWD="密    码：";
+
+		} else {
+
+			denglu = "Login";
+			yes = "ok";
+			no = "cancel";
+			systemExit = "Exit";
+			pwText="PassWord";
+			Text1="Please wait for loading to complete！！";
+			Text2="Password or user name error";
+			userName="User  ID:";
+			     PWD="PassWord:";
+
+
+		}
 
 		// WARN: 以下方式可能产生内存泄露。 -- Charles
 		m_oInvalidateHandler = new MyHandler(this);
@@ -141,15 +182,15 @@ public class SgImage extends View implements IObject {
 			super.handleMessage(msg);
 		}
 	}
-	
-	public  Handler handler = new Handler() {
+
+	public Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
-			
+
 			switch (msg.what) {
 			case 1:
-			
+
 				updateWidget();
-				
+
 				break;
 			default:
 				break;
@@ -281,22 +322,22 @@ public class SgImage extends View implements IObject {
 
 			String[] arrStr = strValue.split("\\.");
 			if ("gif".equals(arrStr[1])) {
-		        MGridActivity.xianChengChi.execute(new Runnable() {
-					
+				MGridActivity.xianChengChi.execute(new Runnable() {
+
 					@Override
 					public void run() {
 						InputStream is = null;
 						try {
 							is = new BufferedInputStream(new FileInputStream(
 									m_strImgSrc));
-						m_oGifHelper = new UtGifHelper();
-						m_oGifHelper.read(is);
-						m_bitBackImage = m_oGifHelper.getImage();
-						m_bitCurrentBackImage = m_bitBackImage;
-						// gif 刷新线程
-						m_oInvalidateThread = new invalidateThread();
-						m_oInvalidateThread.start();
-						is.close();	
+							m_oGifHelper = new UtGifHelper();
+							m_oGifHelper.read(is);
+							m_bitBackImage = m_oGifHelper.getImage();
+							m_bitCurrentBackImage = m_bitBackImage;
+							// gif 刷新线程
+							m_oInvalidateThread = new invalidateThread();
+							m_oInvalidateThread.start();
+							is.close();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -445,28 +486,28 @@ public class SgImage extends View implements IObject {
 						}
 
 						if (isMask) {
-							if(SgImage.isChangColor==false)
-							{
-							SgImage.isChangColor=true;
-							if(MGridActivity.isPlaygif)
-							{
-							  m_rRenderWindow.m_oMgridActivity.releaseWakeLock();
-							  System.out.println("我进来了gif");
-							}
-							else if(MGridActivity.isPlaymv)
-							{
-							  m_rRenderWindow.m_oMgridActivity.releaseWakeLock();
-							  m_rRenderWindow.m_oMgridActivity.svv.pauseMv();
-							  m_rRenderWindow.m_oMgridActivity.mTimeHandler.removeCallbacks(m_rRenderWindow.m_oMgridActivity.runTime);
-							  System.out.println("我进来了mv");
-							}
+							if (SgImage.isChangColor == false) {
+								SgImage.isChangColor = true;
+								if (MGridActivity.isPlaygif) {
+									m_rRenderWindow.m_oMgridActivity
+											.releaseWakeLock();
+									System.out.println("我进来了gif");
+								} else if (MGridActivity.isPlaymv) {
+									m_rRenderWindow.m_oMgridActivity
+											.releaseWakeLock();
+									m_rRenderWindow.m_oMgridActivity.svv
+											.pauseMv();
+									m_rRenderWindow.m_oMgridActivity.mTimeHandler
+											.removeCallbacks(m_rRenderWindow.m_oMgridActivity.runTime);
+									System.out.println("我进来了mv");
+								}
 							}
 							m_rRenderWindow.changePage(str[0]);
 						}
 
 					}
 				} else {
-					Toast.makeText(getContext(), "请等待加载完成！！", 1000).show();
+					Toast.makeText(getContext(), Text1, 1000).show();
 				}
 			}
 		} else {
@@ -488,14 +529,18 @@ public class SgImage extends View implements IObject {
 				.getContext());
 		// 把activity_login中的控件定义在View中
 		final View textEntryView = factory.inflate(R.layout.page_xml, null);
+		
+		TextView tv=(TextView) textEntryView.findViewById(R.id.pagetv);
+		tv.setText(pwText);
+		
 		// 将LoginActivity中的控件显示在对话框中
 		new AlertDialog.Builder(m_rRenderWindow.getContext())
 		// 对话框的标题
-				.setTitle("用户权限登录")
+				.setTitle(denglu)
 				// 设定显示的View
 				.setView(textEntryView)
 				// 对话框中的“登陆”按钮的点击事件
-				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				.setPositiveButton(yes, new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -523,7 +568,7 @@ public class SgImage extends View implements IObject {
 							}
 						} else {
 							Toast.makeText(m_rRenderWindow.getContext(),
-									"密码错误", Toast.LENGTH_SHORT).show();
+									Text2, Toast.LENGTH_SHORT).show();
 							// Toast.makeText(m_rRenderWindow.getContext(),
 							// "Incorrect username or password!",
 							// Toast.LENGTH_SHORT).show();
@@ -532,7 +577,7 @@ public class SgImage extends View implements IObject {
 
 				})
 				// 对话框的“退出”单击事件
-				.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				.setNegativeButton(no, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// LoginActivity.this.finish();
 					}
@@ -550,15 +595,20 @@ public class SgImage extends View implements IObject {
 				.getContext());
 		// 把activity_login中的控件定义在View中
 		final View textEntryView = factory.inflate(R.layout.auth_dialog, null);
+		
+		TextView tv1=(TextView) textEntryView.findViewById(R.id.tvuserName);
+		TextView tv2=(TextView) textEntryView.findViewById(R.id.tvPWD);
+		tv1.setText(userName);
+		tv2.setText(PWD);
+		
 
-		// 将LoginActivity中的控件显示在对话框中
 		new AlertDialog.Builder(m_rRenderWindow.getContext())
 		// 对话框的标题
-				.setTitle("系统维护")
+				.setTitle(systemExit)
 				// 设定显示的View
 				.setView(textEntryView)
 				// 对话框中的“登陆”按钮的点击事件
-				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				.setPositiveButton(yes, new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -591,7 +641,7 @@ public class SgImage extends View implements IObject {
 
 							}
 							Toast.makeText(m_rRenderWindow.getContext(),
-									"主人欢迎回来！", Toast.LENGTH_LONG).show();
+									"Welcome back, master!", Toast.LENGTH_LONG).show();
 							m_rRenderWindow.getContext().startActivity(
 									m_oHomeIntent);
 
@@ -617,7 +667,7 @@ public class SgImage extends View implements IObject {
 								m_rRenderWindow.showTaskUI(true);
 						} else {
 							Toast.makeText(m_rRenderWindow.getContext(),
-									"密码或用户名错误", Toast.LENGTH_SHORT).show();
+									Text2, Toast.LENGTH_SHORT).show();
 							// Toast.makeText(m_rRenderWindow.getContext(),
 							// "Incorrect username or password!",
 							// Toast.LENGTH_SHORT).show();
@@ -626,7 +676,7 @@ public class SgImage extends View implements IObject {
 
 				})
 				// 对话框的“退出”单击事件
-				.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				.setNegativeButton(no, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// LoginActivity.this.finish();
 					}

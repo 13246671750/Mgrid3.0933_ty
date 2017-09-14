@@ -140,6 +140,7 @@ public class local_file {
 			priwrite = new PrintWriter(new FileWriter(file, true), true);
 			priwrite.println(buf);
 			priwrite.close();
+			
 		} catch (Exception e) {
 
 		}

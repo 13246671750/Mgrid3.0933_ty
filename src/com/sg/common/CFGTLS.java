@@ -83,7 +83,12 @@ public class CFGTLS
    		 return  Color.YELLOW;
    	 }
 */
-   	 
+   	 if("Highlight".equalsIgnoreCase(strValue)||"MenuHighlight".equalsIgnoreCase(strValue))
+   	 {
+   		strValue="#FF48B0FF";
+   	 }
+		
+		
    	    // Ω‚Œˆ AA,RR,GG,BB ∏Ò Ω
 		if (strValue.contains(","))
 		{

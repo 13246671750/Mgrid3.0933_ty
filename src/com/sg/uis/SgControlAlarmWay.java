@@ -241,13 +241,23 @@ public class SgControlAlarmWay extends TextView implements IObject {
         String	mExpression1 = mExpression.replace("Binding{[Value[", "");
 		mExpression1 = mExpression1.replace("]]}", "");
 		String[] s = mExpression1.split("-");
-		String[] s0 = s[0].split(":");
-		equitId = s0[1];
-		String[] s1 = s[1].split(":");
-		tempId = s1[1];
-		String[] s2 = s[2].split(":");
-		eventId = s2[1];
-		System.out.println(equitId+":::"+eventId);
+		if(s.length<=1)
+		{
+			String[] s0 = s[0].split(":");
+			equitId = s0[1];
+			tempId="0";
+			eventId="0";
+		}
+		else
+		{
+			String[] s0 = s[0].split(":");
+			equitId = s0[1];
+			String[] s1 = s[1].split(":");
+			tempId = s1[1];
+			String[] s2 = s[2].split(":");
+			eventId = s2[1];
+			System.out.println(equitId+":::"+eventId);
+		}
 
 	}
 
@@ -486,45 +496,68 @@ public class SgControlAlarmWay extends TextView implements IObject {
 									// 就报警.
 			System.out.println("old_eventss为空");
 			old_eventss = new_eventss;
-			if (new_eventss.containsKey(equitId)) {
-				System.out.println("new_eventss包含设备ID");
-				Hashtable<String, Event> new_events = new_eventss.get(equitId);
-
-				if (new_events.containsKey(eventId)) {
-					System.out.println("new_eventss包含告警ID");
+			if(equitId.equals("0"))
+			{
+				if(new_eventss!=null)
+				{
 					return true;
 				}
-			} 
-			System.out.println("new_eventss没有设备ID或者告警ID");
+			}
+			else
+			{
+				if (new_eventss.containsKey(equitId)) {
+					System.out.println("new_eventss包含设备ID");
+					Hashtable<String, Event> new_events = new_eventss.get(equitId);
+
+					if (new_events.containsKey(eventId)) {
+						System.out.println("new_eventss包含告警ID");
+						return true;
+					}
+				} 
+				System.out.println("new_eventss没有设备ID或者告警ID");			
+			}
 			return false;
 		}
 		/**
 		 * 之后判断，先判断new_events有没有这个告警 ，如果有(再判断old_eventss里有没有这个告警,如果有，说明不需要告警
 		 * ，如果没有 ，就需要告警).如果没有（不告警）；
 		 */
-		if (new_eventss.containsKey(equitId)) {
-			// System.out.println("之后;new_eventss包含设备ID");
-			Hashtable<String, Event> new_events = new_eventss.get(equitId);
-			if (new_events.containsKey(eventId)) {
-				// System.out.println("之后;new_eventss包含告警ID");
-				if (old_eventss.containsKey(equitId)) {
-					// System.out.println("之后;old_eventss包含设备ID");
-					Hashtable<String, Event> old_events = old_eventss
-							.get(equitId);
-					if (old_events.containsKey(eventId)) {
-						// System.out.println("之后;old_eventss包含告警ID");
-						old_events = new_events;
-						return false;
-					}
-				}
-				// System.out.println("之后;old_eventss不包含设备ID或告警ID");
+		if(equitId.equals("0"))
+		{
+			if(new_eventss.size()>old_eventss.size())
+			{
 				old_eventss = new_eventss;
 				return true;
 			}
+			
+		}else
+		{
+			if (new_eventss.containsKey(equitId)) {
+				// System.out.println("之后;new_eventss包含设备ID");
+				Hashtable<String, Event> new_events = new_eventss.get(equitId);
+				if (new_events.containsKey(eventId)) {
+					// System.out.println("之后;new_eventss包含告警ID");
+					if (old_eventss.containsKey(equitId)) {
+						// System.out.println("之后;old_eventss包含设备ID");
+						Hashtable<String, Event> old_events = old_eventss
+								.get(equitId);
+						if (old_events.containsKey(eventId)) {
+							// System.out.println("之后;old_eventss包含告警ID");
+							old_events = new_events;
+							return false;
+						}
+					}
+					// System.out.println("之后;old_eventss不包含设备ID或告警ID");
+					old_eventss = new_eventss;
+					return true;
+				}
+			}
+			// System.out.println("之后;new_eventss不包含设备ID或告警ID");
 		}
-		// System.out.println("之后;new_eventss不包含设备ID或告警ID");
+		
 		old_eventss = new_eventss;
 		return false;
+	
 	}
 
 	@Override
