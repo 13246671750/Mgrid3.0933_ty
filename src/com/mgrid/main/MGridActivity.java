@@ -57,6 +57,7 @@ import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.UtExpressionParser.stBindingExpression;
 import com.sg.common.UtIniReader;
+import com.sg.uis.SaveEquipt;
 import com.sg.uis.SgAlarmAction;
 import com.sg.uis.SgAlarmChangTime;
 import com.sg.uis.SgImage;
@@ -249,6 +250,31 @@ public class MGridActivity extends Activity {
 		m_sMainPage = iniReader.getValue("SysConf", "MainPage");
 		m_UserName = iniReader.getValue("SysConf", "UserName", "admin");
 		m_PassWord = iniReader.getValue("SysConf", "PassWord", "12348765");
+		
+		try {
+			SaveEquipt.save_time=Integer.parseInt(iniReader.getValue("SysConf", "SaveTime", "8"));	
+			if(SaveEquipt.save_time<=0)
+			{
+				SaveEquipt.save_time=1;
+			}
+			
+		} catch (Exception e) {	
+		
+			try {
+				SaveEquipt.save_time=(int)Float.parseFloat(iniReader.getValue("SysConf", "SaveTime", "8"));	
+				if(SaveEquipt.save_time<=0)
+				{
+					SaveEquipt.save_time=1;
+				}
+				
+			} catch (Exception e2) {
+				Toast.makeText(this, "Mgrid.ini文件中SaveTime属性设置异常,已经恢复默认值", 1000).show();
+				SaveEquipt.save_time=8;
+			}
+			
+		}
+		
+		
 		String playWay = iniReader.getValue("SysConf", "playWay");
 		String time = iniReader.getValue("SysConf", "playTime");
 		if (time != null) {

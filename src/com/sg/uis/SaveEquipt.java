@@ -458,8 +458,8 @@ public class SaveEquipt extends UtTable implements IObject {
         	m_cEvenRowBackground = Color.parseColor(strValue);
         }
         else if ("SaveTime".equals(strName)) {
-        	save_time = Integer.parseInt(strValue);
-        	save_time = save_time*60*60; //对输入参数的单位为h
+        //	save_time = Integer.parseInt(strValue);
+        //	save_time = save_time*60*60; //对输入参数的单位为h
         	
         }
 	}
