@@ -3,6 +3,7 @@ package comm_service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class service {
 			out = socket.getOutputStream();
 			in = socket.getInputStream();
 			out.write(send_buf, 0, send_buf.length);
-			long l1=System.currentTimeMillis();
+			//long l1=System.currentTimeMillis();
 			//System.out.println("通讯时间BBBBBBBBBBBBBBBBbb：QQQ"+(l1-l));
 			socket.setSoTimeout(5000);  // 
 			out.flush();
@@ -62,7 +63,7 @@ public class service {
 			byte[] soh = new byte[1];
 			int try_times = 0;
 			while (true) {
-				long l10=System.currentTimeMillis();
+				//long l10=System.currentTimeMillis();
 				
 				if (in.read(soh, index, 1) == 1) {
 				//	System.out.println("通讯时间GGGGGGGGGGGGGGGG：QQQ"+(System.currentTimeMillis()-l10));
@@ -104,7 +105,7 @@ public class service {
 				
 				
 			}
-			long l2=System.currentTimeMillis();
+			//long l2=System.currentTimeMillis();
 			//System.out.println("通讯时间CCCCCCCCCCCCCCCc：QQQ"+(l2-l1));
 			
 			receivetemp[0] = soh[0];
@@ -214,7 +215,7 @@ public class service {
 			
 				receivetemp = null; //fjw add 释放内存
 			}
-			long i=System.currentTimeMillis()-l;
+			//long i=System.currentTimeMillis()-l;
 //			System.out.println("网络请求时间："+i);
 		}
 		receivetemp = null; //fjw add 释放内存
@@ -230,7 +231,7 @@ public class service {
 		byte[] send_buf = protocol.build_query_equip_list();
 		byte[] recv_buf = send_and_receive(send_buf, ip_addr, port);
 		
-		return protocol.parse_query_equip_list_ack(recv_buf);
+		return protocol.parse_query_equip_list_ack(recv_buf); 
 	}
 	
 
@@ -238,8 +239,15 @@ public class service {
 		byte[] send_buf = protocol.build_query_signal_list(equipid);
 		byte[] recv_buf = send_and_receive(send_buf, ip_addr, port);
 		
+		if(equipid==188)
+		{
+			for (int i = 0; i < recv_buf.length; i++) {
+				System.out.print(recv_buf[i]+",");
+			} 
+		}
+		
 		return protocol.parse_query_signal_list_ack(recv_buf);
-	}
+	}     
 	
 
 	public static List<ipc_data_signal> get_signal_data_list(String ip_addr, int port, int equipid) {

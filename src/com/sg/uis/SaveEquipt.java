@@ -35,6 +35,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Paint.Style;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -309,7 +310,9 @@ public class SaveEquipt extends UtTable implements IObject {
 //					
 											
 						//设置控件需要更新标识变量
-						m_bneedupdate = true;   									
+						m_bneedupdate = true;   	
+						view_Receive.setEnabled(false);
+						handler.postDelayed(runable,2000);
 			}
 		};
 
@@ -464,6 +467,30 @@ public class SaveEquipt extends UtTable implements IObject {
         }
 	}
 
+	Runnable runable=new Runnable() {
+		public void run() {
+			
+			handler.sendEmptyMessage(2);
+		}
+	};
+	
+	Handler handler=new Handler()
+	{
+		public void handleMessage(android.os.Message msg) {
+			
+			switch (msg.what) {
+			case 2:
+				
+				view_Receive.setEnabled(true);
+				
+				break;
+			}
+			
+		};
+	};
+	
+	
+	
 	@Override
 	public void initFinished()
 	{

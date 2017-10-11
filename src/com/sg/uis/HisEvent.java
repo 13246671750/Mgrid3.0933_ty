@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -70,7 +72,9 @@ public class HisEvent extends UtTable implements IObject {
 	
 	private String logPath="/mgrid/data/Command/0.log";
 	private File logFile=new File(logPath);
-
+  
+	
+	
 	public HisEvent(Context context) {
 		super(context);
 		m_rBBox = new Rect();
@@ -245,14 +249,17 @@ public class HisEvent extends UtTable implements IObject {
 	private OnClickListener l = new OnClickListener() {
 
 		@Override
-		public void onClick(View arg0) {
+		public void onClick(final View arg0) {
 
+	
+			
 			set_year = dialog.getDatePicker().getYear();
 			set_month = dialog.getDatePicker().getMonth() + 1;
 			set_day = dialog.getDatePicker().getDayOfMonth();
 
 			if (arg0 == view_timeButton) {
 
+				
 				dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "…Ë÷√",
 						new DialogInterface.OnClickListener() {
 
@@ -403,6 +410,23 @@ public class HisEvent extends UtTable implements IObject {
 			str_EquiptId = map_EquiptNameList.get(closeEquiptName);
 			mythread thread = new mythread();
 			thread.start();
+			view_Receive.setEnabled(false);
+			if (AllDevice.equals(closeEquiptName))
+			{
+				handler.postDelayed(runable,5000);
+			}else
+			{
+				handler.postDelayed(runable,2000);
+			}
+		
+		}
+	};
+	
+	
+	Runnable runable=new Runnable() {
+		public void run() {
+			
+			handler.sendEmptyMessage(2);
 		}
 	};
 
@@ -429,6 +453,8 @@ public class HisEvent extends UtTable implements IObject {
 			click = true;
 		}
 	}
+	
+
 
 	public boolean onTouchEvent(MotionEvent event) {
 		super.onTouchEvent(event);
@@ -529,7 +555,12 @@ public class HisEvent extends UtTable implements IObject {
 				for (int i = 0; i < s_title.length; i++)
 					s_title[i].setVisibility(View.VISIBLE);
 
-				break;	
+				break;
+			case 2:
+//			//	view_Receive.setClickable(true);
+                view_Receive.setEnabled(true);
+				
+   			    break;	
 			}
 
 			super.handleMessage(msg);
@@ -962,9 +993,9 @@ public class HisEvent extends UtTable implements IObject {
 
 				his_event_list.add(his_event);
 
-				if (his_event_list.size() > 500) {
-					break;
-				}
+//				if (his_event_list.size() > 5000) {
+//					break;
+//				}
 				his_event = null;
 			}
 		} catch (Exception e) {

@@ -413,7 +413,7 @@ public class SgAmmeter extends View implements IObject {
        }
        else if ("WarmPerColor".equals(strName)) {
         	if(strValue!=null&&!strValue.equals(""))
-        		warnPerColor = Integer.parseInt(strValue);
+        		warnPerColor = Color.parseColor(strValue);
        }
 	}
 

@@ -1,6 +1,7 @@
 package comm_service;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -212,7 +213,13 @@ public class protocol {
 			}
 		}
 			
-		String body = new String(body_buf);
+		String body=null;
+		try {
+			body = new String(body_buf,"UTF-8");
+			//body = new String(body_buf,"gb2312");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 			
 		String[] blocks = body.split("\\|");
 		for (i = 0; i < sig_no; ++i) {
@@ -222,7 +229,7 @@ public class protocol {
 			try {
 				signal.equipid = Integer.parseInt(items[0]);
 				signal.id = Integer.parseInt(items[1]);	
-				signal.name = (null==items[2] ? "" : new String(items[2]));
+				signal.name = (null==items[2] ? "" : new String(items[2])); 
 				signal.unit = (null==items[3] ? "" : new String(items[3]));
 				signal.precision = Integer.parseInt(items[4]);
 				signal.description = (null==items[5] ? "" : new String(items[5]));

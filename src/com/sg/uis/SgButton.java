@@ -33,7 +33,6 @@ import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
 import com.mgrid.main.R;
 import com.mgrid.main.SoundService;
-import com.mgrid.util.FileUtil;
 import com.mgrid.util.ShellUtils;
 import com.mgrid.util.ShellUtils.CommandResult;
 import com.sg.common.CFGTLS;

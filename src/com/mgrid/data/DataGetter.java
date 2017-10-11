@@ -186,12 +186,8 @@ public class DataGetter extends Thread {
 								String.valueOf(ipc_signalcfg.id), signal);
 					
 					}
-//					
-//					if(equip.id==116)
-//					{
-//						System.out.println("ÐÅºÅÃû×ÖA£º"+ipc_signalcfg.name);
-//						System.out.println("ÐÅºÅIDA£º"+ipc_signalcfg.id);
-//					}
+					
+				
 					signal.id = String.valueOf(ipc_signalcfg.id);
 					signal.name = ipc_signalcfg.name;
 					signal.unit = ipc_signalcfg.unit;

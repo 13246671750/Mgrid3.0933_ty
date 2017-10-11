@@ -16,10 +16,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -51,6 +55,7 @@ import android.widget.Toast;
 
 import com.mgrid.data.DataGetter;
 import com.mgrid.util.CameraUtils;
+import com.mgrid.util.XmlUtils;
 import com.mgrid.util.dialog.DialogThridUtils;
 import com.mgrid.util.dialog.WeiboDialogUtils;
 import com.sg.common.CFGTLS;
@@ -63,6 +68,7 @@ import com.sg.uis.SgAlarmChangTime;
 import com.sg.uis.SgImage;
 import com.sg.uis.LsyNewView.SgVideoView;
 import comm_service.service;
+import data_model.ipc_control;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 @SuppressLint("InlinedApi")
@@ -250,26 +256,89 @@ public class MGridActivity extends Activity {
 		m_sMainPage = iniReader.getValue("SysConf", "MainPage");
 		m_UserName = iniReader.getValue("SysConf", "UserName", "admin");
 		m_PassWord = iniReader.getValue("SysConf", "PassWord", "12348765");
+		alarmWay=iniReader.getValue("SysConf", "ControlAlarmWay");
+		
+        xianChengChi.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				if(alarmWay!=null)
+				{
+					if(alarmWay.equals("DO1"))
+					{
+						ipc_control ipc = new ipc_control();
+						ipc.equipid = 1;
+						XmlUtils xml = XmlUtils.getXml();
+						NodeList list = xml.getCommandlist();
+						if (list != null) {
+							for (int i = 0; i < list.getLength(); i++) {
+								Element e = (Element) list.item(i);
+								String name = e
+										.getAttribute("CommandName");
+								if (name.equals("DO1")) {
+									String	ctrlid = e
+											.getAttribute("CommandId");
+									ipc.ctrlid = Integer
+											.parseInt(ctrlid);
+									break;
+								}
+							}
+						}
+						ipc.valuetype = 1;
+						ipc.value = "1";
+						lstCtrlDo1=new ArrayList<ipc_control>();
+						lstCtrlDo1.add(ipc);
+					}else if(alarmWay.equals("DO2"))
+					{
+						ipc_control ipc = new ipc_control();
+						ipc.equipid = 1;
+						XmlUtils xml = XmlUtils.getXml();
+						NodeList list = xml.getCommandlist();
+						if (list != null) {
+							for (int i = 0; i < list.getLength(); i++) {
+								Element e = (Element) list.item(i);
+								String name = e
+										.getAttribute("CommandName");
+								if (name.equals("DO2")) {
+									String	ctrlid = e
+											.getAttribute("CommandId");
+									ipc.ctrlid = Integer
+											.parseInt(ctrlid);
+									break;
+								}
+							}
+						}
+						ipc.valuetype = 1;
+						ipc.value = "1";
+						lstCtrlDo2=new ArrayList<ipc_control>();
+						lstCtrlDo2.add(ipc);
+					}
+				}
+			}
+		});
+		
+		
 		
 		try {
-			SaveEquipt.save_time=Integer.parseInt(iniReader.getValue("SysConf", "SaveTime", "8"));	
-			if(SaveEquipt.save_time<=0)
+			SaveEquipt.save_time=Integer.parseInt(iniReader.getValue("SysConf", "SaveTime", "24"))*60*60;	
+			if(SaveEquipt.save_time<3600)
 			{
-				SaveEquipt.save_time=1;
+				SaveEquipt.save_time=1*60*60;
 			}
 			
 		} catch (Exception e) {	
 		
 			try {
-				SaveEquipt.save_time=(int)Float.parseFloat(iniReader.getValue("SysConf", "SaveTime", "8"));	
-				if(SaveEquipt.save_time<=0)
+				SaveEquipt.save_time=(int)Float.parseFloat(iniReader.getValue("SysConf", "SaveTime", "24"))*60*60;	
+				if(SaveEquipt.save_time<3600)
 				{
-					SaveEquipt.save_time=1;
+					SaveEquipt.save_time=1*60*60;
 				}
 				
 			} catch (Exception e2) {
 				Toast.makeText(this, "Mgrid.ini文件中SaveTime属性设置异常,已经恢复默认值", 1000).show();
-				SaveEquipt.save_time=8;
+				SaveEquipt.save_time=24*60*60;
 			}
 			
 		}
@@ -369,6 +438,12 @@ public class MGridActivity extends Activity {
 					"ReceiveMailAccount");
 			Subject = iniReader.getValue("SysConf", "Subject");
 			fromName = iniReader.getValue("SysConf", "FromName");
+			
+			if(m_bTakeEMail==true&&(mailProtocol==null||myEmailSMTPHost==null||myEmailAccount==null||myEmailPassword==null||receiveMailAccount==null||Subject==null||fromName==null))
+			{
+				Toast.makeText(getApplicationContext(), "ini文件邮箱填写不规范", 1000).show();
+				m_bTakeEMail = false;
+			}
 
 		} catch (Exception e) {
 			mailProtocol = "smtp"; // 协议
@@ -942,6 +1017,12 @@ public class MGridActivity extends Activity {
 	// public static Map<IObject, stBindingExpression> m_Label=null;
 
 	public static String usbName = "";
+	
+	public static String alarmWay="";
+	
+	public static List<ipc_control> lstCtrlDo1 = null;
+	public static List<ipc_control> lstCtrlDo2 = null;
+	
 
 	public static Handler handler = new Handler() {
 		public void handleMessage(Message msg) {

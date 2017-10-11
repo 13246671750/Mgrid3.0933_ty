@@ -4,9 +4,8 @@
   package="com.mgrid.main"
   android:installLocation="preferExternal"
   android:versionCode="10"
-  android:versionName="3.0936"
- 
-   >
+  android:versionName="3.0937"
+ >
   
    
   <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="19" />

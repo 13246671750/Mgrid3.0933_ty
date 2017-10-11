@@ -48,8 +48,10 @@ public class SoundService extends Service {
 		
 		boolean playing = intent.getBooleanExtra("playing", false);
 		 if (playing) {
+			    if(!mp.isPlaying())
 	            mp.start();
 	        } else {
+	            if(mp.isPlaying())
 	            mp.pause(); 
 	        }
 		

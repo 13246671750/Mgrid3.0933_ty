@@ -102,6 +102,9 @@ public class SendMessageNew {
 	{
 		System.out.println("开始了");
 		Properties props = new Properties();                    // 参数配置
+		
+		
+		
         props.setProperty("mail.transport.protocol",mailProtocol);   // 使用的协议（JavaMail规范要求）
         props.setProperty("mail.smtp.host", myEmailSMTPHost);   // 发件人的邮箱的 SMTP 服务器地址
         props.setProperty("mail.smtp.auth", "true");            // 需要请求认证
