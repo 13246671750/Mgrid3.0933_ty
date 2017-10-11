@@ -514,7 +514,7 @@ public class SgEventList extends UtTable implements IObject {
 				}
 			}
 		}
-
+		oldEvenLists = newEvenLists;
 		return false;
 	}
 
