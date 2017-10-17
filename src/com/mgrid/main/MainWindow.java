@@ -108,6 +108,7 @@ import com.sg.uis.test_quxian;
 import com.sg.uis.tigerLabel;
 import com.sg.uis.LsyNewView.AlarmCount;
 import com.sg.uis.LsyNewView.AlarmLevel;
+import com.sg.uis.LsyNewView.ChangeLabel;
 import com.sg.uis.LsyNewView.SgBARS;
 import com.sg.uis.LsyNewView.SgBrokenLine;
 import com.sg.uis.LsyNewView.SgDial;
@@ -127,9 +128,7 @@ import data_model.save_multipoint_signal;
 /** Ö÷´°¿Ú */
 public class MainWindow extends ViewGroup {
 
-	
-	
-	
+		
 	public MainWindow(final MGridActivity context) {
 		super(context);
 		setFocusableInTouchMode(true);
@@ -181,8 +180,7 @@ public class MainWindow extends ViewGroup {
 				            		//System.out.println("Ë¢ÐÂ");
 				            	}
 				            }						
-						}
-						
+						}						
 					}
 			       });
 					break;
@@ -985,6 +983,11 @@ public class MainWindow extends ViewGroup {
 							AlarmCount AC=new AlarmCount(this.getContext());
 							m_mapUIs.put(strID, AC);
 						}
+						else if("ChangeLabel".equals(strType))
+						{
+							ChangeLabel CL=new ChangeLabel(this.getContext());
+							m_mapUIs.put(strID, CL);
+						}
  
  
 						else {
@@ -1070,7 +1073,6 @@ public class MainWindow extends ViewGroup {
 								|| "Dial_B".equals(strElementType)
 								|| "Dial_C".equals(strElementType)
 								|| "ELabel".equals(strElementType)
-
 								|| "fjw_history_SignalList"
 										.equals(strElementType)
 								|| "ChangePassWord".equals(strElementType)
@@ -1091,7 +1093,8 @@ public class MainWindow extends ViewGroup {
 								|| "SgDial".equals(strElementType)
 								|| "AlarmLevel".equals(strElementType)
 								|| "AlarmCount".equals(strElementType)
-								|| "SgVideoView".equals(strElementType)) {
+								|| "SgVideoView".equals(strElementType)
+								|| "ChangeLabel".equals(strElementType)) {
 							try {
 								iCurrentObj.parseProperties(strName, strValue,
 										m_strResFolder);

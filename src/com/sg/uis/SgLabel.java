@@ -14,7 +14,6 @@ import android.graphics.Rect;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.mgrid.main.MGridActivity;
@@ -40,10 +39,9 @@ public class SgLabel extends TextView implements IObject {
 			
 			@Override
 			public void onClick(View arg0) {
-			//	System.out.println("mei有值啊");
 				if(m_cmdExpression!=null&&!m_cmdExpression.equals(""))
 				{
-			//		System.out.println("有值啊");
+
 					parse_cmd();
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							getContext());
@@ -163,6 +161,7 @@ public class SgLabel extends TextView implements IObject {
 	}
 
 	public void onDraw(Canvas canvas) {
+		
 		if (m_rRenderWindow == null)
 			return;
 		if (m_rRenderWindow.isLayoutVisible(getBBox()) == false)

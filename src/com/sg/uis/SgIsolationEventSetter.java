@@ -1,14 +1,10 @@
 package com.sg.uis;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,7 +12,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -39,9 +34,7 @@ import com.mgrid.util.XmlUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.UtExpressionParser.stBindingExpression;
-import com.sg.common.UtExpressionParser.stExpression;
 
-import comm_service.service;
 import data_model.ipc_cfg_trigger_value;
 
 public class SgIsolationEventSetter extends ToggleButton implements IObject {
@@ -94,47 +87,6 @@ public class SgIsolationEventSetter extends ToggleButton implements IObject {
 							setTextColor(Color.RED);
 
 						}
-
-						// Map<IObject, stBindingExpression>
-						// Label_data=MainWindow.Label_data;
-						// stBindingExpression
-						// oBindingExpression=m_rRenderWindow.m_oShareObject.m_SgIsolationEventSetter.get(m_strID);
-						// SgLabel label=null;
-						// stBindingExpression val=null;
-						// if(oBindingExpression.nEventId==0){
-						//
-						// Iterator<Entry<IObject, stBindingExpression>>
-						// iterator =Label_data.entrySet().iterator();
-						// while (iterator.hasNext()) {
-						// @SuppressWarnings("rawtypes")
-						// Map.Entry entry = (Map.Entry) iterator.next();
-						// IObject key = (IObject) entry.getKey();
-						// val = (stBindingExpression) entry.getValue();
-						//
-						// if(key.getType().equals("Label"))
-						// {
-						// label=(SgLabel)key;
-						// if(val!=null&&oBindingExpression.nEquipId==val.nEquipId)
-						// {
-						// if(isChecked())
-						// {
-						//
-						// label.handler.sendEmptyMessage(1);
-						//
-						// //
-						// }else
-						// {
-						//
-						// label.isTo=true;
-						// label.handler.sendEmptyMessage(0);
-						//
-						// }
-						//
-						// }
-						// }
-						// }
-						//
-						// }
 
 					}
 				}
@@ -397,6 +349,14 @@ public class SgIsolationEventSetter extends ToggleButton implements IObject {
 						.show();
 
 				break;
+			case 3:
+
+			
+				Toast.makeText(getContext(),
+						"屏蔽整个设备时发生错误", 200)
+						.show();
+
+				break;
 			}
 
 		};
@@ -428,11 +388,13 @@ public class SgIsolationEventSetter extends ToggleButton implements IObject {
 				try {
 					dbf = DocumentBuilderFactory.newInstance();
 					db = dbf.newDocumentBuilder();
-					doc = db.parse(new File(
-							"/data/mgrid/sampler/XmlCfg/MonitorUnitVTU.xml"));
+//					doc = db.parse(new File(
+//							"/data/mgrid/sampler/XmlCfg/MonitorUnitVTU.xml"));
+					doc = db.parse(new File("/data/mgrid/sampler/XmlCfg/"+XmlUtils.getXml().Mainpath));
+
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					hand.sendEmptyMessage(3);
 				}
 
 				list1 = doc.getElementsByTagName("CfgEquipment");
@@ -448,9 +410,7 @@ public class SgIsolationEventSetter extends ToggleButton implements IObject {
 					} else {
 						enabled = 0;
 							MGridActivity.LabelList.add(oBindingExpression.nEquipId
-									+ "");
-						
-						
+									+ "");								
 					}
 
 				}
@@ -470,8 +430,10 @@ public class SgIsolationEventSetter extends ToggleButton implements IObject {
 					synchronized(xml){
 						String TemplateId = xml
 								.getTemplateId(oBindingExpression.nEquipId + "");
-					   // System.out.println(":::::::::::"+TemplateId);
+						
+					
 						NodeList list = xml.getNodeList("EquipEvent", TemplateId);
+						System.out.println("::::"+TemplateId);
 						for (int i = 0; i < list.getLength(); i++) {
 							Element element = (Element) list.item(i);
 							String EvenId = element.getAttribute("EventId");
@@ -479,13 +441,13 @@ public class SgIsolationEventSetter extends ToggleButton implements IObject {
 								
 								String StartExpression = element
 										.getAttribute("StartExpression");
-						//		System.out.println("::::::::::::"+StartExpression);
+					
 								String SingalId=StartExpression.substring(4,StartExpression.length()-1);
 								
 								Map<String, String> map = new HashMap<String, String>();
 								map.put(oBindingExpression.nEquipId + "", SingalId);
 								MGridActivity.EventClose.put(m_strID, map);
-							//	System.out.println(oBindingExpression.nEquipId+"::::"+SingalId);
+							
 							}
 						}
 					}

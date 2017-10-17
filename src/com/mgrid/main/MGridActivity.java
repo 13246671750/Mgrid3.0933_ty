@@ -68,10 +68,12 @@ import com.sg.uis.SgAlarmChangTime;
 import com.sg.uis.SgImage;
 import com.sg.uis.LsyNewView.SgVideoView;
 import comm_service.service;
+
 import data_model.ipc_control;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 @SuppressLint("InlinedApi")
+@SuppressWarnings("deprecation")
 public class MGridActivity extends Activity {
 
 	public WakeLock mWakeLock;// 锁屏类
@@ -470,6 +472,7 @@ public class MGridActivity extends Activity {
 		}
 	}
 
+	
 	public void acquireWakeLock() {
 		if (mWakeLock == null) {
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -507,7 +510,7 @@ public class MGridActivity extends Activity {
 	private void parsePageList() // 解析Pagelist
 	{
 		String line = "";
-		MainWindow page = null;
+	//	MainWindow page = null;
 		BufferedReader reader = null;
 
 		try {
@@ -926,6 +929,7 @@ public class MGridActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 
+		showTaskUI(true);
 		// mWakeLock.acquire();
 
 	}

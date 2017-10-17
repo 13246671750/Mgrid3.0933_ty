@@ -90,9 +90,12 @@ public class XmlUtils {
 	public String getTemplateId(String equipId)
 	{
 		
-	    File  Vtu=new File(Mainpath);
+	    File  Vtu=new File(path+"/"+Mainpath);
 	    if(!Vtu.exists())
+	    {
+	    	System.out.println("不存在");
 	    	return "";
+	    }
 	    String EquipTemplateId="";
 	    try {
 			doc=db.parse(Vtu);
@@ -103,6 +106,7 @@ public class XmlUtils {
 		} 
 		NodeList list = doc
 				.getElementsByTagName("CfgEquipment");
+		System.out.println("屏蔽大小："+list.getLength());
 		if (list == null)
 			return "";
 		for (int i = 0; i < list.getLength(); i++) {
@@ -177,6 +181,7 @@ public class XmlUtils {
 	private Document doc = null;
 	private String path = "/data/mgrid/sampler/XmlCfg";
 	public  String Mainpath="/data/mgrid/sampler/XmlCfg/MonitorUnitVTU.xml";
+	                                                  
 	private  File DangQianFile = null;
 	private  File nowFile = null;
 

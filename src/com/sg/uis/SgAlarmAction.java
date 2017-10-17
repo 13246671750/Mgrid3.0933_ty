@@ -117,9 +117,9 @@ public class SgAlarmAction extends TextView implements IObject {
 
 	private String path = "/data/mgrid/sampler/XmlCfg";
 	private String Vtu_path = "/data/mgrid/sampler/XmlCfg/MonitorUnitVTU.xml";
-	//private String event_path = "/mgrid/data/Command";
-	 private String event_path = Environment
-	 .getExternalStorageDirectory().getPath() +"/Command";
+
+	private String event_path = Environment.getExternalStorageDirectory()
+			.getPath() + "/Command";
 	private String event_data = "/data/mgrid/sampler/SO";
 	private String dialog_path = "/mgrid/data/Command";
 
@@ -130,7 +130,7 @@ public class SgAlarmAction extends TextView implements IObject {
 		m_rBBox = new Rect();
 
 		Et_inputValue = new TextView(context);
-		// Et_inputValue_t = new TextView(context);
+
 		Et_Detection_result = new TextView(context);
 		Et_timeLapse = new EditText(context);
 
@@ -145,27 +145,17 @@ public class SgAlarmAction extends TextView implements IObject {
 		Tv_Detection_equipList = new TextView(context);
 		Tv_Detection_SignalList = new TextView(context);
 
-		// Tv_Input_equipList_t = new TextView(context);
-		// Tv_Input_SignalList_t = new TextView(context);
-
-		// Et_inputValue.setBackgroundResource(android.R.drawable.edit_text);
-		// Et_inputValue_t.setBackgroundResource(android.R.drawable.edit_text);
-		// Et_Detection_result.setBackgroundResource(android.R.drawable.edit_text);
 		Et_timeLapse.setBackgroundResource(android.R.drawable.edit_text);
 
 		Btn_delect.setBackgroundResource(android.R.drawable.btn_default_small);
 		Btn_ensure.setBackgroundResource(android.R.drawable.btn_default_small);
-		// Btn_stop.setBackgroundResource(android.R.drawable.btn_default_small);
+
 		Et_inputValue.setBackgroundColor(Color.argb(100, 100, 100, 100));
-		// Et_inputValue_t.setBackgroundColor(Color.argb(100, 100, 100, 100));
+
 		Et_Detection_result.setBackgroundColor(Color.argb(100, 100, 100, 100));
 		Tv_Input_equipList.setBackgroundColor(Color.argb(100, 100, 100, 100));
 		Tv_Input_SignalList.setBackgroundColor(Color.argb(100, 100, 100, 100));
 		Tv_Output_equipList.setBackgroundColor(Color.argb(100, 100, 100, 100));
-		// Tv_Input_equipList_t.setBackgroundColor(Color.argb(100, 100, 100,
-		// 100));
-		// Tv_Input_SignalList_t
-		// .setBackgroundColor(Color.argb(100, 100, 100, 100));
 
 		Tv_Output_CommandNameList.setBackgroundColor(Color.argb(100, 100, 100,
 				100));
@@ -211,28 +201,9 @@ public class SgAlarmAction extends TextView implements IObject {
 		Btn_delect.setTextColor(Color.BLACK);
 		Btn_ensure.setTextColor(Color.BLACK);
 
-		// Btn_stop.setTextColor(Color.BLACK);
-
-		// Et_inputValue.setHint("告警");
-		// Et_inputValue_t.setHint("告警");
-		// Et_outputValue.setHint("命令");
-
-		// Et_Detection_result.setHint("检测");
-
-		// Tv_Input_equipList.setEllipsize(TruncateAt.END);
-		// Tv_Input_SignalList.setEllipsize(TruncateAt.END);
-		// Tv_Output_equipList.setEllipsize(TruncateAt.END);
-		// Tv_Output_SignalList.setEllipsize(TruncateAt.END);
-
-		// Tv_Input_equipList.setSingleLine();
-		// Tv_Input_SignalList.setSingleLine();
-		// Tv_Output_equipList.setSingleLine();
-		// Tv_Output_SignalList.setSingleLine();
-
 		Tv_Input_equipList.setTextColor(Color.BLACK);
 		Tv_Input_SignalList.setTextColor(Color.BLACK);
-		// Tv_Input_equipList_t.setTextColor(Color.BLACK);
-		// Tv_Input_SignalList_t.setTextColor(Color.BLACK);
+
 		Tv_Output_equipList.setTextColor(Color.BLACK);
 		Tv_Output_CommandNameList.setTextColor(Color.BLACK);
 		Tv_outputCommandMeaning.setTextColor(Color.BLACK);
@@ -241,40 +212,30 @@ public class SgAlarmAction extends TextView implements IObject {
 
 		Btn_delect.setText("删除");
 		Btn_ensure.setText("确认");
-		// Btn_stop.setText("开启");
+
 		Tv_Input_equipList.setText(equipName);
 		Tv_Input_SignalList.setText(signalName);
-		// Tv_Input_equipList_t.setText(equipName);
-		// Tv_Input_SignalList_t.setText(signalName);
+
 		Tv_Output_equipList.setText(equipName);
 		Tv_Output_CommandNameList.setText(commandName);
 		Tv_outputCommandMeaning.setText(stateName);
 		Tv_Detection_equipList.setText(equipName);
 		Tv_Detection_SignalList.setText(signalName);
 		Et_inputValue.setText("状态");
-		// Et_inputValue_t.setText("状态");
 		Et_Detection_result.setText("状态");
-		// Et_inputValue.setSingleLine();
-		// Et_inputValue_t.setSingleLine();
-		// Et_Detection_result.setSingleLine();
+
 		Et_timeLapse.setSingleLine();
 
 		Et_inputValue.setGravity(Gravity.CENTER);
-		// Et_inputValue_t.setGravity(Gravity.CENTER);
-		// Et_inputValue_t.setVisibility(View.GONE);
+
 		Et_Detection_result.setGravity(Gravity.CENTER);
 		Et_timeLapse.setGravity(Gravity.CENTER);
 		Btn_delect.setGravity(Gravity.CENTER);
 		Btn_ensure.setGravity(Gravity.CENTER);
-		// Et_timeLapse.setHint("延时");
-		// Btn_stop.setGravity(Gravity.CENTER);
-		// Btn_stop.setVisibility(View.GONE);
+
 		Tv_Input_equipList.setGravity(Gravity.CENTER);
 		Tv_Input_SignalList.setGravity(Gravity.CENTER);
-		// Tv_Input_equipList_t.setGravity(Gravity.CENTER);
-		// Tv_Input_equipList_t.setVisibility(View.GONE);
-		// Tv_Input_SignalList_t.setGravity(Gravity.CENTER);
-		// Tv_Input_SignalList_t.setVisibility(View.GONE);
+
 		Tv_Output_equipList.setGravity(Gravity.CENTER);
 		Tv_Output_CommandNameList.setGravity(Gravity.CENTER);
 		Tv_outputCommandMeaning.setGravity(Gravity.CENTER);
@@ -418,6 +379,7 @@ public class SgAlarmAction extends TextView implements IObject {
 			public void onClick(View v) {
 
 				if (neepUpdateTime) {
+					
 					get_SignalList(0);
 					showSignal(context, 0);
 				} else {
@@ -516,6 +478,7 @@ public class SgAlarmAction extends TextView implements IObject {
 			@Override
 			public void onClick(View v) {
 				if (neepUpdateTime) {
+					
 					getDeSignal();
 					showSignal(context, 1);
 				} else {
@@ -531,6 +494,8 @@ public class SgAlarmAction extends TextView implements IObject {
 			@Override
 			public void onClick(View v) {
 
+				Btn_delect.setEnabled(false);
+				handler.postDelayed(runable, 2000);
 				if (neepUpdateTime) {
 					delectFile();
 				} else {
@@ -546,6 +511,9 @@ public class SgAlarmAction extends TextView implements IObject {
 			@Override
 			public void onClick(View v) {
 
+				Btn_ensure.setEnabled(false);
+				handler.postDelayed(runable, 2000);
+				
 				if (Tv_Input_equipList.getText().toString().equals("设备")
 						|| Tv_Output_equipList.getText().toString()
 								.equals("设备")
@@ -716,13 +684,26 @@ public class SgAlarmAction extends TextView implements IObject {
 
 	}
 
+	
+	//为了防止连续点击
+	Runnable runable=new Runnable() {
+	
+		@Override
+		public void run() {
+			
+			Btn_ensure.setEnabled(true);
+			Btn_delect.setEnabled(true);
+		}
+	};
+	
+	
 	// 将命令保存 方便重启也能使用
 	protected void saveData() {
 
 		File d = new File(event_data);
 		File f = new File(event_data + "/" + label + ".data");
 		File m = new File(event_path);
-		
+
 		// File f = new File(Environment
 		// .getExternalStorageDirectory().getPath()+"/" + label + ".data");
 
@@ -1055,10 +1036,10 @@ public class SgAlarmAction extends TextView implements IObject {
 
 	// 显示信号列表单选框
 	protected void showSignal(Context context, final int label) {
-		if (neepUpdate) {
-			Toast.makeText(getContext(), "请删除后再修改", 1000).show();
-			return;
-		}
+		 if (neepUpdate) {
+	//	 Toast.makeText(getContext(), "请删除后再修改", 1000).show();
+		 return;
+		 }
 		switch (label) {
 		case 0:
 
@@ -1357,6 +1338,11 @@ public class SgAlarmAction extends TextView implements IObject {
 	// 得到所有设备对应的信号列表
 	protected void get_SignalList(int id) {
 
+		if (neepUpdate) {
+			Toast.makeText(getContext(), "请删除后再修改", 1000).show();
+			return;
+		}
+		
 		if (id == 0) {
 			if (input_SelectEquaipId.equals(""))
 				return;
@@ -1376,28 +1362,17 @@ public class SgAlarmAction extends TextView implements IObject {
 				i++;
 			}
 		} else if (id == 1) {
-			// if (input_SelectEquaipId_t.equals(""))
-			// return;
-			// Hashtable<String, Signal> ht_singal = DataGetter
-			// .getEquipSignalList(input_SelectEquaipId_t);
-			// signalList_t = new String[ht_singal.size()];
-			// Iterator<Map.Entry<String, Signal>> it = ht_singal.entrySet()
-			// .iterator();
-			// int i = 0;
-			// while (it.hasNext()) {
-			// Map.Entry<String, Signal> entry = it.next();
-			// input_SelectSignalId_t = entry.getKey();
-			// String signalName = DataGetter.getSignalName(
-			// input_SelectEquaipId_t, input_SelectSignalId_t);
-			// signalIdName_t.put(signalName, input_SelectSignalId_t);
-			// signalList_t[i] = signalName;
-			// i++;
-			// }
+
 		}
 
 	}
 
 	protected void getDeSignal() {
+		
+		if (neepUpdate) {
+			Toast.makeText(getContext(), "请删除后再修改", 1000).show();
+			return;
+		}
 
 		if (detection_SelectEquipId.equals(""))
 			return;
@@ -1421,6 +1396,11 @@ public class SgAlarmAction extends TextView implements IObject {
 
 	// 得到所有设备列表
 	protected void get_equiptList() {
+		
+		if (neepUpdate) {
+			Toast.makeText(getContext(), "请删除后再修改", 1000).show();
+			return;
+		}
 		HashSet<String> ht_equiptID = DataGetter.getEquipmentIdList();
 		Iterator<String> it = ht_equiptID.iterator();
 		equaipList = new String[ht_equiptID.size()];
@@ -1698,7 +1678,7 @@ public class SgAlarmAction extends TextView implements IObject {
 						handler.sendEmptyMessage(0);
 
 						if (f_ini.exists()) {
-							
+
 							@SuppressWarnings("resource")
 							BufferedReader br = new BufferedReader(
 									new FileReader(f_ini));
@@ -1710,7 +1690,7 @@ public class SgAlarmAction extends TextView implements IObject {
 								list.add(s);
 
 							}
-							
+
 							if (line == 3) {
 								f_ini.delete();
 								AlarmShow.clear();
@@ -1722,20 +1702,22 @@ public class SgAlarmAction extends TextView implements IObject {
 								long nTime = System.currentTimeMillis();
 								if (nTime / 1000 - lTime <= 1800) {
 									if (true) {
-										String S_value = "";										
+										String S_value = "";
 										Equipment Obj = DataGetter.equipment.htEquipmentData
 												.get(input_SelectEquaipId);
-										S_value = DataGetter.proc_rtsignal(Obj, input_SelectSignalId);
-										S_value = (int) Float.parseFloat(S_value) + "";		
+										S_value = DataGetter.proc_rtsignal(Obj,
+												input_SelectSignalId);
+										S_value = (int) Float
+												.parseFloat(S_value) + "";
 										OldValue = S_value;
-										
+
 										if (nTime / 1000 - lTime <= Integer
 												.parseInt(TimeLapse) * 60) {
 
 											waitJumpTwo(lTime);
 
 										} else {
-									
+
 											try {
 												Thread.sleep(10000);
 											} catch (InterruptedException e) {
@@ -1808,8 +1790,7 @@ public class SgAlarmAction extends TextView implements IObject {
 								f_ini.delete();
 								AlarmShow.clear();
 								neepUpdate = true;
-							}else
-							{
+							} else {
 								f_ini.delete();
 								AlarmShow.clear();
 								neepUpdate = true;
@@ -2019,18 +2000,18 @@ public class SgAlarmAction extends TextView implements IObject {
 
 		}
 	}
-	
+
 	private void waitJumpTwo(long time) {
 
 		while (testValue()) {
 			long newTime = System.currentTimeMillis();
 			if (newTime / 1000 - time >= Integer.parseInt(TimeLapse) * 60) {
-					try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
 
-						e.printStackTrace();
-					}
+					e.printStackTrace();
+				}
 				judgeResult();
 				break;
 			}
@@ -2039,31 +2020,34 @@ public class SgAlarmAction extends TextView implements IObject {
 
 	private boolean testValue() {
 		String S_value = "";
-		
 
 		Equipment Obj = DataGetter.equipment.htEquipmentData
 				.get(input_SelectEquaipId);
 		S_value = DataGetter.proc_rtsignal(Obj, input_SelectSignalId);
 
-		S_value = (int) Float.parseFloat(S_value) + "";		
+		S_value = (int) Float.parseFloat(S_value) + "";
 		OldValue = S_value;
 		if (S_value.equals(AlarmValue))
 			return true;
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date dt = new Date(System.currentTimeMillis());
 		String sDate = sdf.format(dt);
-		sb_all.append(",无," + sDate + "&市电恢复正常&"+(isYiChang?"异常":"正常"));
+		sb_all.append(",无," + sDate + "&市电恢复正常&" + (isYiChang ? "异常" : "正常"));
 		writeAllEvent();
 		return false;
 	}
 
 	protected long getStartTime(List<String> list) {
-		isYiChang=true;
+		isYiChang = true;
 		String startTime = list.get(0).split("&")[0];
-		sb_all.append(label + "," + startTime + "&检测到UPS市电异常 等待" + TimeLapse
-				+ "分钟后控制下电 期间发生了异常&"+DataGetter.getSignalName(
-						detection_SelectEquipId, detection_SelectSignalId)+"&市电异常");
+		sb_all.append(label
+				+ ","
+				+ startTime
+				+ "&检测到UPS市电异常 等待"
+				+ TimeLapse
+				+ "分钟后控制下电 期间发生了异常&"
+				+ DataGetter.getSignalName(detection_SelectEquipId,
+						detection_SelectSignalId) + "&市电异常");
 		AlarmShow.add("&检测到UPS市电异常 等待" + TimeLapse + "分钟后控制下电");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date dt2 = null;
@@ -2081,7 +2065,7 @@ public class SgAlarmAction extends TextView implements IObject {
 		sb_all.append("," + XiaDianTime + "&控制下电中");
 		AlarmShow.add("控制下电中");
 	}
-	
+
 	private boolean judgeResult() {
 
 		if (detection_SelectEquipId == "" || detection_SelectSignalId == ""
@@ -2139,7 +2123,8 @@ public class SgAlarmAction extends TextView implements IObject {
 
 					try {
 						event_bw.write("false," + sDate + "&控制结果失败");
-						sb_all.append("," + sDate + "&控制结果失败&"+(isYiChang?"异常":"正常"));
+						sb_all.append("," + sDate + "&控制结果失败&"
+								+ (isYiChang ? "异常" : "正常"));
 						event_bw.newLine();
 						event_bw.flush();
 						event_bw.close();
@@ -2152,7 +2137,7 @@ public class SgAlarmAction extends TextView implements IObject {
 					}
 
 					writeAllEvent();
-				
+
 				}
 			} else {
 				handler.sendEmptyMessage(4);
@@ -2161,7 +2146,8 @@ public class SgAlarmAction extends TextView implements IObject {
 					try {
 
 						event_bw.write("true," + sDate + "&控制结果成功");
-						sb_all.append("," + sDate + "&控制结果成功&"+(isYiChang?"异常":"正常"));
+						sb_all.append("," + sDate + "&控制结果成功&"
+								+ (isYiChang ? "异常" : "正常"));
 						event_bw.newLine();
 						event_bw.flush();
 						event_bw.close();
@@ -2186,7 +2172,8 @@ public class SgAlarmAction extends TextView implements IObject {
 
 				try {
 					event_bw.write("false," + sDate + "&控制结果失败");
-					sb_all.append("," + sDate + "&控制结果失败&"+(isYiChang?"异常":"正常"));
+					sb_all.append("," + sDate + "&控制结果失败&"
+							+ (isYiChang ? "异常" : "正常"));
 					event_bw.newLine();
 					event_bw.flush();
 					event_bw.close();
@@ -2195,15 +2182,15 @@ public class SgAlarmAction extends TextView implements IObject {
 				} catch (Exception e) {
 
 					e.printStackTrace();
-				}				
+				}
 				writeAllEvent();
-				
+
 			}
 		}
 
 		isDetectionLose = false;
-		isChengli=true;
-		isHuiFu=false;
+		isChengli = true;
+		isHuiFu = false;
 		return true;
 
 	}
@@ -2328,10 +2315,11 @@ public class SgAlarmAction extends TextView implements IObject {
 	}
 
 	private void writeAllEvent() {
-		
-		File file=new File(dialog_path);
-		if(!file.exists()) file.mkdir();
-		
+
+		File file = new File(dialog_path);
+		if (!file.exists())
+			file.mkdir();
+
 		synchronized (MGridActivity.all_Event_file) {
 			try {
 				if (!MGridActivity.all_Event_file.exists())
@@ -2450,12 +2438,10 @@ public class SgAlarmAction extends TextView implements IObject {
 	public void updateWidget() {
 
 	}
-	
-	
-	private void creatPath(){
+
+	private void creatPath() {
 		File m = new File(event_path);
-		if(!m.exists())
-		{
+		if (!m.exists()) {
 			m.mkdir();
 		}
 	}
@@ -2475,18 +2461,24 @@ public class SgAlarmAction extends TextView implements IObject {
 		Equipment Obj = DataGetter.equipment.htEquipmentData
 				.get(input_SelectEquaipId);
 		String S_value = DataGetter.proc_rtsignal(Obj, input_SelectSignalId);
+		
+		
+		
 		String lose = DataGetter.getSignalValue(input_SelectEquaipId, "10001");
-//		Equipment Obj_d = DataGetter.equipment.htEquipmentData
-//				.get(detection_SelectEquipId);
-//		String string = DataGetter.proc_rtsignal(Obj_d,
-//				detection_SelectSignalId);
-		if (S_value == null || S_value.equals("") 
-				|| lose.equals("") || lose == null)
+
+	
+
+		// Equipment Obj_d = DataGetter.equipment.htEquipmentData
+		// .get(detection_SelectEquipId);
+		// String string = DataGetter.proc_rtsignal(Obj_d,
+		// detection_SelectSignalId);
+		if (S_value == null || S_value.equals("") || lose.equals("")
+				|| lose == null)
 			return false;
 		if (AlarmValue.equals("") || TimeLapse.equals("") || lstCtrl == null)
 			return false;
 		S_value = (int) Float.parseFloat(S_value) + "";
-	//	string = (int) Float.parseFloat(string) + "";
+		// string = (int) Float.parseFloat(string) + "";
 		lose = (int) Float.parseFloat(lose) + "";
 		if (lose.equals("0"))
 			return false;
@@ -2494,7 +2486,6 @@ public class SgAlarmAction extends TextView implements IObject {
 		System.out.println(S_value + ":::" + "::label" + label);
 		if (!S_value.equals(AlarmValue)) {
 			neepUpdateTime = true;
-			
 
 			if (eventFiles == null)
 				eventFiles = new File(event_path + "/" + label + ".log");
@@ -2505,27 +2496,26 @@ public class SgAlarmAction extends TextView implements IObject {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				if(isHuiFu){
-				SimpleDateFormat sdf = new SimpleDateFormat(
-						"yyyy-MM-dd HH:mm:ss");
-				Date dt = new Date(System.currentTimeMillis());
-				String sDate = sdf.format(dt);
-				sb_all.append(",无," + sDate + "&市电恢复正常&"+(isYiChang?"异常":"正常"));	
-				writeAllEvent();
+
+				if (isHuiFu) {
+					SimpleDateFormat sdf = new SimpleDateFormat(
+							"yyyy-MM-dd HH:mm:ss");
+					Date dt = new Date(System.currentTimeMillis());
+					String sDate = sdf.format(dt);
+					sb_all.append(",无," + sDate + "&市电恢复正常&"
+							+ (isYiChang ? "异常" : "正常"));
+					writeAllEvent();
 				}
-				eventFiles.delete();				
+				eventFiles.delete();
 				AlarmShow.clear();
-				
+
 			}
 			sb_all.setLength(0);
 		}
-	
-		if ((!OldValue.equals(S_value) 
-				&& S_value.equals(AlarmValue) 
-				&& neepUpdateTime)) {
+
+		if ((!OldValue.equals(S_value) && S_value.equals(AlarmValue) && neepUpdateTime)) {
 			neepUpdateTime = false;
-            
+
 			oldTime = System.currentTimeMillis();
 
 			creatPath();
@@ -2539,7 +2529,7 @@ public class SgAlarmAction extends TextView implements IObject {
 					e.printStackTrace();
 				}
 			}
-			isHuiFu=true;
+			isHuiFu = true;
 			try {
 				BufferedWriter event = new BufferedWriter(
 						new OutputStreamWriter(
@@ -2549,7 +2539,8 @@ public class SgAlarmAction extends TextView implements IObject {
 				Date dt = new Date(oldTime);
 				String sDate = sdf.format(dt);
 				sb_all.append(label + "," + sDate + "&检测到UPS市电异常 等待"
-						+ TimeLapse + "分钟后控制下电&"+Tv_Detection_SignalList.getText()+"&市电异常");
+						+ TimeLapse + "分钟后控制下电&"
+						+ Tv_Detection_SignalList.getText() + "&市电异常");
 				event.write(sDate + "&检测到UPS市电异常 等待" + TimeLapse + "分钟后控制下电");
 				event.newLine();
 				event.flush();
@@ -2561,14 +2552,14 @@ public class SgAlarmAction extends TextView implements IObject {
 			}
 
 			OldValue = S_value;
-		//	OldValue_d = string;
+			// OldValue_d = string;
 
 		}
 
 		if (neepUpdateTime) {
 			newTime = oldTime;
 			OldValue = S_value;
-		//	OldValue_d = string;
+			// OldValue_d = string;
 
 		} else {
 			newTime = System.currentTimeMillis();
@@ -2666,9 +2657,8 @@ public class SgAlarmAction extends TextView implements IObject {
 	private String output_SelectEquaipId = "";
 	private String detection_SelectEquipId = "";
 	private String detection_SelectSignalId = "";
- 
-	
-	private boolean isChengli=false;
+
+	private boolean isChengli = false;
 	// private String input_SelectEquaipId_t = "";
 	// private String input_SelectSignalId_t = "";
 
@@ -2732,8 +2722,8 @@ public class SgAlarmAction extends TextView implements IObject {
 	private BufferedWriter bw = null;
 	private XmlUtils xml = XmlUtils.getXml();
 	private ArrayList<String> AlarmShow = new ArrayList<String>();
-	private boolean isYiChang=false;//是否出现断电等异常
-	private boolean isHuiFu=false;//是否恢复正常
+	private boolean isYiChang = false;// 是否出现断电等异常
+	private boolean isHuiFu = false;// 是否恢复正常
 
 	public void updateText() {
 

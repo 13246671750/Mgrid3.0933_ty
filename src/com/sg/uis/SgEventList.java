@@ -65,7 +65,6 @@ public class SgEventList extends UtTable implements IObject {
 			AlarmMeaning = "AlarmMeaning";
 			AlarmSeverity = "AlarmSeverity";
 			StartTime = "StartTime";
-
 		}
 
 		// ±íÍ·
@@ -376,7 +375,7 @@ public class SgEventList extends UtTable implements IObject {
 				@Override
 				public void run() {
 					if (needAlarm()) {
-						if (MGridActivity.alarmWay.equals("Horn")) {
+						if (MGridActivity.alarmWay.equals("wav")) {
 							handler.sendEmptyMessage(2);
 						} else if (MGridActivity.alarmWay.equals("DO1")) {
 							if (MGridActivity.lstCtrlDo1 != null)

@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -67,7 +65,6 @@ public class HisEvent extends UtTable implements IObject {
 	private String PreveDay;
 	private String NextDay;
 	private String Receive;
-
 	private String AllDevice;
 	
 	private String logPath="/mgrid/data/Command/0.log";
@@ -228,8 +225,14 @@ public class HisEvent extends UtTable implements IObject {
 				.setOnItemSelectedListener(new OnItemSelectedListener() {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
-						get_equiptList(); // 解析下拉列表成员
-
+						if(isFirst)
+						{
+						   isFirst=false;
+						   get_equiptList(); // 解析下拉列表成员
+						}
+						handler.sendEmptyMessage(3);
+						System.out.println("我跑进来了");
+                        
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
@@ -495,10 +498,16 @@ public class HisEvent extends UtTable implements IObject {
 								/ s_title.length, nY);
 				
 			}
+			X=nX;
+			Y=nY;
+			
 			
 
 			// 绘制view_button的底板空间
 			int pv = nWidth / 5;
+			X=nX;
+			Y=nY;
+			mY=pv;
 			view_text.layout(nX, nY - 40, nX + pv, nY - 14);
 			view_EquiptSpinner.layout(nX, nY - 42, nX + pv, nY - 12);
 
@@ -557,10 +566,15 @@ public class HisEvent extends UtTable implements IObject {
 
 				break;
 			case 2:
-//			//	view_Receive.setClickable(true);
+			//	view_Receive.setClickable(true);
                 view_Receive.setEnabled(true);
 				
    			    break;	
+			case 3:
+				
+				closeEquiptName = (String) view_EquiptSpinner.getSelectedItem();
+				view_text.setText(closeEquiptName);
+	   			    break;	
 			}
 
 			super.handleMessage(msg);
@@ -856,7 +870,9 @@ public class HisEvent extends UtTable implements IObject {
 			handler.sendEmptyMessage(0);
 			for (int i = 0; i < ALLDeviceList.size(); i++) {
 				String name = ALLDeviceList.get(i);
+				
 				str_Equiptidlsy = (map_EquiptNameList.get(name));
+				System.out.println("id："+str_Equiptidlsy);
 				m_bneedupdate = false; // 如果为真，表示数据不根据数据更新时时刷界面
 				his_event_list = new ArrayList<local_his_event>();
 				his_event_list = getHisEvent();
@@ -864,7 +880,8 @@ public class HisEvent extends UtTable implements IObject {
 				//
 				if (his_event_list == null) {
 					//List<String> lstRow_his = new ArrayList<String>();
-					return true;
+					//return true;
+					continue;
 				}
 				Iterator<local_his_event> iter = his_event_list.iterator();
 				while (iter.hasNext()) {
@@ -873,12 +890,17 @@ public class HisEvent extends UtTable implements IObject {
 					List<String> lstRow_his1 = new ArrayList<String>();
 					String finishTime = his_event.finish_time;
 					//
+					
+					System.out.println(his_event.start_time+"::"+finishTime+"::"+his_event.equip_name+"::"+his_event.equipid);
 					if (finishTime.length() < 10)
-						return false;
-					//
+						continue;
+						//return false;
+						
+				
+					
 					if ("1970-01-01".equals(finishTime.substring(0, 10))) {
 						
-						finishTime = "null";
+						finishTime = "null"; 
 
 					}
 					// //
@@ -891,7 +913,7 @@ public class HisEvent extends UtTable implements IObject {
 					if (!(time_num <= after_num && time_num >= before_num)) {
 						continue;
 					}
-
+					
 					// //重复的强制处理
 					if ((lsyLs1 != null) || (lsyLs1.size() != 0)) {
 						for (int m = 0; m < lsyLs1.size(); m++) {
@@ -923,6 +945,7 @@ public class HisEvent extends UtTable implements IObject {
 
 			}
 
+		   
 			updateContends(lstTitles, lsyLs1);
 			lsyLs1.clear();
 
@@ -939,7 +962,8 @@ public class HisEvent extends UtTable implements IObject {
 				{
 					List<String> list_alarm = new ArrayList<String>();
 					local_his_Alarm lha=new local_his_Alarm();
-					lha.read_string(s);
+					if(!lha.read_string(s))
+					continue;
 					list_alarm.add(lha.equip_name);
 					list_alarm.add(lha.control);
 					list_alarm.add(lha.alarm);
@@ -987,6 +1011,8 @@ public class HisEvent extends UtTable implements IObject {
 			while (iter.hasNext()) {
 				String buf = iter.next();
 
+				if(buf==null||buf.equals(""))
+					continue;
 				local_his_event his_event = new local_his_event();
 
 				his_event.read_string(buf);
@@ -1145,4 +1171,8 @@ public class HisEvent extends UtTable implements IObject {
 	@SuppressWarnings("unused")
 	private Paint mPaint = new Paint(); // 注意以后变量的定义一定要赋予空间
 	// List<String> fjw_signal = null;
+	private boolean isFirst=true;//判断是否第一次点击
+	
+	private int X,Y,mY;
+	
 }
