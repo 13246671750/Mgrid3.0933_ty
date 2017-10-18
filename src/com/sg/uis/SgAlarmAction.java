@@ -1404,10 +1404,14 @@ public class SgAlarmAction extends TextView implements IObject {
 		HashSet<String> ht_equiptID = DataGetter.getEquipmentIdList();
 		Iterator<String> it = ht_equiptID.iterator();
 		equaipList = new String[ht_equiptID.size()];
+		System.out.println("´óÐ¡£º"+ht_equiptID.size());
+		
 		int i = 0;
 		while (it.hasNext()) {
 			String equipId = it.next();
 			String equipName = DataGetter.getEquipmentName(equipId);
+			System.out.println("Ãû×Ö£º"+equipName);
+			System.out.println("ID£º"+equipId);
 			equaipIdName.put(equipName, equipId);
 			equaipList[i] = equipName;
 			i++;

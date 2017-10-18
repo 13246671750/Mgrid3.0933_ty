@@ -225,14 +225,10 @@ public class HisEvent extends UtTable implements IObject {
 				.setOnItemSelectedListener(new OnItemSelectedListener() {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
-						if(isFirst)
-						{
-						   isFirst=false;
+					
 						   get_equiptList(); // 解析下拉列表成员
-						}
-						handler.sendEmptyMessage(3);
-						System.out.println("我跑进来了");
-                        
+						
+					                   
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
@@ -1172,6 +1168,9 @@ public class HisEvent extends UtTable implements IObject {
 	private Paint mPaint = new Paint(); // 注意以后变量的定义一定要赋予空间
 	// List<String> fjw_signal = null;
 	private boolean isFirst=true;//判断是否第一次点击
+	
+
+	 
 	
 	private int X,Y,mY;
 	

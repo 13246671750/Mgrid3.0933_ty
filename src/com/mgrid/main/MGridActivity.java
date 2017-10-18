@@ -28,6 +28,8 @@ import org.w3c.dom.NodeList;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -94,6 +96,7 @@ public class MGridActivity extends Activity {
 	public Handler mTimeHandler = new Handler();
 	
 	private String Load="";
+	
 	
 
 	
@@ -176,6 +179,8 @@ public class MGridActivity extends Activity {
 			public void onReceive(Context arg0, Intent arg1) {
 
 				if (arg1.getAction().equals(Intent.ACTION_SCREEN_ON)) { // 监听屏幕亮
+					
+					
 					// 拍照功能是否开启
 					if (m_bTakePhoto) {
 						// 打开拍照工具
@@ -194,6 +199,9 @@ public class MGridActivity extends Activity {
 				}
 
 				if (arg1.getAction().equals(Intent.ACTION_SCREEN_OFF)) {// 监听屏幕熄灭
+					
+					
+					
 					if (!isLoading && isPlaygif) {// 判断是否加载完成并且开启屏保gif功能
 						onPageChange("gif.xml");
 						if (isChangGif) {
@@ -613,6 +621,26 @@ public class MGridActivity extends Activity {
 			}
 		}
 	}
+	
+		//	判断程序是否进入后台
+
+	private boolean isAppOnForeground()
+	{
+		ActivityManager activityManager=(ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+		String packageName=getApplicationContext().getPackageName();
+		
+		List<RunningAppProcessInfo> appProcesses=activityManager.getRunningAppProcesses();
+		if(appProcesses==null) return false;
+		for(RunningAppProcessInfo appProcess : appProcesses)
+		{
+			if(appProcess.processName.equals(packageName)&& appProcess.importance==RunningAppProcessInfo.IMPORTANCE_FOREGROUND){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 
 	private void loadOtherPage() {
 		final Handler handler = new Handler();
@@ -893,7 +921,7 @@ public class MGridActivity extends Activity {
 		if (m_oSgSgRenderManager == null)
 			return;
 		showTaskUI(false);
-
+         System.out.println("onResume");
 	}
 
 	/** 消息提示显示 **/
@@ -914,7 +942,7 @@ public class MGridActivity extends Activity {
 		super.onDestroy();
 		// restartApplication();
 		releaseWakeLock();
-
+		
 	}
 
 	@Override
@@ -922,14 +950,20 @@ public class MGridActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onStop();
 
-		// showTaskUI(true);
+		if(!isAppOnForeground())
+		{
+			
+            showTaskUI(true);
+		}
+		 
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-
-		showTaskUI(true);
+		
+		
+		
 		// mWakeLock.acquire();
 
 	}

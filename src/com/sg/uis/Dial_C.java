@@ -46,7 +46,14 @@ public class Dial_C extends View implements IObject {
         int nWidth = (int) (((float)(m_nWidth) / (float)MainWindow.FORM_WIDTH) * (m_rRenderWindow.VIEW_RIGHT - m_rRenderWindow.VIEW_LEFT));
 		int nHeight = (int) (((float)(m_nHeight) / (float)MainWindow.FORM_HEIGHT) * (m_rRenderWindow.VIEW_BOTTOM - m_rRenderWindow.VIEW_TOP));
 
-		float angle = 270/(maxValue-minValue) * (data_value-minValue);
+		float angle=0;
+		if(((data_value-minValue)-(maxValue-minValue))>=1)
+		{
+			angle =270;
+		}else
+		{
+			angle = 270/(maxValue-minValue) * (data_value-minValue);
+		}
 		int pad = m_nBorderWidth/2+4;  //Õ‚‘≤±ﬂæ‡
 		m_rRectF1.left = pad+m_nfillWidth/2;
 		m_rRectF1.top = pad+m_nfillWidth/2;
