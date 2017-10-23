@@ -212,7 +212,7 @@ public class SgIsolationEventSetter extends ToggleButton implements IObject {
 				@Override
 				public void run() {
 					while (true) {
-						System.out.println(DataGetter.isLoading+"::"+MGridActivity.isLoading);
+					//	System.out.println(DataGetter.isLoading+"::"+MGridActivity.isLoading);
 						if (!DataGetter.isLoading&&!MGridActivity.isLoading) {
 							
 							setEnabled();

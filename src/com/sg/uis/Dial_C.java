@@ -171,7 +171,7 @@ public class Dial_C extends View implements IObject {
 //				 if(i%2==0){ //2个刻度显示一个标签
 					 float label_value = minValue+( (maxValue-minValue)/scale *(float)i);
 					 DecimalFormat decimalFloat =null;
-					 System.out.println((maxValue-minValue)%scale);
+				//	 System.out.println((maxValue-minValue)%scale);
 					 
 					 if((maxValue-minValue)*i%scale!=0)
 					 decimalFloat = new DecimalFormat("0.0"); //float小数点精度处理 

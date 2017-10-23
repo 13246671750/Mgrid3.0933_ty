@@ -109,6 +109,7 @@ import com.sg.uis.tigerLabel;
 import com.sg.uis.LsyNewView.AlarmCount;
 import com.sg.uis.LsyNewView.AlarmLevel;
 import com.sg.uis.LsyNewView.ChangeLabel;
+import com.sg.uis.LsyNewView.ChangeLabelBtn;
 import com.sg.uis.LsyNewView.SgBARS;
 import com.sg.uis.LsyNewView.SgBrokenLine;
 import com.sg.uis.LsyNewView.SgDial;
@@ -988,6 +989,11 @@ public class MainWindow extends ViewGroup {
 							ChangeLabel CL=new ChangeLabel(this.getContext());
 							m_mapUIs.put(strID, CL);
 						}
+						else if("ChangeLabelBtn".equals(strType))
+						{
+							ChangeLabelBtn CLB=new ChangeLabelBtn(this.getContext());
+							m_mapUIs.put(strID, CLB);
+						}
  
  
 						else {
@@ -1094,7 +1100,8 @@ public class MainWindow extends ViewGroup {
 								|| "AlarmLevel".equals(strElementType)
 								|| "AlarmCount".equals(strElementType)
 								|| "SgVideoView".equals(strElementType)
-								|| "ChangeLabel".equals(strElementType)) {
+								|| "ChangeLabel".equals(strElementType)
+								|| "ChangeLabelBtn".equals(strElementType)) {
 							try {
 								iCurrentObj.parseProperties(strName, strValue,
 										m_strResFolder);

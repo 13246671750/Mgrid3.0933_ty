@@ -305,7 +305,7 @@ public class SaveEquipt extends UtTable implements IObject {
 						String equipt_name = (String) view_EquiptSpinner.getSelectedItem();
 //					
 						view_text.setText(equipt_name);	
-						if("Equiptment¡ý".equals(equipt_name))  return;
+						if(DeviceList.equals(equipt_name))  return;
 						str_EquiptId = map_EquiptNameList.get(equipt_name);
 //					
 											

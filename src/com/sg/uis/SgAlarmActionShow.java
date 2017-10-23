@@ -228,10 +228,10 @@ public class SgAlarmActionShow extends TextView implements IObject {
 				setText("未配置内容");
 				break;
 			case 1:
-				setText("UPS市电正常");
+				setText("市电正常");
 				break;
 			case 2:
-				setText("UPS市电正常");
+				setText("市电正常");
 				break;
 			case 3:
 

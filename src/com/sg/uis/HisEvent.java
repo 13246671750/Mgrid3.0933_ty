@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
@@ -28,16 +29,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.Spinner;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.mgrid.data.DataGetter;
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
 import com.sg.common.IObject;
+import com.sg.common.MyAdapter;
 import com.sg.common.UtExpressionParser;
 import com.sg.common.UtTable;
 import comm_service.local_file;
@@ -66,12 +69,12 @@ public class HisEvent extends UtTable implements IObject {
 	private String NextDay;
 	private String Receive;
 	private String AllDevice;
-	
-	private String logPath="/mgrid/data/Command/0.log";
-	private File logFile=new File(logPath);
-  
-	
-	
+
+	private String logPath = "/mgrid/data/Command/0.log";
+	private File logFile = new File(logPath);
+
+	private PopupWindow popupWindow;
+
 	public HisEvent(Context context) {
 		super(context);
 		m_rBBox = new Rect();
@@ -80,10 +83,12 @@ public class HisEvent extends UtTable implements IObject {
 		this.setOnScrollListener(new OnScrollListener() {
 			@Override
 			public void onScrollStateChanged(AbsListView arg0, int arg1) {
-				
+
 				switch (arg1) {
 				case OnScrollListener.SCROLL_STATE_IDLE:
-					click1 = true;
+					
+					int position=getLastVisiblePosition();
+					System.out.println("最后一项："+position);
 
 					break;
 				case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
@@ -132,13 +137,12 @@ public class HisEvent extends UtTable implements IObject {
 			PreveDay = "PreveDay";
 			NextDay = "NextDay";
 			Receive = "  Receive   ";
-
 			AllDevice = "AllDevice";
 		}
 
 		// 标头标题
 		lstTitles = new ArrayList<String>();
-		AlarmTitles=new ArrayList<String>();
+		AlarmTitles = new ArrayList<String>();
 		lstTitles.add(DeviceName);
 		// lstTitles.add("信号名称");
 		lstTitles.add(AlarmName);
@@ -199,47 +203,69 @@ public class HisEvent extends UtTable implements IObject {
 		dialog = new DatePickerDialog(context, new OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-			
 
 			}
 		}, year, month, day);
 
-		view_EquiptSpinner = new Spinner(context);
-		adapter = new ArrayAdapter<String>(context,
-				android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		view_EquiptSpinner.setAdapter(adapter);
-		adapter.add(DeviceList);
-		adapter.add(AllDevice);
-		if(logFile.exists()) {
-			adapter.add("二次下电");
+	
+		nameList.add(DeviceList);
+		nameList.add(AllDevice);
+
+		if (logFile.exists()) {
+			// adapter.add("二次下电");
+			nameList.add("二次下电");
 			AlarmTitles.add("配置ID");
 			AlarmTitles.add("控制开关");
 			AlarmTitles.add("告警原因");
 			AlarmTitles.add("开始时间");
 			AlarmTitles.add("结束时间");
 			AlarmTitles.add("是否异常");
-			AlarmTitles.add("控制结果");		
+			AlarmTitles.add("控制结果");
 		}
-		view_EquiptSpinner
-				.setOnItemSelectedListener(new OnItemSelectedListener() {
-					public void onItemSelected(AdapterView<?> parent,
-							View view, int position, long id) {
-					
-						   get_equiptList(); // 解析下拉列表成员
-						
-					                   
-					}
 
-					public void onNothingSelected(AdapterView<?> parent) {
+		view_text.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+
+				if (isFirst) {
+					get_equiptList();
+					isFirst=false;
+				}
+
+				View view = m_rRenderWindow.m_oMgridActivity
+						.getLayoutInflater().inflate(R.layout.pop, null);
+				popupWindow = new PopupWindow(view, view_text.getWidth(), 200,
+						true);
+				// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失
+				popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+				// 设置点击弹框外部，弹框消失
+				popupWindow.setOutsideTouchable(true);
+				popupWindow.setFocusable(true);
+				popupWindow.showAsDropDown(view_text);
+
+				ListView lv = (ListView) view.findViewById(R.id.lv_list);
+				lv.setAdapter(new MyAdapter(getContext(), nameList));
+				lv.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						view_text.setText(nameList.get(position));
+						popupWindow.dismiss();
 					}
 				});
+
+			}
+		});
+
+		
 
 		lstContends = new ArrayList<List<String>>();
 		lsyLs = new ArrayList<List<String>>();
 		lsyLs1 = new ArrayList<List<String>>();
-		lsyLs2=new ArrayList<List<String>>();
+		lsyLs2 = new ArrayList<List<String>>();
 		map_EquiptNameList = new HashMap<String, String>();
 
 	}
@@ -250,26 +276,23 @@ public class HisEvent extends UtTable implements IObject {
 		@Override
 		public void onClick(final View arg0) {
 
-	
-			
 			set_year = dialog.getDatePicker().getYear();
 			set_month = dialog.getDatePicker().getMonth() + 1;
 			set_day = dialog.getDatePicker().getDayOfMonth();
 
 			if (arg0 == view_timeButton) {
 
-				
 				dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "设置",
 						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
-							
+
 								set_year = dialog.getDatePicker().getYear();
 								set_month = dialog.getDatePicker().getMonth() + 1;
 								set_day = dialog.getDatePicker()
 										.getDayOfMonth();
-								
+
 								String set_months, set_days;
 								if (set_day < 10) {
 									set_days = "0" + String.valueOf(set_day);
@@ -304,7 +327,6 @@ public class HisEvent extends UtTable implements IObject {
 							@Override
 							public void onDateSet(DatePicker arg0, int arg1,
 									int arg2, int arg3) {
-								
 
 							}
 						}, calendar.get(Calendar.YEAR),
@@ -316,14 +338,14 @@ public class HisEvent extends UtTable implements IObject {
 
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
-								
+
 								before_year = dialog_before.getDatePicker()
 										.getYear();
 								before_month = dialog_before.getDatePicker()
 										.getMonth() + 1;
 								before_day = dialog_before.getDatePicker()
 										.getDayOfMonth();
-								
+
 								String before_months, before_days;
 								if (before_day < 10) {
 									before_days = "0"
@@ -356,7 +378,6 @@ public class HisEvent extends UtTable implements IObject {
 							@Override
 							public void onDateSet(DatePicker arg0, int arg1,
 									int arg2, int arg3) {
-							
 
 							}
 						}, calendar.get(Calendar.YEAR),
@@ -368,14 +389,14 @@ public class HisEvent extends UtTable implements IObject {
 
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
-								
+
 								after_year = dialog_after.getDatePicker()
 										.getYear();
 								after_month = dialog_after.getDatePicker()
 										.getMonth() + 1;
 								after_day = dialog_after.getDatePicker()
 										.getDayOfMonth();
-								
+
 								String after_months, after_days;
 								if (after_day < 10) {
 									after_days = "0"
@@ -400,31 +421,29 @@ public class HisEvent extends UtTable implements IObject {
 				return;
 			}
 
-			closeEquiptName = (String) view_EquiptSpinner.getSelectedItem();
-	//		System.out.println("mingzi:"+closeEquiptName);
-			view_text.setText(closeEquiptName);
+			
+			closeEquiptName=view_text.getText().toString();
+			
 			if (DeviceList.equals(closeEquiptName))
 				return;
+			
 
 			str_EquiptId = map_EquiptNameList.get(closeEquiptName);
 			mythread thread = new mythread();
 			thread.start();
 			view_Receive.setEnabled(false);
-			if (AllDevice.equals(closeEquiptName))
-			{
-				handler.postDelayed(runable,5000);
-			}else
-			{
-				handler.postDelayed(runable,2000);
+			if (AllDevice.equals(closeEquiptName)) {
+				handler.postDelayed(runable, 5000);
+			} else {
+				handler.postDelayed(runable, 2000);
 			}
-		
+
 		}
 	};
-	
-	
-	Runnable runable=new Runnable() {
+
+	Runnable runable = new Runnable() {
 		public void run() {
-			
+
 			handler.sendEmptyMessage(2);
 		}
 	};
@@ -434,12 +453,14 @@ public class HisEvent extends UtTable implements IObject {
 
 		@Override
 		public void run() {
-			
+
 			updateValue();
 			m_bneedupdate = true;
 
 		}
 	}
+
+	
 
 	private class mythread1 extends Thread {
 		public void run() {
@@ -452,8 +473,6 @@ public class HisEvent extends UtTable implements IObject {
 			click = true;
 		}
 	}
-	
-
 
 	public boolean onTouchEvent(MotionEvent event) {
 		super.onTouchEvent(event);
@@ -482,30 +501,28 @@ public class HisEvent extends UtTable implements IObject {
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
 			notifyTableLayoutChange(nX, nY, nX + nWidth, nY + nHeight);
 
-			for (int i = 0; i < m_title.length; ++i){
+			for (int i = 0; i < m_title.length; ++i) {
 				m_title[i].layout(nX + i * nWidth / m_title.length, nY - 18,
 						nX + i * nWidth / m_title.length + nWidth
 								/ m_title.length, nY);
-				
+
 			}
-			for (int i = 0; i < s_title.length; ++i){
+			for (int i = 0; i < s_title.length; ++i) {
 				s_title[i].layout(nX + i * nWidth / s_title.length, nY - 18,
 						nX + i * nWidth / s_title.length + nWidth
 								/ s_title.length, nY);
-				
+
 			}
-			X=nX;
-			Y=nY;
-			
-			
+			X = nX;
+			Y = nY;
 
 			// 绘制view_button的底板空间
 			int pv = nWidth / 5;
-			X=nX;
-			Y=nY;
-			mY=pv;
+			X = nX;
+			Y = nY;
+			mY = pv;
 			view_text.layout(nX, nY - 40, nX + pv, nY - 14);
-			view_EquiptSpinner.layout(nX, nY - 42, nX + pv, nY - 12);
+			// view_EquiptSpinner.layout(nX, nY - 42, nX + pv, nY - 12);
 
 			// view_Receive.layout(nX+4*pv+20, nY-42, nX+5*pv, nY-12);
 
@@ -542,7 +559,6 @@ public class HisEvent extends UtTable implements IObject {
 		return m_nZIndex;
 	}
 
-	
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -562,23 +578,21 @@ public class HisEvent extends UtTable implements IObject {
 
 				break;
 			case 2:
-			//	view_Receive.setClickable(true);
-                view_Receive.setEnabled(true);
-				
-   			    break;	
+				// view_Receive.setClickable(true);
+				view_Receive.setEnabled(true);
+
+				break;
 			case 3:
-				
-				closeEquiptName = (String) view_EquiptSpinner.getSelectedItem();
-				view_text.setText(closeEquiptName);
-	   			    break;	
+
+				System.out.println(lsyLs1.size());
+				update();
+				break;
 			}
 
 			super.handleMessage(msg);
 		}
 	};
-	
-	
-	
+
 	@Override
 	public void addToRenderWindow(MainWindow rWin) {
 		this.setClickable(true);
@@ -607,23 +621,21 @@ public class HisEvent extends UtTable implements IObject {
 			s_title[i].setVisibility(View.INVISIBLE);
 			rWin.addView(s_title[i]);
 		}
-		
+
 		m_rRenderWindow = rWin;
+
 		rWin.addView(this);
 		// view_button画布添加到窗口
 		rWin.addView(view_Receive);
 		rWin.addView(view_NextDay);
 		rWin.addView(view_PerveDay);
 		rWin.addView(view_text);
-		rWin.addView(view_EquiptSpinner);
+		// rWin.addView(view_EquiptSpinner);
 		rWin.addView(view_timeButton);
 		rWin.addView(view_Text);
 
 	}
 
-	
-	
-	
 	@Override
 	public void removeFromRenderWindow(MainWindow rWin) {
 
@@ -633,7 +645,7 @@ public class HisEvent extends UtTable implements IObject {
 		rWin.removeView(view_NextDay);
 		rWin.removeView(view_PerveDay);
 		rWin.removeView(view_text);
-		rWin.removeView(view_EquiptSpinner);
+		// rWin.removeView(view_EquiptSpinner);
 		rWin.removeView(view_timeButton);
 		rWin.removeView(view_Text);
 	}
@@ -717,7 +729,6 @@ public class HisEvent extends UtTable implements IObject {
 		thread1.start();
 	}
 
-	
 	@SuppressWarnings({ "resource", "unused" })
 	@Override
 	public boolean updateValue() // 由于更新不给力在这里要做更新处理 fjw notice
@@ -742,7 +753,8 @@ public class HisEvent extends UtTable implements IObject {
 					+ Integer.parseInt(before.substring(8, 10));
 		}
 
-		if (!AllDevice.equals(closeEquiptName)&&!"二次下电".equals(closeEquiptName)) {
+		if (!AllDevice.equals(closeEquiptName)
+				&& !"二次下电".equals(closeEquiptName)) {
 			handler.sendEmptyMessage(0);
 			lstContends.clear(); // 清楚页面的以前数据 行信号
 			m_bneedupdate = false; // 如果为真，表示数据不根据数据更新时时刷界面
@@ -755,14 +767,12 @@ public class HisEvent extends UtTable implements IObject {
 			his_event_list = m_rRenderWindow.m_oShareObject.m_mapLocalEvent
 					.get(this.getUniqueID());
 
-			
-			
 			if (his_event_list == null) {
-			//	List<String> lstRow_his = new ArrayList<String>();
+				// List<String> lstRow_his = new ArrayList<String>();
 				return true;
 			}
-			
-	//		System.out.println("sssss:"+his_event_list.size());
+
+			// System.out.println("sssss:"+his_event_list.size());
 			// 遍历做容错处理 去除重复采集的告警
 			key = new ArrayList<String>();
 			hast_his = new Hashtable<String, local_his_event>();
@@ -861,22 +871,23 @@ public class HisEvent extends UtTable implements IObject {
 			his_event_list.clear();
 			key.clear();
 			key2.clear();
-		} else if(AllDevice.equals(closeEquiptName)) {
+		} else if (AllDevice.equals(closeEquiptName)) {
 
 			handler.sendEmptyMessage(0);
 			for (int i = 0; i < ALLDeviceList.size(); i++) {
 				String name = ALLDeviceList.get(i);
-				
+
 				str_Equiptidlsy = (map_EquiptNameList.get(name));
-				System.out.println("id："+str_Equiptidlsy);
+				// System.out.println("id："+str_Equiptidlsy);
 				m_bneedupdate = false; // 如果为真，表示数据不根据数据更新时时刷界面
 				his_event_list = new ArrayList<local_his_event>();
 				his_event_list = getHisEvent();
+				
 				// List<String> lstRow_his1 = new ArrayList<String>();
 				//
 				if (his_event_list == null) {
-					//List<String> lstRow_his = new ArrayList<String>();
-					//return true;
+					// List<String> lstRow_his = new ArrayList<String>();
+					// return true;
 					continue;
 				}
 				Iterator<local_his_event> iter = his_event_list.iterator();
@@ -886,17 +897,15 @@ public class HisEvent extends UtTable implements IObject {
 					List<String> lstRow_his1 = new ArrayList<String>();
 					String finishTime = his_event.finish_time;
 					//
-					
-					System.out.println(his_event.start_time+"::"+finishTime+"::"+his_event.equip_name+"::"+his_event.equipid);
+
+					// System.out.println(his_event.start_time+"::"+finishTime+"::"+his_event.equip_name+"::"+his_event.equipid);
 					if (finishTime.length() < 10)
 						continue;
-						//return false;
-						
-				
-					
+					// return false;
+
 					if ("1970-01-01".equals(finishTime.substring(0, 10))) {
-						
-						finishTime = "null"; 
+
+						finishTime = "null";
 
 					}
 					// //
@@ -909,7 +918,7 @@ public class HisEvent extends UtTable implements IObject {
 					if (!(time_num <= after_num && time_num >= before_num)) {
 						continue;
 					}
-					
+
 					// //重复的强制处理
 					if ((lsyLs1 != null) || (lsyLs1.size() != 0)) {
 						for (int m = 0; m < lsyLs1.size(); m++) {
@@ -941,25 +950,24 @@ public class HisEvent extends UtTable implements IObject {
 
 			}
 
-		   
+		
 			updateContends(lstTitles, lsyLs1);
 			lsyLs1.clear();
+			
 
-		}else if("二次下电".equals(closeEquiptName))
-		{
+		} else if ("二次下电".equals(closeEquiptName)) {
 			handler.sendEmptyMessage(1);
 			m_bneedupdate = false;
 			try {
-				BufferedReader br=new BufferedReader(new InputStreamReader(
-						new FileInputStream(logFile),"GBK"));
-				
-				String s=null;
-				while((s=br.readLine())!=null)
-				{
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						new FileInputStream(logFile), "GBK"));
+
+				String s = null;
+				while ((s = br.readLine()) != null) {
 					List<String> list_alarm = new ArrayList<String>();
-					local_his_Alarm lha=new local_his_Alarm();
-					if(!lha.read_string(s))
-					continue;
+					local_his_Alarm lha = new local_his_Alarm();
+					if (!lha.read_string(s))
+						continue;
 					list_alarm.add(lha.equip_name);
 					list_alarm.add(lha.control);
 					list_alarm.add(lha.alarm);
@@ -967,17 +975,15 @@ public class HisEvent extends UtTable implements IObject {
 					list_alarm.add(lha.end_time);
 					list_alarm.add(lha.yichang);
 					list_alarm.add(lha.result);
-					
-					
-					
+
 					lsyLs2.add(list_alarm);
 				}
 				updateContends(AlarmTitles, lsyLs2);
 				lsyLs2.clear();
 			} catch (Exception e) {
-				
+
 				e.printStackTrace();
-			} 
+			}
 		}
 
 		return true;
@@ -1007,17 +1013,18 @@ public class HisEvent extends UtTable implements IObject {
 			while (iter.hasNext()) {
 				String buf = iter.next();
 
-				if(buf==null||buf.equals(""))
+				if (buf == null || buf.equals(""))
 					continue;
 				local_his_event his_event = new local_his_event();
 
 				his_event.read_string(buf);
+			
 
 				his_event_list.add(his_event);
 
-//				if (his_event_list.size() > 5000) {
-//					break;
-//				}
+				// if (his_event_list.size() > 5000) {
+				// break;
+				// }
 				his_event = null;
 			}
 		} catch (Exception e) {
@@ -1031,11 +1038,11 @@ public class HisEvent extends UtTable implements IObject {
 	public boolean get_equiptList() {
 
 		if ("".equals(m_strExpression)) {
-			
+
 			return false;
-			
+
 		} else if (!"Binding{[Equip[Equip:0]]}".equals(m_strExpression)) {
-			
+
 			String s = UtExpressionParser.getInstance().getMathExpression(
 					m_strExpression);
 			ArrayList<Integer> list = new ArrayList<Integer>();
@@ -1048,12 +1055,13 @@ public class HisEvent extends UtTable implements IObject {
 			for (int id : list) {
 				String str_equiptName = DataGetter.getEquipmentName(id);
 				map_EquiptNameList.put(str_equiptName, String.valueOf(id));
-				adapter.add(str_equiptName);
+				// adapter.add(str_equiptName);
+				nameList.add(str_equiptName);
 				ALLDeviceList.add(str_equiptName);
 			}
 
 		} else {
-			
+
 			HashSet<String> ht_equiptID = DataGetter.getEquipmentIdList();
 			if (ht_equiptID == null)
 				return false;
@@ -1067,13 +1075,14 @@ public class HisEvent extends UtTable implements IObject {
 			}
 			Collections.sort(list);
 			for (int id : list) {
-				//System.out.println("equipt_id:" + id);
+				// System.out.println("equipt_id:" + id);
 				String equiptName = DataGetter.getEquipmentName(id);
 				if ("".equals(equiptName)) {
 
 					continue;
 				}
-				adapter.add(equiptName);
+				// adapter.add(equiptName);
+				nameList.add(equiptName);
 				ALLDeviceList.add(equiptName);
 				map_EquiptNameList.put(equiptName, id + "");
 			}
@@ -1115,7 +1124,7 @@ public class HisEvent extends UtTable implements IObject {
 	TextView[] m_title;
 	TextView[] s_title;
 	TextView view_text; // 信号名显示text
-	Spinner view_EquiptSpinner = null; // 设备名选择spinner
+	// Spinner view_EquiptSpinner = null; // 设备名选择spinner
 	Button view_timeButton; // 日期选择button
 	Button view_PerveDay; // 前一天button
 	Button view_NextDay; // 后一天button
@@ -1132,7 +1141,7 @@ public class HisEvent extends UtTable implements IObject {
 	public String get_day = ""; // 所要获取数据的日期
 
 	private HashMap<String, String> map_EquiptNameList = null; // <设备名-设备id>
-	private ArrayAdapter<String> adapter = null;
+	// private ArrayAdapter<String> adapter = null;
 	private String closeEquiptName = "";
 	public static String str_EquiptId = ""; // 所需要的设备-信号id字符串
 	public String str_Equiptidlsy = "";
@@ -1167,11 +1176,9 @@ public class HisEvent extends UtTable implements IObject {
 	@SuppressWarnings("unused")
 	private Paint mPaint = new Paint(); // 注意以后变量的定义一定要赋予空间
 	// List<String> fjw_signal = null;
-	private boolean isFirst=true;//判断是否第一次点击
-	
+	private boolean isFirst = true;// 判断是否第一次点击
+	private ArrayList<String> nameList = new ArrayList<String>();
 
-	 
-	
-	private int X,Y,mY;
-	
+	private int X, Y, mY;
+
 }

@@ -356,22 +356,6 @@ public class SgAlarmAction extends TextView implements IObject {
 			}
 		});
 
-		// Tv_Input_equipList_t.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		//
-		// if (neepUpdateTime) {
-		// get_equiptList();
-		//
-		// showEquaip(context, 3);
-		// } else {
-		// Toast.makeText(getContext(), "当前有告警联动，请等待系统处理完毕", 1000)
-		// .show();
-		// }
-		//
-		// }
-		// });
 
 		Tv_Input_SignalList.setOnClickListener(new OnClickListener() {
 
@@ -389,21 +373,7 @@ public class SgAlarmAction extends TextView implements IObject {
 			}
 		});
 
-		// Tv_Input_SignalList_t.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		//
-		// if (neepUpdateTime) {
-		//
-		// get_SignalList(1);
-		// showSignal(context, 2);
-		// } else {
-		// Toast.makeText(getContext(), "当前有告警联动，请等待系统处理完毕", 1000)
-		// .show();
-		// }
-		// }
-		// });
+
 
 		Tv_Output_equipList.setOnClickListener(new OnClickListener() {
 
@@ -1404,14 +1374,14 @@ public class SgAlarmAction extends TextView implements IObject {
 		HashSet<String> ht_equiptID = DataGetter.getEquipmentIdList();
 		Iterator<String> it = ht_equiptID.iterator();
 		equaipList = new String[ht_equiptID.size()];
-		System.out.println("大小："+ht_equiptID.size());
+	//	System.out.println("大小："+ht_equiptID.size());
 		
 		int i = 0;
 		while (it.hasNext()) {
 			String equipId = it.next();
 			String equipName = DataGetter.getEquipmentName(equipId);
-			System.out.println("名字："+equipName);
-			System.out.println("ID："+equipId);
+		//	System.out.println("名字："+equipName);
+		//	System.out.println("ID："+equipId);
 			equaipIdName.put(equipName, equipId);
 			equaipList[i] = equipName;
 			i++;

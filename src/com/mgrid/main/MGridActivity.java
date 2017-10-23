@@ -921,7 +921,7 @@ public class MGridActivity extends Activity {
 		if (m_oSgSgRenderManager == null)
 			return;
 		showTaskUI(false);
-         System.out.println("onResume");
+     
 	}
 
 	/** 消息提示显示 **/
