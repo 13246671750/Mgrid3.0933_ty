@@ -68,6 +68,7 @@ import com.sg.uis.SaveEquipt;
 import com.sg.uis.SgAlarmAction;
 import com.sg.uis.SgAlarmChangTime;
 import com.sg.uis.SgImage;
+import com.sg.uis.LsyNewView.ChangeLabelBtn;
 import com.sg.uis.LsyNewView.SgVideoView;
 import comm_service.service;
 
@@ -894,6 +895,10 @@ public class MGridActivity extends Activity {
 
 				svv = (SgVideoView) obj;
 				svv.startMv();
+			}else if (obj.getType().equals("ChangeLabelBtn")) {
+
+				ChangeLabelBtn CLB = (ChangeLabelBtn) obj;
+				CLB.setText();
 			}
 			obj.initFinished();
 		}

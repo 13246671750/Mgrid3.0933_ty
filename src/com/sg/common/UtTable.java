@@ -45,7 +45,6 @@ public class UtTable extends ListView {
 		int updatecount = m_bUseTitle ? listContends.size() + 1 : listContends
 				.size();  //如果使用标题  列表行数为内容的数量+1，不然为内容数量。
 		int count = Math.min(m_tableAdapter.getCount(), updatecount); //
-
 		if (m_bUseTitle && count < 1) {//如果使用标题 并且count<1
 
 			m_tableAdapter.m_cTexColor = m_cFontColor;
@@ -55,7 +54,7 @@ public class UtTable extends ListView {
 				titles[i] = new TableCell(listTitles.get(i), width,
 						LayoutParams.MATCH_PARENT, TableCell.STRING, 0x00000000);
 			}
-			m_tableAdapter.addRow(new TableRow(titles));
+			m_tableAdapter.addRow(new TableRow(titles)); 		
 
 		}
 
@@ -71,10 +70,11 @@ public class UtTable extends ListView {
 					cell.width = width;
 				}
 			}
+		
 		} else {
 
 			for (int i = 0; i < count; ++i) {
-
+ 
 				if(i>=listContends.size())
 					continue;
 				List<String> lst = listContends.get(i);
@@ -86,6 +86,7 @@ public class UtTable extends ListView {
 					cell.width = width;
 				}
 			}
+			
 
 		}
 
@@ -146,8 +147,8 @@ public class UtTable extends ListView {
 	protected int m_nTableHeight = 0;
 
 	protected int m_cFontColor = Color.GREEN;
-	public int m_cOddRowBackground = 0xFF000000; // 奇数
-	public int m_cEvenRowBackground = 0xFF000000; // 偶数
+	public int m_cOddRowBackground = 0xFF000000; // 奇数 
+	public int m_cEvenRowBackground =0xFF000000; // 偶数
 	public boolean m_bUseTitle = true;
 	int m_nLayoutBottomOffset = 1; // 动态调节layout大小
 }

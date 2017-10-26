@@ -10,11 +10,10 @@ public class local_his_Alarm {
 	public String alarm="";  
     public String yichang="";  
 	public boolean read_string(String buf){
-		System.out.println(buf);
+		
 		String[] arg1=buf.split(",");
 		if(arg1.length!=4)
-		return false;
-		
+		return false;		
 		equip_name=arg1[0];
 		String[] arg2=arg1[1].split("&");
 		start_time=arg2[0];

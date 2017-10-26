@@ -34,6 +34,7 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mgrid.data.DataGetter;
 import com.mgrid.main.MGridActivity;
@@ -42,7 +43,7 @@ import com.mgrid.main.R;
 import com.sg.common.IObject;
 import com.sg.common.MyAdapter;
 import com.sg.common.UtExpressionParser;
-import com.sg.common.UtTable;
+import com.sg.common.lsyBase.HisEventTable;
 import comm_service.local_file;
 
 import data_model.local_his_Alarm;
@@ -52,7 +53,7 @@ import data_model.local_his_event;
 // 信号告警数据 HisEvent
 // author :fjw0312
 // time:2016 5 17
-public class HisEvent extends UtTable implements IObject {
+public class HisEvent extends HisEventTable implements IObject {
 
 	// 方便中英文切换
 	private String DeviceName;
@@ -69,7 +70,7 @@ public class HisEvent extends UtTable implements IObject {
 	private String NextDay;
 	private String Receive;
 	private String AllDevice;
-
+ 
 	private String logPath = "/mgrid/data/Command/0.log";
 	private File logFile = new File(logPath);
 
@@ -88,8 +89,21 @@ public class HisEvent extends UtTable implements IObject {
 				case OnScrollListener.SCROLL_STATE_IDLE:
 					
 					int position=getLastVisiblePosition();
-					System.out.println("最后一项："+position);
-
+					if(lsyLs1.size()!=0)
+					{
+						rePlush(position,lsyLs1);
+	
+					}
+					else if(lstContends.size()!=0)
+					{
+						rePlush(position,lstContends);
+					}
+					else if(lsyLs2.size()!=0)
+					{
+					
+						rePlush(position,lsyLs2);			
+					}
+				    
 					break;
 				case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 					click1 = false;
@@ -263,7 +277,7 @@ public class HisEvent extends UtTable implements IObject {
 		
 
 		lstContends = new ArrayList<List<String>>();
-		lsyLs = new ArrayList<List<String>>();
+	//	lsyLs = new ArrayList<List<String>>();
 		lsyLs1 = new ArrayList<List<String>>();
 		lsyLs2 = new ArrayList<List<String>>();
 		map_EquiptNameList = new HashMap<String, String>();
@@ -428,6 +442,12 @@ public class HisEvent extends UtTable implements IObject {
 				return;
 			
 
+			table.clear();
+			lsyLs1.clear();
+			lstContends.clear();
+			lsyLs2.clear();
+			index=1;
+			
 			str_EquiptId = map_EquiptNameList.get(closeEquiptName);
 			mythread thread = new mythread();
 			thread.start();
@@ -454,7 +474,7 @@ public class HisEvent extends UtTable implements IObject {
 		@Override
 		public void run() {
 
-			updateValue();
+			//updateValue();
 			m_bneedupdate = true;
 
 		}
@@ -541,6 +561,30 @@ public class HisEvent extends UtTable implements IObject {
 					.layout(nX + 4 * pv + 20, nY - 42, nX + 5 * pv, nY - 12);
 		}
 	}
+	
+    //分页刷新
+	private void  rePlush(int position,List<List<String>> listData)
+	{
+		System.out.println(position);
+		if(position==(listData.size()-1))
+		{
+			Toast.makeText(getContext(), "已经刷新完了", 200).show();
+			
+		}else if(position!=(listData.size()-1)&&position==(index*30-1))
+		{
+			
+			if(listData.size()<=(index+1)*30)
+			{
+				updateList(AlarmTitles, listData.subList(index*30,listData.size()));	
+			}else
+			{
+				updateList(AlarmTitles, listData.subList(index*30,(index+1)*30));
+				index++;
+			}
+			update();		
+		}				
+	}
+	
 
 	public void onDraw(Canvas canvas) {
 		if (m_rRenderWindow == null)
@@ -733,6 +777,7 @@ public class HisEvent extends UtTable implements IObject {
 	@Override
 	public boolean updateValue() // 由于更新不给力在这里要做更新处理 fjw notice
 	{
+		
 
 		Hashtable<String, local_his_event> hast_his;
 		List<local_his_event> his_event_list;
@@ -742,15 +787,16 @@ public class HisEvent extends UtTable implements IObject {
 		String before = view_NextDay.getText().toString();
 		int after_num, before_num;
 		if (after.length() < 10 || before.length() < 10) {
-			after_num = set_year + set_month * 32 + set_day;
-			before_num = set_year + set_month * 32 + set_day;
+			after_num = set_year*1000 + set_month * 32 + set_day;
+			before_num = set_year*1000 + set_month * 32 + set_day;
 		} else {
-			after_num = Integer.parseInt(after.substring(0, 4))
+			after_num = Integer.parseInt(after.substring(0, 4))*1000
 					+ Integer.parseInt(after.substring(5, 7)) * 32
 					+ Integer.parseInt(after.substring(8, 10));
-			before_num = Integer.parseInt(before.substring(0, 4))
+			before_num = Integer.parseInt(before.substring(0, 4))*1000
 					+ Integer.parseInt(before.substring(5, 7)) * 32
 					+ Integer.parseInt(before.substring(8, 10));
+			System.out.println(after_num+":::;"+before_num);
 		}
 
 		if (!AllDevice.equals(closeEquiptName)
@@ -834,7 +880,7 @@ public class HisEvent extends UtTable implements IObject {
 				}
 				//
 				String startTime = his_event.start_time.substring(0, 10);// 截取年月日
-				int time_num = Integer.parseInt(startTime.substring(0, 4))
+				int time_num = Integer.parseInt(startTime.substring(0, 4))*1000
 						+ Integer.parseInt(startTime.substring(5, 7)) * 32
 						+ Integer.parseInt(startTime.substring(8, 10));
 				if (!(time_num <= after_num && time_num >= before_num)) {
@@ -862,11 +908,18 @@ public class HisEvent extends UtTable implements IObject {
 				lstRow_his.add(his_event.start_time); // 开始时间
 				lstRow_his.add(finishTime);// 结束时间
 				lstContends.add(lstRow_his);
-				updateContends(lstTitles, lstContends);
+				//updateContends(lstTitles, lstContends);
 			}
 
-			updateContends(lstTitles, lstContends);
-			lstContends.clear();
+			
+			if(lstContends.size()<=30)
+			{
+				updateList(lstTitles, lstContends);
+			}else
+			{
+				updateList(lstTitles, lstContends.subList(0, 30));
+			}	
+		//	lstContends.clear();
 			hast_his.clear();
 			his_event_list.clear();
 			key.clear();
@@ -912,7 +965,7 @@ public class HisEvent extends UtTable implements IObject {
 					String startTime = his_event.start_time.substring(0, 10);// 截取年月日
 					String eventName = DataGetter.getEventName(str_Equiptidlsy,
 							his_event.event_id);
-					int time_num = Integer.parseInt(startTime.substring(0, 4))
+					int time_num = Integer.parseInt(startTime.substring(0, 4))*1000
 							+ Integer.parseInt(startTime.substring(5, 7)) * 32
 							+ Integer.parseInt(startTime.substring(8, 10));
 					if (!(time_num <= after_num && time_num >= before_num)) {
@@ -951,13 +1004,20 @@ public class HisEvent extends UtTable implements IObject {
 			}
 
 		
-			updateContends(lstTitles, lsyLs1);
-			lsyLs1.clear();
+			if(lsyLs1.size()<=30)
+			{
+				updateList(lstTitles, lsyLs1);
+			}else
+			{
+				updateList(lstTitles, lsyLs1.subList(0, 30));
+			}	
+			//lsyLs1.clear();
 			
 
 		} else if ("二次下电".equals(closeEquiptName)) {
 			handler.sendEmptyMessage(1);
 			m_bneedupdate = false;
+			long l1=System.currentTimeMillis();
 			try {
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						new FileInputStream(logFile), "GBK"));
@@ -978,8 +1038,15 @@ public class HisEvent extends UtTable implements IObject {
 
 					lsyLs2.add(list_alarm);
 				}
-				updateContends(AlarmTitles, lsyLs2);
-				lsyLs2.clear();
+				long l2=System.currentTimeMillis();
+				if(lsyLs2.size()<=30)
+				{
+					updateList(AlarmTitles, lsyLs2);
+				}else
+				{
+					updateList(AlarmTitles, lsyLs2.subList(0, 30));
+				}	
+				long l3=System.currentTimeMillis();
 			} catch (Exception e) {
 
 				e.printStackTrace();
@@ -1022,9 +1089,6 @@ public class HisEvent extends UtTable implements IObject {
 
 				his_event_list.add(his_event);
 
-				// if (his_event_list.size() > 5000) {
-				// break;
-				// }
 				his_event = null;
 			}
 		} catch (Exception e) {
@@ -1090,6 +1154,13 @@ public class HisEvent extends UtTable implements IObject {
 		}
 		return true;
 	}
+	
+	private void updateList(List<String> items,List<List<String>> data)
+	{
+		 updateContends(items, data);
+	}
+	
+	
 
 	@Override
 	public boolean needupdate() {
@@ -1170,7 +1241,7 @@ public class HisEvent extends UtTable implements IObject {
 	List<String> lstTitles = null;
 	List<String> AlarmTitles = null;
 	List<List<String>> lstContends = null;
-	List<List<String>> lsyLs = null;
+//	List<List<String>> lsyLs = null;
 	List<List<String>> lsyLs1 = null;
 	List<List<String>> lsyLs2 = null;
 	@SuppressWarnings("unused")
@@ -1180,5 +1251,6 @@ public class HisEvent extends UtTable implements IObject {
 	private ArrayList<String> nameList = new ArrayList<String>();
 
 	private int X, Y, mY;
+	private int index=1;
 
 }

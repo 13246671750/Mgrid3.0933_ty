@@ -72,8 +72,7 @@ public class UtTableAdapter extends BaseAdapter {
 				layoutParams.setMargins(0, 0, 1, 1);
 				
 				if (tableCell.type == TableCell.STRING)
-				{
-				
+				{				
 					AlwaysMarqueeTextView textCell = new AlwaysMarqueeTextView(context);
 					textCell.setTextColor(m_cTexColor);
 					textCell.setGravity(Gravity.CENTER);

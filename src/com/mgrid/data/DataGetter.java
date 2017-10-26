@@ -10,9 +10,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
 
 import com.mgrid.data.EquipmentDataModel.CommandCfg;
 import com.mgrid.data.EquipmentDataModel.CommandCfg.CmdParameaningCfg;
@@ -173,21 +176,20 @@ public class DataGetter extends Thread {
 
 				List<ipc_cfg_signal> signal_cfg = service.get_signal_cfg_list(
 						service.IP, service.PORT, equip.id);
-			
+
 				Iterator<ipc_cfg_signal> signal_cfg_it = signal_cfg.iterator();
 				while (signal_cfg_it.hasNext()) {
 					ipc_cfg_signal ipc_signalcfg = signal_cfg_it.next();
 					Signal signal = equipobj.htSignalData.get(String
 							.valueOf(ipc_signalcfg.id));
-				
+
 					if (null == signal) {
 						signal = equipment.new Signal();
 						equipobj.htSignalData.put(
 								String.valueOf(ipc_signalcfg.id), signal);
-					
+
 					}
-					
-				
+
 					signal.id = String.valueOf(ipc_signalcfg.id);
 					signal.name = ipc_signalcfg.name;
 					signal.unit = ipc_signalcfg.unit;
@@ -346,7 +348,7 @@ public class DataGetter extends Thread {
 			try {
 
 				// System.out.println("我是XXX线程1");
-				//摔性能一些数据空间 比如说sigleList...
+				// 摔性能一些数据空间 比如说sigleList...
 				Set<String> autoEquipList = equipment.autoAnyPapeRefreshEquip;
 				if (autoEquipList == null)
 					;
@@ -384,8 +386,8 @@ public class DataGetter extends Thread {
 
 			// System.out.println("我是XXX线程3");
 			// fix java.util.ConcurrentModificationException
-			
-			//一些表达式为value的设备 比如Sglabel控件
+
+			// 一些表达式为value的设备 比如Sglabel控件
 			if (bIsLoading)
 				equipNameIt = new CopiedIterator<String>(
 						equipment.hsEquipSet.iterator());
@@ -396,8 +398,8 @@ public class DataGetter extends Thread {
 				// {
 
 				currEquipObj = equipment.htEquipmentData
-						
-						.get(equipNameIt.next());
+
+				.get(equipNameIt.next());
 				if (null == currEquipObj)
 					continue;
 				long l = java.lang.System.currentTimeMillis()
@@ -960,15 +962,15 @@ public class DataGetter extends Thread {
 				.get(equipmentid);
 		if (null == equip_cfg)
 			return "";
-	
+
 		EventCfg eventcfg = equip_cfg.get(eventid);
 		if (null == eventcfg)
 			return "";
-	
+
 		EventConditionCfg condcfg = eventcfg.htConditions.get(conditionId);
 		if (null == condcfg)
 			return "";
-	
+
 		return condcfg.startcompare;
 	}
 
@@ -1423,41 +1425,45 @@ public class DataGetter extends Thread {
 		//
 		if (null == object)
 			return false;
-//
-//		new Thread(new Runnable() {
-//
-//			@Override
-//			public void run() {
 
-				 long startTime = System.currentTimeMillis();
-				 while (true) {
-				 if (!equipment.htEquipmentData.containsKey(equipId)) {
-				 //
-				 long endTime = System.currentTimeMillis();
-				 if (startTime - endTime >= 3000) {
-					 return false;
-				 }
-				 continue;
-				 }
-				 break;
-				 }
-//				while (true) {
-//					if (isLoading == false) {
-//						if (!equipment.htEquipmentData.containsKey(equipId)) {
-//							break;
-//						}
-						equipment.htEquipmentData.get(equipId).registedBackgroundListObj
-								.put(object.getUniqueID(), object);
-						equipment.autoAnyPapeRefreshEquip.add(equipId);
-//						System.out.println("autoAnyPapeRefreshEquip中的id："
-//								+ equipId);
-//						break;
-//					}
-//				}
-//
-//			}
-//		}).start();
-						
+		// long startTime = System.currentTimeMillis();
+		// while (true) {
+		// if (!equipment.htEquipmentData.containsKey(equipId)) {
+		// long endTime = System.currentTimeMillis();
+		// if (startTime - endTime >= 3000) {
+		// return false;
+		// }
+		// continue;
+		// }
+		// break;
+		// }
+		// equipment.htEquipmentData.get(equipId).registedBackgroundListObj.put(
+		// object.getUniqueID(), object);
+		// equipment.autoAnyPapeRefreshEquip.add(equipId);
+		MGridActivity.xianChengChi.execute(new Runnable() {
+
+			@Override
+			public void run() {
+
+				while (true) {
+				
+					if (!isLoading) {
+						if (equipment.htEquipmentData.containsKey(equipId)) {
+							equipment.htEquipmentData.get(equipId).registedBackgroundListObj
+									.put(object.getUniqueID(), object);
+							equipment.autoAnyPapeRefreshEquip.add(equipId);
+						}
+						break;
+					}
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+		});
 
 		return true;
 
@@ -1643,7 +1649,7 @@ public class DataGetter extends Thread {
 			return false;
 		if (null == equipObj.signal_req)
 			return false;
-		
+
 		byte[] recv_buf = service.send_and_receive(equipObj.signal_req,
 				service.IP, service.PORT);
 
@@ -1669,7 +1675,7 @@ public class DataGetter extends Thread {
 		} else {
 			return false;
 		}
-		
+
 		String body = new String(body_buf);
 
 		Signal signal = null;
@@ -1827,9 +1833,9 @@ public class DataGetter extends Thread {
 		// System.out.println("实时处理XXX：6");
 		return true;
 	} // end of proc_rtsignal
-	
-	public static String proc_rtsignal(Equipment equipObj,String Sid) {
-		String s="-1";
+
+	public static String proc_rtsignal(Equipment equipObj, String Sid) {
+		String s = "-1";
 		if (null == equipObj)
 			return s;
 		if (null == equipObj.signal_req)
@@ -1869,25 +1875,24 @@ public class DataGetter extends Thread {
 		body_buf = null;
 		body = null;
 		recv_buf = null;
-        // System.out.println("我是线程3");
+		// System.out.println("我是线程3");
 		boolean equipupdated = false;
 		boolean haseveritychanged = false;
-		
+
 		for (i = 0; i < sig_no; ++i) {
 			String[] items = blocks[i].split("`");
-			
-			if(!items[1].equals(Sid))
+
+			if (!items[1].equals(Sid))
 				continue;
 			signal = equipObj.htSignalData.get(items[1]);
 
 			if (null == signal)
-				continue;	
+				continue;
 			s = new String(items[5]);
-            break;
-		} 
+			break;
+		}
 		return s;
-	} 
-
+	}
 
 	private static boolean proc_allrtalarm() {
 
@@ -1960,7 +1965,7 @@ public class DataGetter extends Thread {
 			String[] items = blocks[i].split("`");
 			ipc_active_event alarm = new ipc_active_event();
 
-			//System.out.println(items.toString());
+			// System.out.println(items.toString());
 			try {
 				alarm.equipid = Integer.parseInt(items[0]);
 				alarm.eventid = Integer.parseInt(items[1]);
@@ -2114,7 +2119,7 @@ public class DataGetter extends Thread {
 
 			try {
 				time = Integer.parseInt(items[2]);
-			
+
 				SimpleDateFormat formatter = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");
 				Date date = new Date(time * 1000);

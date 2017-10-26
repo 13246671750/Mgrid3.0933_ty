@@ -16,7 +16,9 @@ import com.mgrid.data.DataGetter;
 import com.mgrid.data.EquipmentDataModel.Signal;
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
 import com.sg.common.IObject;
+import com.sg.common.MyAdapter;
 import com.sg.common.UtExpressionParser;
 import com.sg.common.UtTable;
 import com.sg.common.UtTableAdapter;
@@ -35,6 +37,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Paint.Style;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
@@ -44,8 +47,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 /** 历史信号 */
@@ -68,6 +74,8 @@ public class SaveEquipt extends UtTable implements IObject {
 	private String PreveDay;
 	private String NextDay;
 	private String Receive;
+	
+	private PopupWindow popupWindow;
 	
 	public SaveEquipt(Context context) {
 		super(context);
@@ -167,24 +175,61 @@ public class SaveEquipt extends UtTable implements IObject {
 			}
 		}, year, month, day);
 		
+		view_text.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				if (isFirst) {
+					parse_expression();
+					isFirst=false;
+				}
+
+				View view = m_rRenderWindow.m_oMgridActivity
+						.getLayoutInflater().inflate(R.layout.pop, null);
+				popupWindow = new PopupWindow(view, view_text.getWidth(), 200,
+						true);
+				// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失
+				popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+				// 设置点击弹框外部，弹框消失
+				popupWindow.setOutsideTouchable(true);
+				popupWindow.setFocusable(true);
+				popupWindow.showAsDropDown(view_text);
+
+				ListView lv = (ListView) view.findViewById(R.id.lv_list);
+				lv.setAdapter(new MyAdapter(getContext(), nameList));
+				lv.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						view_text.setText(nameList.get(position));
+						popupWindow.dismiss();
+					}
+				});
+
+			}
+		});
+		
 		
 		//信号名选择spinner
-		view_EquiptSpinner = new Spinner(context);//信号下拉列表控件
-		adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item); 
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		view_EquiptSpinner.setAdapter(adapter);
-		adapter.add(DeviceList);	
-		view_EquiptSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-            public void onItemSelected(
-                    AdapterView<?> parent, View view, int position, long id) {
-            	parse_expression(); //解析下拉列表成员
- 
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-            	
-            }
-		});
+//		view_EquiptSpinner = new Spinner(context);//信号下拉列表控件
+//		adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item); 
+//		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		view_EquiptSpinner.setAdapter(adapter);
+//		adapter.add(DeviceList);	
+//		view_EquiptSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+//            public void onItemSelected(
+//                    AdapterView<?> parent, View view, int position, long id) {
+//            	parse_expression(); //解析下拉列表成员
+// 
+//            }
+//
+//            public void onNothingSelected(AdapterView<?> parent) {
+//            	
+//            }
+//		});
 		
 		
 		lstContends = new ArrayList<List<String>>();
@@ -301,10 +346,9 @@ public class SaveEquipt extends UtTable implements IObject {
 //					
 						if("".equals(get_day)) return;
 						
-						//显示所选择的设备的名字						
-						String equipt_name = (String) view_EquiptSpinner.getSelectedItem();
-//					
-						view_text.setText(equipt_name);	
+					
+						String equipt_name = view_text.getText().toString();
+	
 						if(DeviceList.equals(equipt_name))  return;
 						str_EquiptId = map_EquiptNameList.get(equipt_name);
 //					
@@ -338,7 +382,6 @@ public class SaveEquipt extends UtTable implements IObject {
 			//绘制view_button的底板空间	
 			int pv = nWidth/5;
 			view_text.layout(nX, nY-40, nX+pv, nY-14);
-			view_EquiptSpinner.layout(nX, nY-42, nX+pv, nY-12);
 			view_timeButton.layout(nX+pv+20, nY-42, nX+2*pv, nY-12);
 			view_NextDay.layout(nX+2*pv+20, nY-42, nX+3*pv, nY-12);
 			view_PerveDay.layout(nX+3*pv+20, nY-42, nX+4*pv, nY-12);
@@ -388,7 +431,7 @@ public class SaveEquipt extends UtTable implements IObject {
 		rWin.addView(view_NextDay);	
 		rWin.addView(view_PerveDay);
 		rWin.addView(view_text);		
-		rWin.addView(view_EquiptSpinner);	
+	
 		rWin.addView(view_timeButton);	
 	
 	}
@@ -402,7 +445,7 @@ public class SaveEquipt extends UtTable implements IObject {
 		rWin.removeView(view_NextDay);
 		rWin.removeView(view_PerveDay);
 		rWin.removeView(view_text);
-		rWin.removeView(view_EquiptSpinner);
+		
 		rWin.removeView(view_timeButton);
 	}
 
@@ -570,6 +613,7 @@ public class SaveEquipt extends UtTable implements IObject {
 	//解析出控件表达式，返回控件表达式类
 	@SuppressWarnings({ "unchecked", "static-access" })
 	public boolean parse_expression(){
+		    nameList.add(DeviceList);
 			if("".equals(m_strExpression)) return false;
 			String Mathstr=UtExpressionParser.getInstance().getMathExpression(m_strExpression);
 			ArrayList<Integer> list=new ArrayList<Integer>();
@@ -584,41 +628,9 @@ public class SaveEquipt extends UtTable implements IObject {
 			{
 				String str_equiptName = DataGetter.getEquipmentName(id);
 				map_EquiptNameList.put(str_equiptName, String.valueOf(id));
-				adapter.add(str_equiptName);
+				nameList.add(str_equiptName);
 			}
-			
-//			stExpression oMathExpress = UtExpressionParser.getInstance().parseExpression(m_strExpression);
-//			if (oMathExpress != null) {		
-//				//遍历控件表达式各个数据单元表达式类
-//				Iterator<HashMap.Entry<String, stBindingExpression>> it = oMathExpress.mapObjectExpress.entrySet().iterator();
-//			
-//				ArrayList<Integer> list=new ArrayList<Integer>();
-//				while(it.hasNext())
-//				{
-//					stBindingExpression oBindingExpression = it.next().getValue();
-//				
-//					int equipt_id = oBindingExpression.nEquipId;
-//					System.out.println("equipt_id:"+equipt_id);
-//					
-//					list.add(equipt_id);
-//				//	Log.e("SaveEquipt-parse_expression>equipt_id:",String.valueOf(equipt_id));
-//		//			int signal_id = oBindingExpression.nSignalId;
-//		//			int temp_id = oBindingExpression.nTemplateId;
-//
-//		//			String str_signalName = DataGetter.getSignalName(equipt_id, signal_id);
-//	//			
-//			
-//				}
-//				Collections.sort(list);
-//				for(int id:list)
-//				{
-//					
-//					String str_equiptName = DataGetter.getEquipmentName(id);
-//					map_EquiptNameList.put(str_equiptName, String.valueOf(id));
-//					adapter.add(str_equiptName);
-//				}
-//				
-//			}
+
 		 return true;
 		}
 
@@ -659,14 +671,14 @@ public class SaveEquipt extends UtTable implements IObject {
 	// 固定标题栏
 	TextView[] m_title;
 	TextView view_text;		            //信号名显示text		
-	Spinner view_EquiptSpinner = null; 		//信号名选择spinner
+		//信号名选择spinner
 	Button  view_timeButton;		        //日期选择button
 	Button  view_PerveDay;		            //前一天button
 	Button  view_NextDay;		            //后一天button
 	Button  view_Receive;		            //接收receive
 	
 	private HashMap<String,String> map_EquiptNameList = null;  //<设备名，设备id>
-	private  ArrayAdapter<String> adapter = null;
+	
 	private  DatePickerDialog  dialog;  //日期对话框选择应用
 	private int year,month,day;   //对话框显示的年月日变量
 	private Calendar calendar;
@@ -687,6 +699,7 @@ public class SaveEquipt extends UtTable implements IObject {
 //	ArrayList<String> m_sortedarray = null;
 	List<String> lstTitles = null;
 	List<List<String>> lstContends = null;
-	private Paint  mPaint = new Paint();  //注意以后变量的定义一定要赋予空间
-//	List<String> fjw_signal = null;
+
+	private ArrayList<String> nameList = new ArrayList<String>();
+	private boolean isFirst=true;
 }
