@@ -31,7 +31,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -55,11 +54,11 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+
+import com.mgrid.MyDialog.MyDialog;
 import com.mgrid.data.DataGetter;
 import com.mgrid.util.CameraUtils;
 import com.mgrid.util.XmlUtils;
-import com.mgrid.util.dialog.DialogThridUtils;
-import com.mgrid.util.dialog.WeiboDialogUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.UtExpressionParser.stBindingExpression;
@@ -69,6 +68,7 @@ import com.sg.uis.SgAlarmAction;
 import com.sg.uis.SgAlarmChangTime;
 import com.sg.uis.SgImage;
 import com.sg.uis.LsyNewView.ChangeLabelBtn;
+import com.sg.uis.LsyNewView.FlikerProgressBar;
 import com.sg.uis.LsyNewView.SgVideoView;
 import comm_service.service;
 
@@ -79,24 +79,90 @@ import data_model.ipc_control;
 @SuppressWarnings("deprecation")
 public class MGridActivity extends Activity {
 
-	public WakeLock mWakeLock;// 锁屏类
-	public SgVideoView svv = null; // 播放视频
 
 	private int sleepTime = 2 * 60 * 60;// 屏保视频休眠时间
-
+	private Intent m_oTaskIntent = null;
+	private MainWindow m_oSgSgRenderManager = null;
+	private HashMap<String, MainWindow> m_oViewGroups = null;
+	private String Load="";
+	private long starttime = 0;
+	private DataGetter mDataGetter;
+	private ContainerView mContainer;
+	private MyDialog dialog;
+	private FlikerProgressBar bar;
+	
+	
+	public WakeLock mWakeLock;// 锁屏类
+	public SgVideoView svv = null; // 播放视频
+	public Handler mTimeHandler = new Handler();	
+	
 	public static boolean isPlaymv = false;
 	public static boolean isPlaygif = false;
 	public static boolean isSleep = false;
-
 	public static Context context = null;
-	public static String XmlFile = "";
+	public static String XmlFile = "";	
+	public InputMethodManager mImm = null;
+
+	// 加载用
+	public int tmp_load_int_time = 0;
+	public int tmp_load_pageseek = 0;
+	public boolean tmp_flag_loading = true;
+	public MainWindow tmp_load_prevpage = null;
+		
+	// Params:
+	public String m_sMainPage = null;
+	public String m_sRootFolder = null;
+	public ArrayList<String> m_oPageList = null;
+
 	
-	public static Dialog mWeiboDialog;
-	public static Dialog mDialog;
-	long starttime = 0;
-	public Handler mTimeHandler = new Handler();
+	public static boolean m_bHasRandomData = false;
+	public static boolean m_bBitmapHIghQuality = false;
+	public static boolean m_bShowLoadProgress = true;
+	public static boolean m_bErrMsgParser = true;
+	public static boolean m_bCanZoom = true;
+	public static boolean m_bTakePhoto = false;
+
+	public static boolean m_bTakeEMail = false; // 是否实时告警邮件发送
+	public static String mailProtocol = "smtp"; // 协议
+	public static String myEmailSMTPHost = "smtp.qq.com";
+	public static String myEmailAccount = "453938089@qq.com"; // 发送邮箱账号
+	public static String myEmailPassword = "sgipglsayogvcaih"; // 授权码
+	public static String receiveMailAccount = "leisiyang521@163.com"; // 接收邮箱账号
+	public static String Subject = "标题"; // 邮箱标题
+	public static String fromName = "发件人名称"; // 发件人名称
+
+
 	
-	private String Load="";
+	public static boolean whatLanguage = true;// 系统语言
+	public static Map<String, Map<String, String>> EventClose = new HashMap<String, Map<String, String>>();
+	public static HashMap<String, ArrayList<String>> AlarmShow = new HashMap<String, ArrayList<String>>();
+	public static ExecutorService xianChengChi = Executors.newCachedThreadPool();
+	public static boolean isNOChangPage = false;
+	public static int saveTime;	//信号数据存储时间
+		
+	// 用户名和密码
+	public static String m_UserName;
+	public static String m_PassWord;
+
+	// 页面权限用户名和密码
+	public static String m_pageUserName;
+	public static String[] m_pagePassWord;
+
+	public static String[][] m_MaskPage;// 权限页面内的子页面
+	public static int m_MaskCount;// 总权限页面的个数
+
+	public static HashMap<String, IObject> AlarmAll = new HashMap<String, IObject>();
+	public static File all_Event_file = new File("/mgrid/data/Command/0.log");
+	
+	public static boolean isChangPage = false;
+	public static boolean isLoading = true;
+	public static boolean isChangGif = true;
+	public static ArrayList<String> LabelList = new ArrayList<String>();
+	public static HashMap<String, stBindingExpression> m_DoubleButton = null;
+	public static String usbName = "";
+	public static String alarmWay="";
+	public static List<ipc_control> lstCtrlDo1 = null;
+	public static List<ipc_control> lstCtrlDo2 = null;
 	
 	
 
@@ -116,20 +182,18 @@ public class MGridActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-	//	mWeiboDialog = WeiboDialogUtils.createLoadingDialog(MGridActivity.this, "加载中...");
-		init();
+			init();
 
 	} 
 	
 	private void init() {
+		
+		
 		starttime = System.currentTimeMillis();
 		context = this;
-
 		m_oViewGroups = new HashMap<String, MainWindow>();
 		m_oPageList = new ArrayList<String>();
-		whatLanguage = whatLanguage();
-		
-		
+		whatLanguage = whatLanguage();				
 		if(whatLanguage)
 		{
 			Load="加载完";
@@ -137,36 +201,31 @@ public class MGridActivity extends Activity {
 		{
 			Load="Loaded";
 		}
-
+		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);// 强制为横屏
-
 		mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);// 输入法窗口
-
 		getWindow().setFlags(
 				WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
 				WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);// 对该window进行硬件加速.
-
 		// 设置屏幕宽高
 		mContainer = new ContainerView(this);
-
 		MainWindow.SCREEN_WIDTH = 1024; 
 		MainWindow.SCREEN_HEIGHT = 768;
-
+		
+		setProgressDialog();		
 		setBroadcastReceiver(); // 注册广播
-
-		// xianChengChi.execute(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		//
-		// parseMgridIni(); // 解析Mgrid.ini文件
-		//
-		// }
-		// });
 		parseMgridIni();
 		parseView();
 		runDataGetter();
 
+	}
+	
+	private void setProgressDialog()
+	{
+		dialog=new MyDialog(this);	
+		dialog.show();
+		bar=dialog.getBar();
+		
 	}
 
 	// 广播注册
@@ -661,8 +720,12 @@ public class MGridActivity extends Activity {
 
 					tmp_load_pageseek++;
 					if (m_oPageList.size() > tmp_load_pageseek)
-						pagename = m_oPageList.get(tmp_load_pageseek);
+					{
+						bar.setProgress(tmp_load_pageseek*100/m_oPageList.size());
+						pagename = m_oPageList.get(tmp_load_pageseek);						
+					}				
 					else {
+						dialog.dismiss();
 						tmp_flag_loading = false;
 						DataGetter.bIsLoading = false;
 						Toast.makeText(MGridActivity.this, Load,
@@ -704,7 +767,8 @@ public class MGridActivity extends Activity {
 					tmp_load_pageseek++;
 
 					if (m_oPageList.size() > tmp_load_pageseek) {
-
+						
+						bar.setProgress(tmp_load_pageseek*100/m_oPageList.size());
 						handler.postDelayed(this, tmp_load_int_time);
 						
 					} else {
@@ -717,6 +781,8 @@ public class MGridActivity extends Activity {
 						isLoading = false;
 						isNOChangPage = true;
 						
+						bar.finishLoad();
+						dialog.dismiss();
 						
 						System.out.println("所用时间："
 								+ (System.currentTimeMillis() - starttime));
@@ -981,90 +1047,7 @@ public class MGridActivity extends Activity {
 		startActivity(intent);
 	}
 
-	// 加载用
-	public int tmp_load_int_time = 0;
-	public int tmp_load_pageseek = 0;
-	public boolean tmp_flag_loading = true;
-	public MainWindow tmp_load_prevpage = null;
 
-	// Params:
-	public String m_sMainPage = null;
-	public String m_sRootFolder = null;
-	public static boolean m_bHasRandomData = false;
-	public static boolean m_bBitmapHIghQuality = false;
-	public static boolean m_bShowLoadProgress = true;
-	public static boolean m_bErrMsgParser = true;
-	public static boolean m_bCanZoom = true;
-	public static boolean m_bTakePhoto = false;
-
-	public static boolean m_bTakeEMail = false; // 是否实时告警邮件发送
-	public static String mailProtocol = "smtp"; // 协议
-	public static String myEmailSMTPHost = "smtp.qq.com";
-	public static String myEmailAccount = "453938089@qq.com"; // 发送邮箱账号
-	public static String myEmailPassword = "sgipglsayogvcaih"; // 授权码
-	public static String receiveMailAccount = "leisiyang521@163.com"; // 接收邮箱账号
-	public static String Subject = "标题"; // 邮箱标题
-	public static String fromName = "发件人名称"; // 发件人名称
-
-	public ArrayList<String> m_oPageList = null;
-	private Intent m_oTaskIntent = null;
-	private MainWindow m_oSgSgRenderManager = null;
-	private HashMap<String, MainWindow> m_oViewGroups = null;
-
-	public static Map<String, Map<String, String>> EventClose = new HashMap<String, Map<String, String>>();
-
-	public static HashMap<String, ArrayList<String>> AlarmShow = new HashMap<String, ArrayList<String>>();
-
-	public static ExecutorService xianChengChi = Executors
-			.newCachedThreadPool();
-
-	public static boolean isNOChangPage = false;
-	// 系统语言
-	public static boolean whatLanguage = true;
-	// xml文件号码的个数
-	// public static int xmlPhoneNumber=0;
-
-	
-	//信号数据存储时间
-	public static int saveTime;
-	
-	// 用户名和密码
-	public static String m_UserName;
-	public static String m_PassWord;
-
-	// 页面权限用户名和密码
-	public static String m_pageUserName;
-	public static String[] m_pagePassWord;
-
-	public static String[][] m_MaskPage;// 权限页面内的子页面
-	public static int m_MaskCount;// 总权限页面的个数
-
-	//
-	public static HashMap<String, IObject> AlarmAll = new HashMap<String, IObject>();
-	public static File all_Event_file = new File("/mgrid/data/Command/0.log");
-	private ContainerView mContainer;
-
-	private DataGetter mDataGetter;
-
-	public InputMethodManager mImm = null;
-
-	public static ProgressDialog dialog;
-
-	public static boolean isChangPage = false;
-	public static boolean isLoading = true;
-	public static boolean isChangGif = true;
-
-	public static ArrayList<String> LabelList = new ArrayList<String>();
-	// CopyOnWriteArrayList
-	public static HashMap<String, stBindingExpression> m_DoubleButton = null;
-	// public static Map<IObject, stBindingExpression> m_Label=null;
-
-	public static String usbName = "";
-	
-	public static String alarmWay="";
-	
-	public static List<ipc_control> lstCtrlDo1 = null;
-	public static List<ipc_control> lstCtrlDo2 = null;
 	
 
 	public static Handler handler = new Handler() {
@@ -1073,8 +1056,7 @@ public class MGridActivity extends Activity {
 			switch (msg.what) {
 			case 1:
 				
-				WeiboDialogUtils.closeDialog(mWeiboDialog);
-				DialogThridUtils.closeDialog(mDialog);
+			
 				break;
 			case 2:
 				String s = (String) msg.obj;

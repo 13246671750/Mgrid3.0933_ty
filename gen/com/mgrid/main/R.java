@@ -17,39 +17,91 @@ public final class R {
         public static final int zoom_enter=0x7f040005;
     }
     public static final class attr {
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int borderWidth=0x7f010004;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int loadingColor=0x7f010001;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int radius=0x7f010003;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int stopColor=0x7f010002;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int textSize=0x7f010000;
     }
     public static final class drawable {
         public static final int dialog_loading=0x7f020000;
         public static final int dialog_loading_img=0x7f020001;
         public static final int fjw=0x7f020002;
-        public static final int hi=0x7f020003;
-        public static final int hj=0x7f020004;
-        public static final int hk=0x7f020005;
-        public static final int ic_jiqiren=0x7f020006;
-        public static final int ic_launcher=0x7f020007;
-        public static final int kstart=0x7f020008;
-        public static final int loading_bg=0x7f020009;
-        public static final int loading_icon=0x7f02000a;
-        public static final int mgrid=0x7f02000b;
-        public static final int popup_bg=0x7f02000c;
+        public static final int flicker=0x7f020003;
+        public static final int flicker_1=0x7f020004;
+        public static final int free_dialog_bg=0x7f020005;
+        public static final int hi=0x7f020006;
+        public static final int hj=0x7f020007;
+        public static final int hk=0x7f020008;
+        public static final int ic_jiqiren=0x7f020009;
+        public static final int ic_launcher=0x7f02000a;
+        public static final int kstart=0x7f02000b;
+        public static final int loading_bg=0x7f02000c;
+        public static final int loading_icon=0x7f02000d;
+        public static final int mgrid=0x7f02000e;
+        public static final int popup_bg=0x7f02000f;
     }
     public static final class id {
         public static final int dialog_loading_view=0x7f080008;
-        public static final int dialog_view=0x7f080017;
+        public static final int dialog_view=0x7f080018;
         public static final int etPWD=0x7f080003;
         public static final int et_change=0x7f080007;
         public static final int etuserName=0x7f080001;
+        public static final int flikerbar=0x7f080011;
         public static final int gridCellID=0x7f08000b;
-        public static final int img=0x7f080018;
-        public static final int info=0x7f08001a;
+        public static final int img=0x7f080019;
+        public static final int info=0x7f08001b;
         public static final int itemImage=0x7f08000c;
         public static final int itemText=0x7f08000d;
-        public static final int lastpagebtn=0x7f080011;
-        public static final int layout_pageID=0x7f080013;
-        public static final int lv_list=0x7f080016;
-        public static final int nextbtn=0x7f080012;
-        public static final int pageet=0x7f080015;
-        public static final int pagetv=0x7f080014;
+        public static final int lastpagebtn=0x7f080012;
+        public static final int layout_pageID=0x7f080014;
+        public static final int lv_list=0x7f080017;
+        public static final int nextbtn=0x7f080013;
+        public static final int pageet=0x7f080016;
+        public static final int pagetv=0x7f080015;
         public static final int progressBar1=0x7f080009;
         public static final int progress_horizontal=0x7f08000f;
         public static final int progress_large=0x7f080010;
@@ -58,7 +110,7 @@ public final class R {
         public static final int textView2=0x7f080005;
         public static final int textView3=0x7f080006;
         public static final int tipTextView=0x7f08000a;
-        public static final int title=0x7f080019;
+        public static final int title=0x7f08001a;
         public static final int tvPWD=0x7f080002;
         public static final int tvuserName=0x7f080000;
     }
@@ -69,14 +121,15 @@ public final class R {
         public static final int gridview=0x7f030003;
         public static final int lv_items=0x7f030004;
         public static final int main=0x7f030005;
-        public static final int nextpage=0x7f030006;
-        public static final int page=0x7f030007;
-        public static final int page_xml=0x7f030008;
-        public static final int pass_dialog=0x7f030009;
-        public static final int pop=0x7f03000a;
-        public static final int simple_spinner_itemtest=0x7f03000b;
-        public static final int thridlogin_dialog_loading=0x7f03000c;
-        public static final int vlist=0x7f03000d;
+        public static final int mydialog=0x7f030006;
+        public static final int nextpage=0x7f030007;
+        public static final int page=0x7f030008;
+        public static final int page_xml=0x7f030009;
+        public static final int pass_dialog=0x7f03000a;
+        public static final int pop=0x7f03000b;
+        public static final int simple_spinner_itemtest=0x7f03000c;
+        public static final int thridlogin_dialog_loading=0x7f03000d;
+        public static final int vlist=0x7f03000e;
     }
     public static final class menu {
         public static final int main=0x7f070000;
@@ -112,15 +165,127 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f060001;
+        /**  加载进度对话框样式 
+ 模糊 
+         */
+        public static final int Dialog_Fullscreen=0x7f060006;
+        /** 自定义dialog背景全透明无边框theme 
+         */
+        public static final int MyDialog=0x7f060008;
         /**  my loading dialog 
          */
-        public static final int MyDialogStyle=0x7f060005;
+        public static final int MyDialogStyle=0x7f060007;
         /**  Base application theme. 
- popup window 显示消失动画
- 指定消失的动画xml  
+ popup window 显示消失动画 
+ 指定消失的动画xml 
          */
         public static final int PopWindowAnimStyle=0x7f060002;
         public static final int TransDialogStyle=0x7f060003;
         public static final int WhiteDialogStyle=0x7f060004;
+        /**  模糊 
+         */
+        public static final int loading_dialog=0x7f060005;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a FlikerProgressBar.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #FlikerProgressBar_borderWidth com.mgrid.main:borderWidth}</code></td><td></td></tr>
+           <tr><td><code>{@link #FlikerProgressBar_loadingColor com.mgrid.main:loadingColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #FlikerProgressBar_radius com.mgrid.main:radius}</code></td><td></td></tr>
+           <tr><td><code>{@link #FlikerProgressBar_stopColor com.mgrid.main:stopColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #FlikerProgressBar_textSize com.mgrid.main:textSize}</code></td><td></td></tr>
+           </table>
+           @see #FlikerProgressBar_borderWidth
+           @see #FlikerProgressBar_loadingColor
+           @see #FlikerProgressBar_radius
+           @see #FlikerProgressBar_stopColor
+           @see #FlikerProgressBar_textSize
+         */
+        public static final int[] FlikerProgressBar = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003,
+            0x7f010004
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.mgrid.main.R.attr#borderWidth}
+          attribute's value can be found in the {@link #FlikerProgressBar} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.mgrid.main:borderWidth
+        */
+        public static final int FlikerProgressBar_borderWidth = 4;
+        /**
+          <p>This symbol is the offset where the {@link com.mgrid.main.R.attr#loadingColor}
+          attribute's value can be found in the {@link #FlikerProgressBar} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.mgrid.main:loadingColor
+        */
+        public static final int FlikerProgressBar_loadingColor = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.mgrid.main.R.attr#radius}
+          attribute's value can be found in the {@link #FlikerProgressBar} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.mgrid.main:radius
+        */
+        public static final int FlikerProgressBar_radius = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.mgrid.main.R.attr#stopColor}
+          attribute's value can be found in the {@link #FlikerProgressBar} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.mgrid.main:stopColor
+        */
+        public static final int FlikerProgressBar_stopColor = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.mgrid.main.R.attr#textSize}
+          attribute's value can be found in the {@link #FlikerProgressBar} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.mgrid.main:textSize
+        */
+        public static final int FlikerProgressBar_textSize = 0;
+    };
 }
