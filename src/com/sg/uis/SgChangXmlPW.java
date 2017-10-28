@@ -29,13 +29,6 @@ import com.sg.common.IObject;
  */
 public class SgChangXmlPW extends TextView implements IObject {
 
-	
-	
-	private String oldPw="";
-	private String newPw="";
-	private String confirm="";
-	private String change="";
-	
 	public SgChangXmlPW(Context context) {
 		super(context);
 		this.setClickable(true);
@@ -69,22 +62,6 @@ public class SgChangXmlPW extends TextView implements IObject {
 		// return true;
 		// }
 		// });
-		
-	if (MGridActivity.whatLanguage) {
-			
-			oldPw="旧密码:";
-			newPw="新密码:";
-			confirm="确    认:";
-			change="修改";
-			
-			
-		} else {
-			
-			oldPw="OldPassword";
-			newPw="NewPassword";
-			confirm="Confirm";
-			change="Change";
-		}
 
 		setBackgroundResource(android.R.drawable.btn_default);
 		setPadding(0, 0, 0, 0);
@@ -107,27 +84,27 @@ public class SgChangXmlPW extends TextView implements IObject {
 
 		MakeBtn.setBackgroundResource(android.R.drawable.btn_default_small);
 
-		m_oEditTextNEW.setPadding(0, 0, 0, 0);
-		m_oEditTextOLD.setPadding(0, 0, 0, 0);
-		E_CPassword.setPadding(0, 0, 0, 0);
+		m_oEditTextNEW.setPadding(0, 2, 0, 0);
+		m_oEditTextOLD.setPadding(0, 2, 0, 0);
+		E_CPassword.setPadding(0, 2, 0, 0);
 
 		tvNew.setPadding(0, 0, 0, 0);
 		T_CPassword.setPadding(0, 0, 0, 0);
 		tvOld.setPadding(0, 0, 0, 0);
-		MakeBtn.setPadding(0, 0, 0, 0);
+		MakeBtn.setPadding(0, 5, 0, 0);
 
 		tvNew.setTextSize(15);
 		T_CPassword.setTextSize(15);
 		tvOld.setTextSize(15);
-		m_oEditTextNEW.setTextSize(20);
-		m_oEditTextOLD.setTextSize(20);
-		E_CPassword.setTextSize(20);
+		m_oEditTextNEW.setTextSize(15);
+		m_oEditTextOLD.setTextSize(15);
+		E_CPassword.setTextSize(15);
 
-		MakeBtn.setTextSize(20);
+		MakeBtn.setTextSize(15);
 
-		tvNew.setText(newPw);
-		T_CPassword.setText(confirm);
-		tvOld.setText(oldPw);
+		tvNew.setText("新密码:");
+		T_CPassword.setText("确    认:");
+		tvOld.setText("旧密码:");
 
 		MakeBtn.setTextColor(Color.BLACK);
 		tvNew.setTextColor(Color.BLACK);
@@ -166,7 +143,7 @@ public class SgChangXmlPW extends TextView implements IObject {
 					m_bPressed = false;
 					
 					MakeBtn.setBackgroundResource(android.R.drawable.btn_default_small);
-					MakeBtn.setText(change);
+					MakeBtn.setText("修改");
 					if (m_xscal == event.getX() && m_yscal == event.getY())
 						onClicked();
 					break;
@@ -245,58 +222,37 @@ public class SgChangXmlPW extends TextView implements IObject {
 				&& label > 0) {
 			if(MGridActivity.m_pagePassWord==null)
 			{
-				if(MGridActivity.whatLanguage)
 				Toast.makeText(getContext(), "你根本没有权限页面", 1000).show();
-				else
-					Toast.makeText(getContext(), "You have no permissions page at all ", 1000).show();
 			    return;
 			}
 				
 			if(!newPassWordTwo.equals(newPassWord))
 			{
-				if(MGridActivity.whatLanguage)
 				Toast.makeText(getContext(), "两次密码输入不一样", 1000).show();
-				else
-					Toast.makeText(getContext(), "The two password input is not the same ", 1000).show();
 				return;
 			}
 			if(MGridActivity.m_pagePassWord.length<label)
 			{
-				if(MGridActivity.whatLanguage)
 				Toast.makeText(getContext(), "孩子， 你组态配置的标签大于权限页面的个数", 1000).show();
-				else
-					Toast.makeText(getContext(), "The label of your configuration configuration is greater than the number of permissions pages ", 1000).show();
 				return;
 			}
 			if (oldPassWord.equals(MGridActivity.m_pagePassWord[label - 1])||
 					oldPassWord.equals("88888888")) {
 
 				changPassWord(newPassWord);
-				if(MGridActivity.whatLanguage)
 				Toast.makeText(m_rRenderWindow.getContext(), "密码修改成功",
 						Toast.LENGTH_SHORT).show();
-				else
-					Toast.makeText(m_rRenderWindow.getContext(), "Password changes succeeded ",
-							Toast.LENGTH_SHORT).show();
 
 			} else {
-				if(MGridActivity.whatLanguage)
 				Toast.makeText(m_rRenderWindow.getContext(), "旧密码输入错误，请重新输入",
 						Toast.LENGTH_SHORT).show();
-				else
-					Toast.makeText(m_rRenderWindow.getContext(), "Old password entered error, please re-enter",
-							Toast.LENGTH_SHORT).show();
 			}
 			m_oEditTextOLD.setText("");
 			m_oEditTextNEW.setText("");
 			E_CPassword.setText("");
 		} else {
-			if(MGridActivity.whatLanguage)
 			Toast.makeText(m_rRenderWindow.getContext(), "密码输入不完整",
 					Toast.LENGTH_SHORT).show();
-			else
-				Toast.makeText(m_rRenderWindow.getContext(), "The password input is incomplete ",
-						Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -305,10 +261,7 @@ public class SgChangXmlPW extends TextView implements IObject {
 		if (label > 0) {
 			MGridActivity.changPassWord(Type, newPassWord, label);
 		} else {
-			if(MGridActivity.whatLanguage)
 			Toast.makeText(getContext(), "你的配置出现错误", 1000).show();
-			else
-				Toast.makeText(getContext(), "There is an error in your configuration", 1000).show();
 		}
 
 	}
@@ -341,19 +294,19 @@ public class SgChangXmlPW extends TextView implements IObject {
 //			tvNew.layout(nX + (int) (nWidth * 0.45f), nY
 //					+ (int) (nHeight * 0.15f), nX + (int) (nWidth * 0.55f), nY
 //					+ (int) (nHeight * 1.0f));
-			tvOld.layout(nX + (int) (nWidth * 0.05f), nY
+			tvOld.layout(nX + (int) (nWidth * 0.1f), nY
 					+ (int) (nHeight * 0.1f), nX + (int) (nWidth * 0.3f), nY
 					+ (int) (nHeight * 0.24f));
 			m_oEditTextOLD.layout(nX + (int) (nWidth * 0.35f), nY
 					+ (int) (nHeight * 0.1f), nX + (int) (nWidth * 0.9f), nY
 					+ (int) (nHeight * 0.24f));
-			tvNew.layout(nX + (int) (nWidth * 0.05f), nY
+			tvNew.layout(nX + (int) (nWidth * 0.1f), nY
 					+ (int) (nHeight * 0.34f), nX + (int) (nWidth * 0.3f), nY
 					+ (int) (nHeight * 0.48f));
 			m_oEditTextNEW.layout(nX + (int) (nWidth * 0.35f), nY
 					+ (int) (nHeight * 0.34f), nX + (int) (nWidth * 0.9f), nY
 					+ (int) (nHeight * 0.48f));
-			T_CPassword.layout(nX + (int) (nWidth * 0.05f), nY
+			T_CPassword.layout(nX + (int) (nWidth * 0.1f), nY
 					+ (int) (nHeight * 0.58f), nX + (int) (nWidth * 0.3f), nY
 					+ (int) (nHeight * 0.72f));
 			E_CPassword.layout(nX + (int) (nWidth * 0.35f), nY
@@ -421,10 +374,10 @@ public class SgChangXmlPW extends TextView implements IObject {
 		else if ("FontColor".equals(strName)) {
 			m_cFontColor = Color.parseColor(strValue);
 			this.setTextColor(m_cFontColor);
-			MakeBtn.setTextColor(m_cFontColor);
 			tvNew.setTextColor(m_cFontColor);
-			T_CPassword.setTextColor(m_cFontColor);
 			tvOld.setTextColor(m_cFontColor);
+			T_CPassword.setTextColor(m_cFontColor);
+			MakeBtn.setTextColor(m_cFontColor);
 		} else if ("CmdExpression".equals(strName)) {
 			m_strCmdExpression = strValue;
 		} else if ("IsValueRelateSignal".equals(strName)) {
@@ -436,18 +389,6 @@ public class SgChangXmlPW extends TextView implements IObject {
 			m_fButtonWidthRate = Float.parseFloat(strValue);
 		} else if ("Label".equals(strName)) {
 			label = Integer.parseInt(strValue);
-		}else if("FontSize".equals(strName))
-		{
-			 fontSize=Integer.parseInt(strValue);
-
-				tvNew.setTextSize(fontSize);
-				T_CPassword.setTextSize(fontSize);
-				tvOld.setTextSize(fontSize);
-				m_oEditTextNEW.setTextSize(fontSize);
-				m_oEditTextOLD.setTextSize(fontSize);
-				E_CPassword.setTextSize(fontSize);
-				MakeBtn.setTextSize(fontSize);
-				this.setTextSize(fontSize);
 		}
 	}
 
@@ -563,8 +504,6 @@ public class SgChangXmlPW extends TextView implements IObject {
 	EditText E_CPassword = null;
 	String Type = "MaskPagePassword";
 	int label = -1;
-	
-	int fontSize=15;
 
 	// 记录触摸坐标，过滤滑动操作。解决滑动误操作点击问题。
 	public float m_xscal = 0;

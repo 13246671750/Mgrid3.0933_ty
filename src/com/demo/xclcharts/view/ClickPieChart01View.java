@@ -50,10 +50,16 @@ public class ClickPieChart01View extends GraphicalView {
 		 chartRender();
 	 }	 		 	
 	
+	 
+	 public PieChart getChart()
+	 {
+		 return chart;
+	 }
+	 
 	@Override  
    protected void onSizeChanged(int w, int h, int oldw, int oldh) {  
        super.onSizeChanged(w, h, oldw, oldh);  
-      //图所占范围大小
+      //鍥炬墍鍗犺寖鍥村ぇ灏�
        chart.setChartRange(w,h);
    }  	
 	
@@ -67,10 +73,10 @@ public class ClickPieChart01View extends GraphicalView {
 			//图的内边距
 			//注释折线较长，缩进要多些
 			int [] ltrb = new int[4];
-			ltrb[0] = DensityUtil.dip2px(getContext(), 60); //left	
-			ltrb[1] = DensityUtil.dip2px(getContext(), 55); //top	
-			ltrb[2] = DensityUtil.dip2px(getContext(), 60); //right
-			ltrb[3] = DensityUtil.dip2px(getContext(), 50); //bottom				
+			ltrb[0] = DensityUtil.dip2px(getContext(), 20); //left	
+			ltrb[1] = DensityUtil.dip2px(getContext(), 20); //top	
+			ltrb[2] = DensityUtil.dip2px(getContext(), 20); //right
+			ltrb[3] = DensityUtil.dip2px(getContext(), 20); //bottom				
 							
 			chart.setPadding(ltrb[0], ltrb[1], ltrb[2], ltrb[3]);
 			
@@ -78,16 +84,16 @@ public class ClickPieChart01View extends GraphicalView {
 			chart.setDataSource(chartData);												
 		
 			//标题
-			chart.setTitle("擂茶配方比");
-			chart.addSubtitle("(XCL-Charts Demo)");
-			chart.setTitleVerticalAlign(XEnum.VerticalAlign.MIDDLE);
+			//chart.setTitle("擂茶配方比");
+			//chart.addSubtitle("(XCL-Charts Demo)");
+			//chart.setTitleVerticalAlign(XEnum.VerticalAlign.MIDDLE);
 				
 		
 			//显示边框
 			//chart.showRoundBorder();
 			
 			//激活点击监听
-			chart.ActiveListenItemClick();
+		//	chart.ActiveListenItemClick();
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -97,12 +103,17 @@ public class ClickPieChart01View extends GraphicalView {
 
 	private void chartDataSet()
 	{
+		
+		chart.getLabelPaint().setColor(Color.WHITE);
+		chart.getLabelPaint().setTextSize(10);
+		chart.getLabelLinePaint().setColor(Color.rgb(127, 117, 116));
+		chart.getLabelLinePaint().setStrokeWidth(1);
 		//设置图表数据源		
-		chartData.add(new PieData("芝麻","芝麻-15%",15,(int)Color.rgb(77, 83, 97)));
-		chartData.add(new PieData("花生","花生-35%",35,(int)Color.rgb(148, 159, 181)));
-		chartData.add(new PieData("茶叶","茶叶(25%)",25,(int)Color.rgb(253, 180, 90)));
+		chartData.add(new PieData("其他","其他-15%",15,(int)Color.rgb(253, 252, 250)));
+		//chartData.add(new PieData("我","我-35%",35,(int)Color.rgb(148, 159, 181)));
+		//chartData.add(new PieData("他","他-25%",25,(int)Color.rgb(253, 180, 90)));
 		//将此比例块突出显示
-		chartData.add(new PieData("其它","其它(炒米，炒花生之类)",25,(int)Color.rgb(180, 205, 230),true));
+		chartData.add(new PieData("IT负载","IT负载-85%",85,(int)Color.rgb(180, 205, 230),true));
 	}
 	
 	@Override
@@ -127,7 +138,7 @@ public class ClickPieChart01View extends GraphicalView {
 	}
 	
 
-	//触发监听
+	//瑙﹀彂鐩戝惉
 	private void triggerClick(float x,float y)
 	{			
 		
@@ -145,10 +156,10 @@ public class ClickPieChart01View extends GraphicalView {
 	}
 	
 	
-	//请注意:
-	// 此处是饼图所以监听为 ChartArcListener
-	// 如为柱图则监听为 ChartBarListener
-	// 如为线图或雷达图，则监听为ChartPointListener
+	//璇锋敞鎰�:
+	// 姝ゅ鏄ゼ鍥炬墍浠ョ洃鍚负 ChartArcListener
+	// 濡備负鏌卞浘鍒欑洃鍚负 ChartBarListener
+	// 濡備负绾垮浘鎴栭浄杈惧浘锛屽垯鐩戝惉涓篊hartPointListener
 	public void setOnPlotClickListener(ChartArcListener chartListener) 
 	{
 	  this.onClickListener = chartListener;

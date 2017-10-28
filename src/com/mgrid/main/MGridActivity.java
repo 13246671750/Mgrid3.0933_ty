@@ -67,6 +67,7 @@ import com.sg.uis.SaveEquipt;
 import com.sg.uis.SgAlarmAction;
 import com.sg.uis.SgAlarmChangTime;
 import com.sg.uis.SgImage;
+import com.sg.uis.LsyNewView.AlarmShieldTime;
 import com.sg.uis.LsyNewView.ChangeLabelBtn;
 import com.sg.uis.LsyNewView.FlikerProgressBar;
 import com.sg.uis.LsyNewView.SgVideoView;
@@ -163,6 +164,9 @@ public class MGridActivity extends Activity {
 	public static String alarmWay="";
 	public static List<ipc_control> lstCtrlDo1 = null;
 	public static List<ipc_control> lstCtrlDo2 = null;
+	
+	//告警屏蔽时间保存
+	public static HashMap<String,HashMap<Long,String>> AlarmShieldTimer=new HashMap<String, HashMap<Long,String>>();
 	
 	
 
@@ -965,7 +969,14 @@ public class MGridActivity extends Activity {
 
 				ChangeLabelBtn CLB = (ChangeLabelBtn) obj;
 				CLB.setText();
-			}
+			}else if(obj.getType().equals("AlarmShieldTime"))
+            {
+            	AlarmShieldTime ast=(AlarmShieldTime)obj;
+            	if(MGridActivity.AlarmShieldTimer.get(ast.equitId+"_"+ast.eventId)!=null)
+            	{
+            		ast.updateText();
+            	}
+            }
 			obj.initFinished();
 		}
 	}

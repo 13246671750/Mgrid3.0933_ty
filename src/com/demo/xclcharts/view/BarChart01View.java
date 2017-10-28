@@ -14,7 +14,7 @@
  * limitations under the License.
  * 	
  * @Project XCL-Charts 
- * @Description Android图表基类库
+ * @Description Android鍥捐〃鍩虹被搴�
  * @author XiongChuanLiang<br/>(xcl_168@aliyun.com)
  * @Copyright Copyright (c) 2014 XCL-Charts (www.xclcharts.com)
  * @license http://www.apache.org/licenses/  Apache v2 License
@@ -26,6 +26,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.xclcharts.chart.BarChart;
 import org.xclcharts.chart.BarData;
@@ -56,7 +57,7 @@ public class BarChart01View extends TouchView implements Runnable{
 	private String TAG = "BarChart01View";
 	private BarChart chart = new BarChart();
 	
-	//标签轴
+	//鏍囩杞�
 	private List<String> chartLabels = new LinkedList<String>();
 	private List<BarData> chartData = new LinkedList<BarData>();
 	
@@ -64,6 +65,11 @@ public class BarChart01View extends TouchView implements Runnable{
 		super(context);
 		// TODO Auto-generated constructor stub
 		initView();				
+	}
+	
+	public BarChart getBarChart()
+	{
+		return chart;
 	}
 	
 	public BarChart01View(Context context, AttributeSet attrs){   
@@ -87,7 +93,7 @@ public class BarChart01View extends TouchView implements Runnable{
 	@Override  
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {  
         super.onSizeChanged(w, h, oldw, oldh);  
-       //图所占范围大小
+        //图所占范围大小
         chart.setChartRange(w,h);
     }  
 	
@@ -101,17 +107,17 @@ public class BarChart01View extends TouchView implements Runnable{
 			
 			
 			//标题
-			chart.setTitle("主要数据库分布情况");
-			chart.addSubtitle("(XCL-Charts Demo)");	
-			chart.getPlotTitle().getTitlePaint().setColor(Color.BLUE);
-			chart.getPlotTitle().getSubtitlePaint().setColor(Color.BLUE);
+//			chart.setTitle("主要数据库分布情况");
+//			chart.addSubtitle("(XCL-Charts Demo)");	
+//			chart.getPlotTitle().getTitlePaint().setColor(Color.BLUE);
+//			chart.getPlotTitle().getSubtitlePaint().setColor(Color.BLUE);
 			//数据源
 			//chart.setDataSource(chartData);
 			chart.setCategories(chartLabels);	
 			
 			//轴标题
-			chart.getAxisTitle().setLeftAxisTitle("数据库个数");
-			chart.getAxisTitle().setLowerAxisTitle("分布位置");
+	//		chart.getAxisTitle().setLeftAxisTitle("数据库个数");
+	//		chart.getAxisTitle().setLowerAxisTitle("分布位置");
 			
 			//数据轴
 			chart.getDataAxis().setAxisMax(100);
@@ -134,6 +140,9 @@ public class BarChart01View extends TouchView implements Runnable{
 			
 			//在柱形顶部显示值
 			chart.getBar().setItemLabelVisible(true);
+			chart.getBar().getItemLabelPaint().setColor(Color.rgb(186, 193, 208));
+			chart.getBar().getItemLabelPaint().setTextSize(10);
+			
 			//设定格式
 			chart.setItemLabelFormatter(new IFormatterDoubleCallBack() {
 				@Override
@@ -149,11 +158,26 @@ public class BarChart01View extends TouchView implements Runnable{
 		
 			
 			//轴颜色
-			int axisColor = Color.BLUE; // Color.rgb(222, 136, 166);			
+			int axisColor = Color.rgb(172, 183, 200); // Color.rgb(222, 136, 166);			
 			chart.getDataAxis().getAxisPaint().setColor(axisColor);
 			chart.getCategoryAxis().getAxisPaint().setColor(axisColor);			
 			chart.getDataAxis().getTickMarksPaint().setColor(axisColor);
 			chart.getCategoryAxis().getTickMarksPaint().setColor(axisColor);
+			
+			//轴宽度
+			chart.getDataAxis().getAxisPaint().setStrokeWidth(1);
+			chart.getCategoryAxis().getAxisPaint().setStrokeWidth(1);	
+			chart.getDataAxis().getTickMarksPaint().setStrokeWidth(1);	
+			chart.getCategoryAxis().getTickMarksPaint().setStrokeWidth(1);	
+		
+			//x轴刻度文字画笔
+			chart.getCategoryAxis().getTickLabelPaint().setColor(Color.rgb(186, 193, 208));
+			chart.getCategoryAxis().getTickLabelPaint().setTextSize(10);
+			chart.getCategoryAxis().setTickMarksVisible(false);
+			//y轴刻度文字画笔
+			chart.getDataAxis().getTickLabelPaint().setColor(Color.rgb(186, 193, 208));
+			chart.getDataAxis().getTickLabelPaint().setTextSize(10);
+			chart.getDataAxis().setTickMarksVisible(false);
 			
 			//指隔多少个轴刻度(即细刻度)后为主刻度
 			chart.getDataAxis().setDetailModeSteps(5);
@@ -169,36 +193,41 @@ public class BarChart01View extends TouchView implements Runnable{
 	private void chartDataSet()
 	{
 		//标签对应的柱形数据集
-		List<Double> dataSeriesA= new LinkedList<Double>();	
-		dataSeriesA.add(66d); 
-		dataSeriesA.add(33d); 
-		dataSeriesA.add(50d);
-		BarData BarDataA = new BarData("Oracle",dataSeriesA,(int)Color.rgb(186, 20, 26));
-		
-		
-		List<Double> dataSeriesB= new LinkedList<Double>();	
-		dataSeriesB.add(32d);
-		dataSeriesB.add(22d);
-		dataSeriesB.add(18d);
-		BarData BarDataB = new BarData("SQL Server",dataSeriesB,(int)Color.rgb(1, 188, 242));
-		
-		List<Double> dataSeriesC= new LinkedList<Double>();	
-		dataSeriesC.add(79d);
-		dataSeriesC.add(91d);
-		dataSeriesC.add(65d);
-		BarData BarDataC = new BarData("MySQL",dataSeriesC,(int)Color.rgb(0, 75, 106)); 
-		
-		chartData.add(BarDataA);
-		chartData.add(BarDataB);
-		chartData.add(BarDataC);
-	}
-	
-	private void chartLabels()
-	{
-		chartLabels.add("福田数据中心"); 
-		chartLabels.add("西丽数据中心"); 
-		chartLabels.add("观澜数据中心"); 
-	}	
+				List<Double> dataSeriesA= new LinkedList<Double>();	
+				Random r=new Random();
+				for (int i = 1; i <=20; i++) {
+					dataSeriesA.add((double) r.nextInt(100));
+				}
+//				dataSeriesA.add(66d); 
+//				dataSeriesA.add(33d); 
+//				dataSeriesA.add(50d);
+				BarData BarDataA = new BarData("内阻(Ω)",dataSeriesA,(int)Color.rgb(85, 140, 232));
+				
+				
+//				List<Double> dataSeriesB= new LinkedList<Double>();	
+//				dataSeriesB.add(32d);
+//				dataSeriesB.add(22d);
+//				dataSeriesB.add(18d);
+//				BarData BarDataB = new BarData("SQL Server",dataSeriesB,(int)Color.rgb(1, 188, 242));
+//				
+//				List<Double> dataSeriesC= new LinkedList<Double>();	
+//				dataSeriesC.add(79d);
+//				dataSeriesC.add(91d);
+//				dataSeriesC.add(65d);
+//				BarData BarDataC = new BarData("MySQL",dataSeriesC,(int)Color.rgb(0, 75, 106)); 
+				
+				chartData.add(BarDataA);
+				//chartData.add(BarDataB);
+				//chartData.add(BarDataC);
+			}
+			
+			private void chartLabels()
+			{
+				for (int i = 1; i <=20; i++) {
+					chartLabels.add(i+""); 
+				}
+				 
+			}	
 		
 	@Override
     public void render(Canvas canvas) {
@@ -272,7 +301,7 @@ public class BarChart01View extends TouchView implements Runnable{
 		return true;
 	}
 	
-	//触发监听
+	//瑙﹀彂鐩戝惉
 	private void triggerClick(float x,float y)
 	{
 		BarPosition record = chart.getPositionRecord(x,y);			

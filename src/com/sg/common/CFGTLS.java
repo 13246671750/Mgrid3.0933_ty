@@ -88,6 +88,14 @@ public class CFGTLS
    		strValue="#FF48B0FF";
    	 }
 		
+ 	
+	 if(strValue.equals("LimeGreen"))
+	 {
+		 return Color.rgb(96, 208, 133);
+	 }else if(strValue.equals("Silver"))
+	 {
+		 return Color.rgb(209, 209, 209);
+	 }
 		
    	    // Ω‚Œˆ AA,RR,GG,BB ∏Ò Ω
 		if (strValue.contains(","))

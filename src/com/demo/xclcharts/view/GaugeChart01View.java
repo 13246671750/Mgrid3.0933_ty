@@ -14,7 +14,7 @@
  * limitations under the License.
  * 	
  * @Project XCL-Charts 
- * @Description Android图表基类库
+ * @Description Android鍥捐〃鍩虹被搴�
  * @author XiongChuanLiang<br/>(xcl_168@aliyun.com)
  * @Copyright Copyright (c) 2014 XCL-Charts (www.xclcharts.com)
  * @license http://www.apache.org/licenses/  Apache v2 License
@@ -36,7 +36,7 @@ import android.util.Pair;
 
 /**
  * @ClassName GaugeChart01View
- * @Description  仪表盘例子
+ * @Description  浠〃鐩樹緥瀛�
  * @author XiongChuanLiang<br/>(xcl_168@aliyun.com)
  */
 public class GaugeChart01View  extends GraphicalView {
@@ -72,24 +72,30 @@ public class GaugeChart01View  extends GraphicalView {
 		chartRender();
 	 }
 	 
+	 
+	 public GaugeChart getChart()
+	 {
+		 return chart;
+	 }
+	 
 	 @Override  
      protected void onSizeChanged(int w, int h, int oldw, int oldh) {  
         super.onSizeChanged(w, h, oldw, oldh);  
-       //图所占范围大小
-        //xml中的设置:  android:layout_width="300dip"   
+       //鍥炬墍鍗犺寖鍥村ぇ灏�
+        //xml涓殑璁剧疆:  android:layout_width="300dip"   
         //			   android:layout_height="300dip"           
         chart.setChartRange(w ,h );        
-        //绘图区范围
-        //左右各缩进10%
+        //缁樺浘鍖鸿寖鍥�
+        //宸﹀彸鍚勭缉杩�10%
         //int offsetX = DensityUtil.dip2px(getContext(), (float) (300 * 0.1)); 
-        //偏移高度的25%下来
+        //鍋忕Щ楂樺害鐨�25%涓嬫潵
         //int offsetY = DensityUtil.dip2px(getContext(), (float) (300 * 0.25));        
        // chart.setPadding(offsetY, 0, 0,  0);
      
      }  
 	 
 	
-	//从seekbar传入的值
+	//浠巗eekbar浼犲叆鐨勫��
 	public void setAngle(float currentAngle)
 	{
 		mAngle = currentAngle;
@@ -99,22 +105,28 @@ public class GaugeChart01View  extends GraphicalView {
 	{
 		try {								
 						
-			//设置标题
-			//chart.setTitle("刻度盘 ");
+			//璁剧疆鏍囬
+			//chart.setTitle("鍒诲害鐩� ");
 								
-			//刻度步长
-			chart.setTickSteps(10d);
+			//鍒诲害姝ラ暱
+			chart.setTickSteps(5d);
 			
-			//标签(标签和步长分开，步长即刻度可以密点，标签可以松点)					
+			chart.getPointerLinePaint().setColor(Color.WHITE);
+			chart.getPinterCirclePaint().setColor((int)Color.rgb(76, 128, 164));
+			chart.getPinterCirclePaint().setStrokeWidth(5);
+			chart.getDountPaint().setColor(Color.rgb(178, 212, 233));
+			//鏍囩(鏍囩鍜屾闀垮垎寮�锛屾闀垮嵆鍒诲害鍙互瀵嗙偣锛屾爣绛惧彲浠ユ澗鐐�)	
+            chart.getLabelPaint().setColor(Color.WHITE);
+            chart.getLabelPaint().setTextSize(15);
 			chart.setCategories(mLabels);					
-			//分区
-			chart.setPartition(mPartitionSet);
+			//鍒嗗尯 
+			chart.setPartition(mPartitionSet); 
 			
-			//设置当前指向角度(0-180).
-			//chart.setCurrentAngle(90f);
+			//璁剧疆褰撳墠鎸囧悜瑙掑害(0-180).
+			//chart.setCurrentAngle(90f); 
 			chart.setCurrentAngle(mAngle);
-			//绘制边框
-			chart.showRoundBorder();
+			//缁樺埗杈规 
+	//		chart.showRoundBorder();
 		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -123,23 +135,24 @@ public class GaugeChart01View  extends GraphicalView {
 		
 	}
 	
-	//分区[角度(0-mStartAngle)，颜色]		
+	//鍒嗗尯[瑙掑害(0-mStartAngle)锛岄鑹瞉		
 	private void chartDataSet()
 	{
 		int Angle = 180/3;
-		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(73, 172, 72)));
-		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(247, 156, 27)));
-		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(224, 62, 54)));
+		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(92, 153, 199)));
+		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(92, 153, 199)));
+		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(92, 153, 199)));
 	}
 	
 	private void chartLabels()
 	{
-		//标签		
-		mLabels.add("起始");
-		mLabels.add("安全");
-		mLabels.add("警惕");
-		mLabels.add("危险");
-		mLabels.add("终止");
+		//鏍囩		
+		mLabels.add("0");
+		mLabels.add("10");
+		mLabels.add("20");
+		mLabels.add("30");
+		mLabels.add("40");
+		mLabels.add("50");
 	}
 
 	

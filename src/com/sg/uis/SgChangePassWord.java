@@ -1,11 +1,5 @@
 package com.sg.uis;
 
-import com.mgrid.main.MGridActivity;
-import com.mgrid.main.MainWindow;
-import com.sg.common.CFGTLS;
-import com.sg.common.IObject;
-
-import android.R;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -16,11 +10,15 @@ import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mgrid.main.MGridActivity;
+import com.mgrid.main.MainWindow;
+import com.sg.common.CFGTLS;
+import com.sg.common.IObject;
 
 /**
  * ∏ƒ√‹¬Î
@@ -36,7 +34,7 @@ public class SgChangePassWord extends TextView implements IObject {
 		this.setGravity(Gravity.CENTER);
 		this.setFocusableInTouchMode(true);
 		m_fFontSize = this.getTextSize();
-		this.setTextSize(20);
+		this.setTextSize(15);
 		this.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
@@ -75,14 +73,14 @@ public class SgChangePassWord extends TextView implements IObject {
 
 		m_oEditTextNEW.setBackgroundResource(android.R.drawable.edit_text);
 		m_oEditTextOLD.setBackgroundResource(android.R.drawable.edit_text);
-		m_oEditTextNEW.setPadding(0, 0, 0, 0);
-		m_oEditTextOLD.setPadding(0, 0, 0, 0);
+		m_oEditTextNEW.setPadding(0, 4, 0, 0);
+		m_oEditTextOLD.setPadding(0, 4, 0, 0);
 		tvNew.setPadding(0, 0, 0, 0);
 		tvOld.setPadding(0, 0, 0, 0);
-		tvNew.setTextSize(20);
-		tvOld.setTextSize(20);
-		m_oEditTextNEW.setTextSize(20);
-		m_oEditTextOLD.setTextSize(20);
+		tvNew.setTextSize(15);
+		tvOld.setTextSize(15);
+		m_oEditTextNEW.setTextSize(15);
+		m_oEditTextOLD.setTextSize(15);
 		tvNew.setText("–¬√‹¬Î:");
 		tvOld.setText("æ…√‹¬Î:");
 		tvNew.setTextColor(Color.BLACK);
@@ -212,19 +210,19 @@ public class SgChangePassWord extends TextView implements IObject {
 
 	@Override
 	public void setUniqueID(String strID) {
-		// TODO Auto-generated method stub
+	
 		m_strID = strID;
 	}
 
 	@Override
 	public String getUniqueID() {
-		// TODO Auto-generated method stub
+		
 		return m_strID;
 	}
 
 	@Override
 	public void setType(String strType) {
-		// TODO Auto-generated method stub
+		
 		m_strType = strType;
 	}
 
@@ -264,6 +262,8 @@ public class SgChangePassWord extends TextView implements IObject {
 		else if ("FontColor".equals(strName)) {
 			m_cFontColor = Color.parseColor(strValue);
 			this.setTextColor(m_cFontColor);
+			tvNew.setTextColor(m_cFontColor);
+			tvOld.setTextColor(m_cFontColor);
 		} else if ("CmdExpression".equals(strName)) {
 			m_strCmdExpression = strValue;
 		} else if ("IsValueRelateSignal".equals(strName)) {
@@ -300,7 +300,7 @@ public class SgChangePassWord extends TextView implements IObject {
 
 	@Override
 	public void removeFromRenderWindow(MainWindow rWin) {
-		// TODO Auto-generated method stub
+	
 		rWin.removeView(m_oEditTextNEW);
 		rWin.removeView(m_oEditTextOLD);
 		rWin.removeView(this);
@@ -308,43 +308,43 @@ public class SgChangePassWord extends TextView implements IObject {
 
 	@Override
 	public void updateWidget() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public boolean updateValue() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean needupdate() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public void needupdate(boolean bNeedUpdate) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public String getBindingExpression() {
-		// TODO Auto-generated method stub
+		
 		return m_strCmdExpression;
 	}
 
 	@Override
 	public View getView() {
-		// TODO Auto-generated method stub
+		
 		return this;
 	}
 
 	@Override
 	public int getZIndex() {
-		// TODO Auto-generated method stub
+	
 		return m_nZIndex;
 	}
 

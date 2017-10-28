@@ -108,11 +108,21 @@ import com.sg.uis.test_quxian;
 import com.sg.uis.tigerLabel;
 import com.sg.uis.LsyNewView.AlarmCount;
 import com.sg.uis.LsyNewView.AlarmLevel;
+import com.sg.uis.LsyNewView.AlarmRectangle;
+import com.sg.uis.LsyNewView.AlarmShieldTime;
 import com.sg.uis.LsyNewView.ChangeLabel;
 import com.sg.uis.LsyNewView.ChangeLabelBtn;
+import com.sg.uis.LsyNewView.EquipHistoryAlarm;
+import com.sg.uis.LsyNewView.EventLevelAlter;
+import com.sg.uis.LsyNewView.HistoryCurveChart;
 import com.sg.uis.LsyNewView.SgBARS;
+import com.sg.uis.LsyNewView.SgBarChartView;
 import com.sg.uis.LsyNewView.SgBrokenLine;
+import com.sg.uis.LsyNewView.SgClickPieChart;
 import com.sg.uis.LsyNewView.SgDial;
+import com.sg.uis.LsyNewView.SgHalfCircleChart;
+import com.sg.uis.LsyNewView.SgSplineChart;
+import com.sg.uis.LsyNewView.SgStackBarChart;
 import com.sg.uis.LsyNewView.SgVideoView;
 
 import comm_service.local_file;
@@ -993,6 +1003,48 @@ public class MainWindow extends ViewGroup {
 						{
 							ChangeLabelBtn CLB=new ChangeLabelBtn(this.getContext());
 							m_mapUIs.put(strID, CLB);
+						}else if("SgHalfCircleChar".equals(strType))
+						{
+							SgHalfCircleChart SCC=new SgHalfCircleChart(this.getContext());
+							m_mapUIs.put(strID, SCC);
+						}
+						else if("SgClickPieChart".equals(strType))
+						{
+							SgClickPieChart SCPC=new SgClickPieChart(this.getContext());
+							m_mapUIs.put(strID, SCPC);
+						}
+						else if("SgSplineChart".equals(strType)) 
+						{
+							SgSplineChart SSC=new SgSplineChart(this.getContext());
+							m_mapUIs.put(strID, SSC);
+						}else if("AlarmRectangle".equals(strType))
+						{
+							AlarmRectangle AR=new AlarmRectangle(this.getContext());
+							m_mapUIs.put(strID, AR);
+						}else if("SgBarChartView".equals(strType))
+						{
+							SgBarChartView SBCV=new SgBarChartView(this.getContext());
+							m_mapUIs.put(strID, SBCV);
+						}else if("SgStackBarChart".equals(strType))
+						{
+							SgStackBarChart SSBC=new SgStackBarChart(this.getContext());
+							m_mapUIs.put(strID, SSBC);
+						}else if("AlarmShieldTime".equals(strType))
+						{
+							AlarmShieldTime AST=new AlarmShieldTime(this.getContext());
+							m_mapUIs.put(strID, AST);
+						}else if("EquipHistoryAlarm".equals(strType))
+						{
+							EquipHistoryAlarm EHA=new EquipHistoryAlarm(this.getContext());
+							m_mapUIs.put(strID, EHA);
+						}else if("EventLevelAlter".equals(strType))
+						{
+							EventLevelAlter ELA=new EventLevelAlter(this.getContext());
+							m_mapUIs.put(strID, ELA);
+						}else if("HistoryCurveChart".equals(strType))
+						{
+							HistoryCurveChart HCC=new HistoryCurveChart(this.getContext());
+							m_mapUIs.put(strID, HCC);
 						}
  
  
@@ -1101,7 +1153,17 @@ public class MainWindow extends ViewGroup {
 								|| "AlarmCount".equals(strElementType)
 								|| "SgVideoView".equals(strElementType)
 								|| "ChangeLabel".equals(strElementType)
-								|| "ChangeLabelBtn".equals(strElementType)) {
+								|| "ChangeLabelBtn".equals(strElementType)
+								|| "SgHalfCircleChar".equals(strElementType)
+								|| "SgClickPieChart".equals(strElementType)
+								|| "SgSplineChart".equals(strElementType)
+								|| "AlarmRectangle".equals(strElementType)
+								|| "SgBarChartView".equals(strElementType)
+								|| "SgStackBarChart".equals(strElementType)
+								|| "AlarmShieldTime".equals(strElementType)
+								|| "EquipHistoryAlarm".equals(strElementType)
+								|| "EventLevelAlter".equals(strElementType)
+								|| "HistoryCurveChart".equals(strElementType)) {
 							try {
 								iCurrentObj.parseProperties(strName, strValue,
 										m_strResFolder);
