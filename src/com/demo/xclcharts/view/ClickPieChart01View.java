@@ -61,6 +61,15 @@ public class ClickPieChart01View extends GraphicalView {
        super.onSizeChanged(w, h, oldw, oldh);  
       //鍥炬墍鍗犺寖鍥村ぇ灏�
        chart.setChartRange(w,h);
+   	//图的内边距
+		//注释折线较长，缩进要多些	
+		int [] ltrb = new int[4];
+		ltrb[0] = DensityUtil.dip2px(getContext(), w/6); //left	
+		ltrb[1] = DensityUtil.dip2px(getContext(), h/6); //top	
+		ltrb[2] = DensityUtil.dip2px(getContext(), w/6); //right
+		ltrb[3] = DensityUtil.dip2px(getContext(), h/6); //bottom				
+						
+		chart.setPadding(ltrb[0], ltrb[1], ltrb[2], ltrb[3]);
    }  	
 	
 
@@ -70,15 +79,7 @@ public class ClickPieChart01View extends GraphicalView {
 			//标签显示(隐藏，显示在中间，显示在扇区外面,折线注释方式)
 			chart.setLabelPosition(XEnum.SliceLabelPosition.LINE);			
 			
-			//图的内边距
-			//注释折线较长，缩进要多些
-			int [] ltrb = new int[4];
-			ltrb[0] = DensityUtil.dip2px(getContext(), 20); //left	
-			ltrb[1] = DensityUtil.dip2px(getContext(), 20); //top	
-			ltrb[2] = DensityUtil.dip2px(getContext(), 20); //right
-			ltrb[3] = DensityUtil.dip2px(getContext(), 20); //bottom				
-							
-			chart.setPadding(ltrb[0], ltrb[1], ltrb[2], ltrb[3]);
+		
 			
 			//设定数据源
 			chart.setDataSource(chartData);												
@@ -104,7 +105,7 @@ public class ClickPieChart01View extends GraphicalView {
 	private void chartDataSet()
 	{
 		
-		chart.getLabelPaint().setColor(Color.WHITE);
+		chart.getLabelPaint().setColor(Color.BLUE);
 		chart.getLabelPaint().setTextSize(10);
 		chart.getLabelLinePaint().setColor(Color.rgb(127, 117, 116));
 		chart.getLabelLinePaint().setStrokeWidth(1);

@@ -1,6 +1,5 @@
 package com.sg.uis.LsyNewView;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -27,12 +25,12 @@ import com.mgrid.main.MainWindow;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 
-/** 折线图 */
+/** 黑白仪表盘 */
 
 public class SgDial extends TextView implements IObject {
 
 	@SuppressWarnings("unused")
-	private DialChart DCchart=null;// 关键view
+	private DialChart DCchart = null;// 关键view
 
 	public SgDial(Context context) {
 		super(context);
@@ -40,7 +38,7 @@ public class SgDial extends TextView implements IObject {
 		m_oPaint = new Paint();
 		m_rBBox = new Rect();
 		chart = new DialChart07View(context);
-		DCchart=chart.getChart();
+		DCchart = chart.getChart();
 	}
 
 	@SuppressLint("Dra wAllocation")
@@ -101,26 +99,29 @@ public class SgDial extends TextView implements IObject {
 		} else if ("Alpha".equals(strName)) {
 			m_fAlpha = Float.parseFloat(strValue);
 		} else if ("BackgroundColor".equals(strName)) {
-			if (strValue.isEmpty())
-				return;
-			m_cBackgroundColor = Color.parseColor(strValue);
-			// this.setBackgroundColor(m_cBackgroundColor);
+			if (strValue != null || !strValue.equals("")) {
+				chart.BcColor = strValue;
+
+			}
+
 		} else if ("Content".equals(strName)) {
 			m_strContent = strValue;
 
 		} else if ("FontFamily".equals(strName))
-			m_strFontFamily = strValue;
+			m_strFontFamily = strValue; 
 		else if ("FontSize".equals(strName)) {
-			float fWinScale = (float) MainWindow.SCREEN_WIDTH
+			float fWinScale = (float) MainWindow.SCREEN_WIDTH 
 					/ (float) MainWindow.FORM_WIDTH;
 			m_fFontSize = Float.parseFloat(strValue) * fWinScale;
-
+   
 		} else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
-			m_cFontColor = Color.parseColor(strValue);
-			// this.setTextColor(m_cFontColor);
-		} else if ("ClickEvent".equals(strName))
+			if (strValue != null || !strValue.equals("")) {
+				chart.textColor = strValue;
+                chart.refreshAll();
+			}
+		} else if ("ClickEvent".equals(strName)) 
 			m_strClickEvent = strValue;
 		else if ("Url".equals(strName))
 			m_strUrl = strValue;
@@ -134,22 +135,30 @@ public class SgDial extends TextView implements IObject {
 		else if ("Expression".equals(strName)) {
 			mExpression = strValue;
 			parse_cmd();
-		} else if ("colorData".equals(strName)) {
+		} else if ("ColorData".equals(strName)) {
 			colorData = strValue;
 			parse_color();
-		} else if ("labelData".equals(strName)) {
+			if (color_list.size() == 1) {
+				chart.PointColor = color_list.get(0);
+			}
+		} else if ("LabelData".equals(strName)) {
 			labelData = strValue;
 			parse_label();
+			if (color_list.size() != 0) {
+				chart.textList.clear();
+				chart.textList=label_list;
+			}
 		}
 	}
 
 	private void parse_label() {
-		if (labelData == null || labelData.equals(""))
+		if (labelData == null || labelData.equals("")||labelData.equals("设置内容"))
 			return;
 		String[] s = labelData.split("\\|");
 		for (int i = 0; i < s.length; i++) {
 			label_list.add(s[i]);
 		}
+		max_data=Float.parseFloat(s[s.length-1]);
 
 	}
 
@@ -160,6 +169,7 @@ public class SgDial extends TextView implements IObject {
 		for (int i = 0; i < s.length; i++) {
 			color_list.add(s[i]);
 		}
+	
 	}
 
 	@Override
@@ -212,12 +222,13 @@ public class SgDial extends TextView implements IObject {
 	// fjw add 按钮控制命令功能的控制命令的绑定表达式解析
 	// 解析出控件表达式，返回控件表达式类
 	public boolean parse_cmd() {
-		
-		if(mExpression.equals("")||mExpression==null) return false;
-		String[] arg1=mExpression.split("-");
-		equail=arg1[0].split(":")[1];
-		signal=arg1[2].split(":")[1].split("]")[0];
-	
+
+		if (mExpression.equals("") || mExpression == null)
+			return false;
+		String[] arg1 = mExpression.split("-");
+		equail = arg1[0].split(":")[1];
+		signal = arg1[2].split(":")[1].split("]")[0];
+
 		return true;
 	}
 
@@ -231,7 +242,7 @@ public class SgDial extends TextView implements IObject {
 
 			@Override
 			public void run() {
-	
+
 				handler.sendEmptyMessage(0);
 				try {
 					Thread.sleep(5 * 1000);
@@ -247,8 +258,8 @@ public class SgDial extends TextView implements IObject {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
-			
-				chart.setCurrentStatus(F_dial);
+
+				chart.setCurrent(F_dial);
 				chart.invalidate();
 
 				break;
@@ -260,16 +271,15 @@ public class SgDial extends TextView implements IObject {
 	@Override
 	public boolean updateValue() {
 
-         String svalue  = DataGetter.getSignalValue(equail, signal);
-         if(svalue==null||svalue.equals("")||svalue.equals("-999999"))
-         {
-        	 return false;
-         }
-         float fvalue=Float.parseFloat(svalue);
-		
-         F_dial=fvalue/30;
-         m_bneedupdate=false;
-		 return true;
+		String svalue = DataGetter.getSignalValue(equail, signal);
+		if (svalue == null || svalue.equals("") || svalue.equals("-999999")) {
+			return false;
+		}
+		float fvalue = Float.parseFloat(svalue);
+
+		F_dial = fvalue / max_data;
+		m_bneedupdate = false;
+		return true;
 	}
 
 	@Override
@@ -338,8 +348,7 @@ public class SgDial extends TextView implements IObject {
 	private String labelData = "";
 	private List<String> color_list = new ArrayList<String>();
 	private List<String> label_list = new ArrayList<String>();
-	private float F_dial=0;
-
+	private float F_dial = 0;
+    private float max_data=30;
 
 }
-

@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xclcharts.chart.GaugeChart;
+import org.xclcharts.renderer.XEnum;
 
+import android.R.color;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -44,10 +46,17 @@ public class GaugeChart01View  extends GraphicalView {
 	private String TAG = "GaugeChart01View";
 	private GaugeChart chart = new GaugeChart();
 	
-	private List<String> mLabels = new ArrayList<String>();
-	private List<Pair> mPartitionSet = new ArrayList<Pair>();		
+	public List<String> mLabels = new ArrayList<String>();
+	public List<Pair> mPartitionSet = new ArrayList<Pair>();		
 	private float mAngle = 0.0f;
 
+	public String tColor="#B2D4E9";
+	public String pColor="#B2D4E9";
+	public String lColor="#B2D4E9";
+	
+	public int Tick=5;
+	
+	public List<String> colorData=new ArrayList<String>();
 	
 	public GaugeChart01View(Context context) {
 		super(context);
@@ -67,11 +76,17 @@ public class GaugeChart01View  extends GraphicalView {
 	 
 	 private void initView()
 	 {
+		 chartColors();
 		chartLabels();
 		chartDataSet();	
 		chartRender();
 	 }
-	 
+	 public void initViews()
+	 {
+		
+		chartDataSet();	
+		chartRender();
+	 }
 	 
 	 public GaugeChart getChart()
 	 {
@@ -80,18 +95,9 @@ public class GaugeChart01View  extends GraphicalView {
 	 
 	 @Override  
      protected void onSizeChanged(int w, int h, int oldw, int oldh) {  
-        super.onSizeChanged(w, h, oldw, oldh);  
-       //鍥炬墍鍗犺寖鍥村ぇ灏�
-        //xml涓殑璁剧疆:  android:layout_width="300dip"   
-        //			   android:layout_height="300dip"           
-        chart.setChartRange(w ,h );        
-        //缁樺浘鍖鸿寖鍥�
-        //宸﹀彸鍚勭缉杩�10%
-        //int offsetX = DensityUtil.dip2px(getContext(), (float) (300 * 0.1)); 
-        //鍋忕Щ楂樺害鐨�25%涓嬫潵
-        //int offsetY = DensityUtil.dip2px(getContext(), (float) (300 * 0.25));        
-       // chart.setPadding(offsetY, 0, 0,  0);
-     
+        super.onSizeChanged(w, h, oldw, oldh);          
+        chart.setChartRange(w ,h);   
+        chart.setPadding(0, 10, 0, 0);
      }  
 	 
 	
@@ -109,24 +115,26 @@ public class GaugeChart01View  extends GraphicalView {
 			//chart.setTitle("鍒诲害鐩� ");
 								
 			//鍒诲害姝ラ暱
-			chart.setTickSteps(5d);
+			chart.setTickSteps(Tick);
 			
-			chart.getPointerLinePaint().setColor(Color.WHITE);
-			chart.getPinterCirclePaint().setColor((int)Color.rgb(76, 128, 164));
+			chart.getTickPaint().setColor(Color.parseColor(tColor));	//	刻度颜色  
+			chart.getPointerLinePaint().setColor(Color.parseColor(pColor));	//	指针颜色  
+			chart.getPinterCirclePaint().setColor(Color.parseColor(pColor));//	指针圆心颜色  
 			chart.getPinterCirclePaint().setStrokeWidth(5);
-			chart.getDountPaint().setColor(Color.rgb(178, 212, 233));
-			//鏍囩(鏍囩鍜屾闀垮垎寮�锛屾闀垮嵆鍒诲害鍙互瀵嗙偣锛屾爣绛惧彲浠ユ澗鐐�)	
-            chart.getLabelPaint().setColor(Color.WHITE);
+			chart.getDountPaint().setColor(Color.parseColor(tColor));	//外围圆颜色
+
+            chart.getLabelPaint().setColor(Color.parseColor(lColor));//标签颜色
             chart.getLabelPaint().setTextSize(15);
 			chart.setCategories(mLabels);					
 			//鍒嗗尯 
 			chart.setPartition(mPartitionSet); 
-			
+			 
 			//璁剧疆褰撳墠鎸囧悜瑙掑害(0-180).
 			//chart.setCurrentAngle(90f); 
 			chart.setCurrentAngle(mAngle);
 			//缁樺埗杈规 
 	//		chart.showRoundBorder();
+		
 		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -138,10 +146,19 @@ public class GaugeChart01View  extends GraphicalView {
 	//鍒嗗尯[瑙掑害(0-mStartAngle)锛岄鑹瞉		
 	private void chartDataSet()
 	{
-		int Angle = 180/3;
-		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(92, 153, 199)));
-		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(92, 153, 199)));
-		mPartitionSet.add(new Pair<Float,Integer>((float)Angle, (int)Color.rgb(92, 153, 199)));
+		int Angle = 180/colorData.size();
+		for (int i = 0; i < colorData.size(); i++) {
+			mPartitionSet.add(new Pair<Float,Integer>((float)Angle, Color.parseColor(colorData.get(i))));
+		}
+		
+	}
+	
+	
+	private void chartColors()
+	{
+		colorData.add("#66C2A5");
+		colorData.add("#FFC656");
+		colorData.add("#FF7369");
 	}
 	
 	private void chartLabels()

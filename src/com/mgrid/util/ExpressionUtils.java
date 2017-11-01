@@ -18,8 +18,7 @@ public class ExpressionUtils {
 	//Binding{[Value[Equip:118-Temp:177-Signal:78]]|[Value[Equip:118-Temp:177-Signal:78]]}
 	public List<String> parse(String cmd)
 	{
-		String removeBind =UtExpressionParser            //[Value[Equip:118-Temp:177-Signal:78]]|[Value[Equip:118-Temp:177-Signal:78]]
-				.removeBindingString(cmd);                
+		String removeBind = removeBindingString(cmd);             //[Value[Equip:118-Temp:177-Signal:78]]|[Value[Equip:118-Temp:177-Signal:78]]            
 		String[] eachCmd=removeBind.split("\\|");        //[Value[Equip:118-Temp:177-Signal:78]]
 		List<String> cmdList=new ArrayList<String>();
 		for (int i = 0; i < eachCmd.length; i++) {
@@ -44,6 +43,13 @@ public class ExpressionUtils {
 			cmdList.add(equipId);
 		}
 		return cmdList;
+	}
+	
+	public String removeBindingString(String cmd)
+	{
+		String s=cmd.replace("}", "");
+		s=s.replace("Binding{", "");
+		return s;
 	}
 	
 }

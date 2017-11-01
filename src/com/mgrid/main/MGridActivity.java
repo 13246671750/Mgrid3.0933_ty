@@ -31,7 +31,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -53,7 +52,6 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-
 
 import com.mgrid.MyDialog.MyDialog;
 import com.mgrid.data.DataGetter;
@@ -291,7 +289,7 @@ public class MGridActivity extends Activity {
 					}
 				}
 			}
-		};
+		};                                                                                                                            
 		getApplicationContext().registerReceiver(BroastcastScreenOn, filter);
 	}
 
@@ -666,7 +664,7 @@ public class MGridActivity extends Activity {
 
 					setContentView(mContainer);
 					mContainer.requestFocus();
-
+				
 					showTaskUI(false);
 
 					getWindow().setSoftInputMode(
@@ -729,12 +727,14 @@ public class MGridActivity extends Activity {
 						pagename = m_oPageList.get(tmp_load_pageseek);						
 					}				
 					else {
-						dialog.dismiss();
+						
 						tmp_flag_loading = false;
 						DataGetter.bIsLoading = false;
-						Toast.makeText(MGridActivity.this, Load,
-								Toast.LENGTH_LONG).show();
+//						Toast.makeText(MGridActivity.this, Load,
+//								Toast.LENGTH_LONG).show();
 						isLoading = false;
+						bar.finishLoad();
+						dialog.dismiss();						
 						return;
 					}
 					handler.postDelayed(this, tmp_load_int_time);
@@ -747,7 +747,6 @@ public class MGridActivity extends Activity {
 					try {
 						page.loadPage(pagename);
 						page.active(false);
-
 						page.setVisibility(View.GONE);
 						m_oViewGroups.put(pagename, page);
 						mContainer.addView(page, 1024, 768);
@@ -780,8 +779,8 @@ public class MGridActivity extends Activity {
 						DataGetter.bIsLoading = false;
 						isChangPage = true;
 						MGridActivity.handler.sendEmptyMessage(1);
-						Toast.makeText(MGridActivity.this, Load,
-								Toast.LENGTH_LONG).show();
+//						Toast.makeText(MGridActivity.this, Load,
+//								Toast.LENGTH_LONG).show();
 						isLoading = false;
 						isNOChangPage = true;
 						
@@ -1133,7 +1132,7 @@ public class MGridActivity extends Activity {
 
 			onPageChange(mPageName);
 
-			/*
+			/*j
 			 * 两种切换角度的尝试 if (mPosition > -1) {
 			 * mPhotosList.setVisibility(View.GONE);
 			 * mImageView.setVisibility(View.VISIBLE);

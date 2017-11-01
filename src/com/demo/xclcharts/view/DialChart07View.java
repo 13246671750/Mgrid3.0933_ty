@@ -61,7 +61,15 @@ public class DialChart07View extends GraphicalView {
 
 	private String TAG = "DialChart07View";	
 	
-
+	public String PointColor="#F1F1F1";//指针颜色
+	public String BcColor="#FFF0EEF9";//背景颜色
+	public String textColor="#FF000000";//字体颜色
+	public String leftColor="#898989";//左半圆颜色
+	public String rightColor="#4F4F4F";//右半圆颜色
+	public List<String> textList=new ArrayList<String>();
+	
+	
+	
 	private DialChart chart180 = new DialChart();	
 	private float mPercentage = 0.9f;
 	
@@ -85,6 +93,9 @@ public class DialChart07View extends GraphicalView {
 	 private void initView()
 	 {
 
+		textList.add("0");
+		textList.add("15");
+		textList.add("30");
 		chartRender180();
 	 }
 	 
@@ -111,7 +122,7 @@ public class DialChart07View extends GraphicalView {
 				
 				chart180.setPadding(0, 0, 0, 0);
 				
-				chart180.setTotalAngle(160f);
+				chart180.setTotalAngle(160f); 
 				chart180.setStartAngle(190f);
 						
 				//设置当前百分比
@@ -119,8 +130,8 @@ public class DialChart07View extends GraphicalView {
 				
 				//设置指针长度
 				chart180.getPointer().setPointerStyle(XEnum.PointerStyle.TRIANGLE);
-				chart180.getPointer().getPointerPaint().setColor(Color.parseColor("#F1F1F1"));
-				chart180.getPointer().getBaseCirclePaint().setColor(Color.parseColor("#F1F1F1"));
+				chart180.getPointer().getPointerPaint().setColor(Color.parseColor(PointColor));
+				chart180.getPointer().getBaseCirclePaint().setColor(Color.parseColor(PointColor));
 				chart180.getPointer().setBaseRadius(10);
 				chart180.getPointer().setLength(0.65f,0f);	
 				
@@ -131,15 +142,15 @@ public class DialChart07View extends GraphicalView {
 	
 				
 				List<Integer> rcolor  = new ArrayList<Integer>();			
-				rcolor.add((int)Color.parseColor("#898989"));
-				rcolor.add((int)Color.parseColor("#4F4F4F"));					
+				rcolor.add((int)Color.parseColor(leftColor));
+				rcolor.add((int)Color.parseColor(rightColor));					
 				chart180.addStrokeRingAxis(0.75f,0.5f, ringPercentage, rcolor);
 			//	chart180.getPlotAxis().get(0).getFillAxisPaint().setColor((int)Color.parseColor("#FF2B2B2B") );		#00000000	
-				chart180.getPlotAxis().get(0).getFillAxisPaint().setColor((int)Color.parseColor("#FF000000") );
+				chart180.getPlotAxis().get(0).getFillAxisPaint().setColor((int)Color.parseColor(BcColor) );
 				List<String> tickLabels = new ArrayList<String>();
-				tickLabels.add("0");
-				tickLabels.add("15");
-				tickLabels.add("30");			
+			    for (int i = 0; i < textList.size(); i++) {
+			    	tickLabels.add(textList.get(i));					
+				}			
 				chart180.addInnerTicksAxis(1f, tickLabels);
 				List<RoundAxis> mRoundAxis=chart180.getPlotAxis();
 				for (int i = 0; i < mRoundAxis.size(); i++) {
@@ -147,8 +158,7 @@ public class DialChart07View extends GraphicalView {
 					{
 						mRoundAxis.get(i).setAxisLineVisible(false);
 						mRoundAxis.get(i).setTickMarksVisible(false);
-						mRoundAxis.get(i).getTickLabelPaint().setColor(Color.parseColor("#F2F2F2"));
-						
+						mRoundAxis.get(i).getTickLabelPaint().setColor(Color.parseColor(textColor));						
 					}				
 				}
 				
@@ -169,11 +179,15 @@ public class DialChart07View extends GraphicalView {
 		
 
 		
-		public void setCurrentStatus(float percentage)
-		{								
-			mPercentage =  percentage;
+		public void refreshAll()
+		{											
 			chart180.clearAll();		
 			chartRender180();
+		}
+		
+		public void setCurrent(float percentage)
+		{								
+			mPercentage =  percentage;
 			chart180.getPointer().setPercentage(mPercentage);
 		}
 

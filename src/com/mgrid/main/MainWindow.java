@@ -652,7 +652,7 @@ public class MainWindow extends ViewGroup {
 	public void parseXml(String xmlFile) throws FileNotFoundException {
 		String[] arrStr = xmlFile.split("\\.");
 		m_strResFolder = m_strRootFolder + arrStr[0] + ".files/";
-        System.out.println("xmlFile:"+xmlFile);
+ //       System.out.println("xmlFile:"+xmlFile);
         MGridActivity.XmlFile=xmlFile;
 		InputStream is = new BufferedInputStream(new FileInputStream(
 				Environment.getExternalStorageDirectory().getPath()
