@@ -817,6 +817,7 @@ public class HisEvent extends HisEventTable implements IObject {
 				// List<String> lstRow_his = new ArrayList<String>();
 				return true;
 			}
+			
 
 			// System.out.println("sssss:"+his_event_list.size());
 			// 遍历做容错处理 去除重复采集的告警
@@ -826,7 +827,7 @@ public class HisEvent extends HisEventTable implements IObject {
 			while (iter.hasNext()) {
 				local_his_event his_event = iter.next();
 				if (his_event == null)
-					return false;
+					continue;
 				boolean flag = true;
 
 				if (hast_his.containsKey(his_event.start_time + "#"
@@ -860,19 +861,20 @@ public class HisEvent extends HisEventTable implements IObject {
 				return false;
 			Iterator<String> iterator_key = key2.iterator();
 			while (iterator_key.hasNext()) {
+				
 				String his_event_key = iterator_key.next();
 				if (his_event_key == null || "".equals(his_event_key))
-					return false;
+					continue;
 				local_his_event his_event = hast_his.get(his_event_key);
 				if (his_event == null)
-					return false;
+					continue;
 				List<String> lstRow_his = new ArrayList<String>();
 				lstRow_his.clear();
 				// //对通信中断告警结束时间做判断
 				String finishTime = his_event.finish_time;
 				//
 				if (finishTime.length() < 10)
-					return false;
+					continue;
 				//
 				if ("1970-01-01".equals(finishTime.substring(0, 10))) {
 					finishTime = "null";
@@ -887,6 +889,8 @@ public class HisEvent extends HisEventTable implements IObject {
 
 					continue;
 				}
+				
+				
 				//
 				// 重复的强制处理
 				if ((lstContends != null) || (lstContends.size() != 0)) {
@@ -898,6 +902,7 @@ public class HisEvent extends HisEventTable implements IObject {
 					}
 				}
 
+				
 				String eventName = DataGetter.getEventName(str_EquiptId,
 						his_event.event_id);
 				lstRow_his.add(closeEquiptName);
@@ -907,6 +912,7 @@ public class HisEvent extends HisEventTable implements IObject {
 				lstRow_his.add(his_event.severity); // 告警等级
 				lstRow_his.add(his_event.start_time); // 开始时间
 				lstRow_his.add(finishTime);// 结束时间
+			//	System.out.println(closeEquiptName+":"+eventName+":"+his_event.event_mean+":"+his_event.value+":"+his_event.severity+":"+his_event.start_time+":"+finishTime);
 				lstContends.add(lstRow_his);
 				//updateContends(lstTitles, lstContends);
 			}
@@ -1157,6 +1163,7 @@ public class HisEvent extends HisEventTable implements IObject {
 	
 	private void updateList(List<String> items,List<List<String>> data)
 	{
+		 System.out.println(data.size());
 		 updateContends(items, data);
 	}
 	
