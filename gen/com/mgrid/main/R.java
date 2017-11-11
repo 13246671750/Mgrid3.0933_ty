@@ -98,6 +98,9 @@ containing a value of this type.
         public static final int itemText=0x7f080010;
         public static final int lastpagebtn=0x7f080015;
         public static final int layout_pageID=0x7f080017;
+        public static final int linLayout=0x7f08001c;
+        public static final int list_info=0x7f08001e;
+        public static final int list_title=0x7f08001d;
         public static final int lv_list=0x7f08001a;
         public static final int nextbtn=0x7f080016;
         public static final int pageet=0x7f080019;

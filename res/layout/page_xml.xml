@@ -24,7 +24,7 @@
         android:layout_toRightOf="@+id/pagetv"
         android:singleLine="true"
         android:ems="10"
-        android:maxLength="8" >
+        android:maxLength="20" >
         <requestFocus />
      </EditText>
   

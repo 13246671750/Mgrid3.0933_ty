@@ -115,6 +115,7 @@ import com.sg.uis.LsyNewView.ChangeLabelBtn;
 import com.sg.uis.LsyNewView.EquipHistoryAlarm;
 import com.sg.uis.LsyNewView.EventLevelAlter;
 import com.sg.uis.LsyNewView.HistoryCurveChart;
+import com.sg.uis.LsyNewView.OnClickBtn;
 import com.sg.uis.LsyNewView.SgBARS;
 import com.sg.uis.LsyNewView.SgBarChartView;
 import com.sg.uis.LsyNewView.SgBrokenLine;
@@ -652,7 +653,8 @@ public class MainWindow extends ViewGroup {
 	public void parseXml(String xmlFile) throws FileNotFoundException {
 		String[] arrStr = xmlFile.split("\\.");
 		m_strResFolder = m_strRootFolder + arrStr[0] + ".files/";
- //       System.out.println("xmlFile:"+xmlFile);
+       System.out.println("xmlFile:"+xmlFile);
+       System.out.println(Thread.currentThread().getName());
         MGridActivity.XmlFile=xmlFile;
 		InputStream is = new BufferedInputStream(new FileInputStream(
 				Environment.getExternalStorageDirectory().getPath()
@@ -1045,6 +1047,10 @@ public class MainWindow extends ViewGroup {
 						{
 							HistoryCurveChart HCC=new HistoryCurveChart(this.getContext());
 							m_mapUIs.put(strID, HCC);
+						}else if("OnClickBtn".equals(strType))
+						{
+							OnClickBtn OCB=new OnClickBtn(this.getContext());
+							m_mapUIs.put(strID, OCB);
 						}
  
  
@@ -1163,7 +1169,8 @@ public class MainWindow extends ViewGroup {
 								|| "AlarmShieldTime".equals(strElementType)
 								|| "EquipHistoryAlarm".equals(strElementType)
 								|| "EventLevelAlter".equals(strElementType)
-								|| "HistoryCurveChart".equals(strElementType)) {
+								|| "HistoryCurveChart".equals(strElementType)
+								|| "OnClickBtn".equals(strElementType)) {
 							try {
 								iCurrentObj.parseProperties(strName, strValue,
 										m_strResFolder);

@@ -70,7 +70,12 @@ public class HisEvent extends HisEventTable implements IObject {
 	private String NextDay;
 	private String Receive;
 	private String AllDevice;
- 
+
+	private String textColor = "#FFFFFFFF";
+	private String btnColor = "#FF008B8B";
+	private String titleColor = "#87008B8B";
+	private MyAdapter myAdapter = null;
+
 	private String logPath = "/mgrid/data/Command/0.log";
 	private File logFile = new File(logPath);
 
@@ -87,23 +92,18 @@ public class HisEvent extends HisEventTable implements IObject {
 
 				switch (arg1) {
 				case OnScrollListener.SCROLL_STATE_IDLE:
-					
-					int position=getLastVisiblePosition();
-					if(lsyLs1.size()!=0)
-					{
-						rePlush(position,lsyLs1);
-	
+
+					int position = getLastVisiblePosition();
+					if (lsyLs1.size() != 0) {
+						rePlush(position, lsyLs1);
+
+					} else if (lstContends.size() != 0) {
+						rePlush(position, lstContends);
+					} else if (lsyLs2.size() != 0) {
+
+						rePlush(position, lsyLs2);
 					}
-					else if(lstContends.size()!=0)
-					{
-						rePlush(position,lstContends);
-					}
-					else if(lsyLs2.size()!=0)
-					{
-					
-						rePlush(position,lsyLs2);			
-					}
-				    
+
 					break;
 				case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 					click1 = false;
@@ -168,26 +168,32 @@ public class HisEvent extends HisEventTable implements IObject {
 
 		// 信号名显示text
 		view_text = new TextView(context);
-		view_text.setTextColor(Color.BLACK);
 		view_text.setText(DeviceList); // 变为中文
 		view_text.setTextSize(16);
 		view_text.setGravity(Gravity.CENTER);
-		view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
+		view_text.setPadding(2, 2, 2, 2);
+		// view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
+		view_text.setBackgroundColor(Color.parseColor(btnColor));
+		view_text.setTextColor(Color.parseColor(textColor));
 
 		// 日期选择button
 		view_timeButton = new Button(context);
 		view_timeButton.setText(SetTime); // Set Time
-		view_timeButton.setTextColor(Color.BLACK);
+		// view_timeButton.setTextColor(Color.BLACK);
 		view_timeButton.setTextSize(16);
 		view_timeButton.setPadding(2, 2, 2, 2);
 		view_timeButton.setOnClickListener(l);// 设置该控件的监听
+		view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
+		view_timeButton.setTextColor(Color.parseColor(textColor));
 		// 结束时间button
 		view_PerveDay = new Button(context);
 		view_PerveDay.setText(PreveDay); // PreveDay
-		view_PerveDay.setTextColor(Color.BLACK);
+		// view_PerveDay.setTextColor(Color.BLACK);
 		view_PerveDay.setTextSize(16);
 		view_PerveDay.setPadding(2, 2, 2, 2);
 		view_PerveDay.setOnClickListener(l);// 设置该控件的监听
+		view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
+		view_PerveDay.setTextColor(Color.parseColor(textColor));
 
 		view_Text = new TextView(context);
 		view_Text.setText("——");
@@ -198,17 +204,22 @@ public class HisEvent extends HisEventTable implements IObject {
 		// 开始时间button
 		view_NextDay = new Button(context);
 		view_NextDay.setText(NextDay); // NextDay
-		view_NextDay.setTextColor(Color.BLACK);
+		// view_NextDay.setTextColor(Color.BLACK);
 		view_NextDay.setTextSize(16);
 		view_NextDay.setPadding(2, 2, 2, 2);
 		view_NextDay.setOnClickListener(l);// 设置该控件的监听
+		view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
+		view_NextDay.setTextColor(Color.parseColor(textColor));
+
 		// 接收receive
 		view_Receive = new Button(context);
 		view_Receive.setText(Receive);
-		view_Receive.setTextColor(Color.BLACK);
+		// view_Receive.setTextColor(Color.BLACK);
 		view_Receive.setTextSize(16);
 		view_Receive.setPadding(2, 2, 2, 2);
 		view_Receive.setOnClickListener(l);
+		view_Receive.setBackgroundColor(Color.parseColor(btnColor));
+		view_Receive.setTextColor(Color.parseColor(textColor));
 
 		calendar = Calendar.getInstance();
 		year = calendar.get(Calendar.YEAR);
@@ -221,7 +232,6 @@ public class HisEvent extends HisEventTable implements IObject {
 			}
 		}, year, month, day);
 
-	
 		nameList.add(DeviceList);
 		nameList.add(AllDevice);
 
@@ -237,6 +247,8 @@ public class HisEvent extends HisEventTable implements IObject {
 			AlarmTitles.add("控制结果");
 		}
 
+		
+		myAdapter = new MyAdapter(getContext(), nameList);
 		view_text.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -244,14 +256,14 @@ public class HisEvent extends HisEventTable implements IObject {
 
 				if (isFirst) {
 					get_equiptList();
-					isFirst=false;
+					isFirst = false;
 				}
 
 				View view = m_rRenderWindow.m_oMgridActivity
 						.getLayoutInflater().inflate(R.layout.pop, null);
 				popupWindow = new PopupWindow(view, view_text.getWidth(), 200,
 						true);
-				// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失
+				// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失 
 				popupWindow.setBackgroundDrawable(new BitmapDrawable());
 
 				// 设置点击弹框外部，弹框消失
@@ -260,7 +272,10 @@ public class HisEvent extends HisEventTable implements IObject {
 				popupWindow.showAsDropDown(view_text);
 
 				ListView lv = (ListView) view.findViewById(R.id.lv_list);
-				lv.setAdapter(new MyAdapter(getContext(), nameList));
+				
+				myAdapter.setTextColor(textColor);
+				myAdapter.setBtnColor(btnColor);
+				lv.setAdapter(myAdapter);
 				lv.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
@@ -274,10 +289,8 @@ public class HisEvent extends HisEventTable implements IObject {
 			}
 		});
 
-		
-
 		lstContends = new ArrayList<List<String>>();
-	//	lsyLs = new ArrayList<List<String>>();
+		// lsyLs = new ArrayList<List<String>>();
 		lsyLs1 = new ArrayList<List<String>>();
 		lsyLs2 = new ArrayList<List<String>>();
 		map_EquiptNameList = new HashMap<String, String>();
@@ -435,19 +448,17 @@ public class HisEvent extends HisEventTable implements IObject {
 				return;
 			}
 
-			
-			closeEquiptName=view_text.getText().toString();
-			
+			closeEquiptName = view_text.getText().toString();
+
 			if (DeviceList.equals(closeEquiptName))
 				return;
-			
 
 			table.clear();
 			lsyLs1.clear();
 			lstContends.clear();
 			lsyLs2.clear();
-			index=1;
-			
+			index = 1;
+
 			str_EquiptId = map_EquiptNameList.get(closeEquiptName);
 			mythread thread = new mythread();
 			thread.start();
@@ -474,13 +485,11 @@ public class HisEvent extends HisEventTable implements IObject {
 		@Override
 		public void run() {
 
-			//updateValue();
+			// updateValue();
 			m_bneedupdate = true;
 
 		}
 	}
-
-	
 
 	private class mythread1 extends Thread {
 		public void run() {
@@ -541,50 +550,47 @@ public class HisEvent extends HisEventTable implements IObject {
 			X = nX;
 			Y = nY;
 			mY = pv;
-			view_text.layout(nX, nY - 40, nX + pv, nY - 14);
+			view_text.layout(nX, nY - 40, nX + pv, nY - 16);
 			// view_EquiptSpinner.layout(nX, nY - 42, nX + pv, nY - 12);
 
 			// view_Receive.layout(nX+4*pv+20, nY-42, nX+5*pv, nY-12);
 
-			view_timeButton.layout(nX + pv + 20, nY - 42, nX + 2 * pv, nY - 12);
+			view_timeButton.layout(nX + pv + 20, nY - 40, nX + 2 * pv, nY - 16);
 
 			view_NextDay
-					.layout(nX + 2 * pv + 20, nY - 42, nX + 3 * pv, nY - 12);
+					.layout(nX + 2 * pv + 20, nY - 40, nX + 3 * pv, nY - 16);
 
-			view_Text.layout(nX + 3 * pv + 5, nY - 42, nX + 3 * pv + 15,
-					nY - 12);
+			view_Text.layout(nX + 3 * pv + 5, nY - 40, nX + 3 * pv + 15,
+					nY - 16);
 
-			view_PerveDay.layout(nX + 3 * pv + 20, nY - 42, nX + 4 * pv,
-					nY - 12);
+			view_PerveDay.layout(nX + 3 * pv + 20, nY - 40, nX + 4 * pv,
+					nY - 16);
 
 			view_Receive
-					.layout(nX + 4 * pv + 20, nY - 42, nX + 5 * pv, nY - 12);
+					.layout(nX + 4 * pv + 20, nY - 40, nX + 5 * pv, nY - 16);
 		}
 	}
-	
-    //分页刷新
-	private void  rePlush(int position,List<List<String>> listData)
-	{
+
+	// 分页刷新
+	private void rePlush(int position, List<List<String>> listData) {
 		System.out.println(position);
-		if(position==(listData.size()-1))
-		{
+		if (position == (listData.size() - 1)) {
 			Toast.makeText(getContext(), "已经刷新完了", 200).show();
-			
-		}else if(position!=(listData.size()-1)&&position==(index*30-1))
-		{
-			
-			if(listData.size()<=(index+1)*30)
-			{
-				updateList(AlarmTitles, listData.subList(index*30,listData.size()));	
-			}else
-			{
-				updateList(AlarmTitles, listData.subList(index*30,(index+1)*30));
+
+		} else if (position != (listData.size() - 1)
+				&& position == (index * 30 - 1)) {
+
+			if (listData.size() <= (index + 1) * 30) {
+				updateList(AlarmTitles,
+						listData.subList(index * 30, listData.size()));
+			} else {
+				updateList(AlarmTitles,
+						listData.subList(index * 30, (index + 1) * 30));
 				index++;
 			}
-			update();		
-		}				
+			update();
+		}
 	}
-	
 
 	public void onDraw(Canvas canvas) {
 		if (m_rRenderWindow == null)
@@ -652,6 +658,7 @@ public class HisEvent extends HisEventTable implements IObject {
 			m_title[i].setGravity(Gravity.CENTER);
 			m_title[i].setText(lstTitles.get(i));
 			m_title[i].setVisibility(View.INVISIBLE);
+			m_title[i].setTextColor(Color.parseColor(titleColor));
 			rWin.addView(m_title[i]);
 		}
 		s_title = new TextView[AlarmTitles.size()];
@@ -663,6 +670,7 @@ public class HisEvent extends HisEventTable implements IObject {
 			s_title[i].setGravity(Gravity.CENTER);
 			s_title[i].setText(AlarmTitles.get(i));
 			s_title[i].setVisibility(View.INVISIBLE);
+			s_title[i].setTextColor(Color.parseColor(titleColor));
 			rWin.addView(s_title[i]);
 		}
 
@@ -739,6 +747,32 @@ public class HisEvent extends HisEventTable implements IObject {
 			m_cOddRowBackground = Color.parseColor(strValue);
 		} else if ("EvenRowBackground".equals(strName)) {
 			m_cEvenRowBackground = Color.parseColor(strValue);
+		} else if ("BtnColor".equals(strName)) {
+			if (!strValue.isEmpty()) {
+				btnColor = strValue;
+				
+				view_text.setBackgroundColor(Color.parseColor(btnColor));
+				
+				view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
+			
+				view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
+			
+				view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
+			
+				view_Receive.setBackgroundColor(Color.parseColor(btnColor));
+				
+				myAdapter.setBtnColor(btnColor);
+			}
+		} else if ("TextColor".equals(strName)) {
+			if (!strValue.isEmpty()) {
+				textColor = strValue;
+				myAdapter.setTextColor(textColor);
+			}
+		} else if ("TitleColor".equals(strName)) {
+			if (!strValue.isEmpty()) {
+				titleColor = strValue;
+				myAdapter.notifyDataSetChanged();
+			}
 		}
 	}
 
@@ -777,7 +811,6 @@ public class HisEvent extends HisEventTable implements IObject {
 	@Override
 	public boolean updateValue() // 由于更新不给力在这里要做更新处理 fjw notice
 	{
-		
 
 		Hashtable<String, local_his_event> hast_his;
 		List<local_his_event> his_event_list;
@@ -787,16 +820,16 @@ public class HisEvent extends HisEventTable implements IObject {
 		String before = view_NextDay.getText().toString();
 		int after_num, before_num;
 		if (after.length() < 10 || before.length() < 10) {
-			after_num = set_year*1000 + set_month * 32 + set_day;
-			before_num = set_year*1000 + set_month * 32 + set_day;
+			after_num = set_year * 1000 + set_month * 32 + set_day;
+			before_num = set_year * 1000 + set_month * 32 + set_day;
 		} else {
-			after_num = Integer.parseInt(after.substring(0, 4))*1000
+			after_num = Integer.parseInt(after.substring(0, 4)) * 1000
 					+ Integer.parseInt(after.substring(5, 7)) * 32
 					+ Integer.parseInt(after.substring(8, 10));
-			before_num = Integer.parseInt(before.substring(0, 4))*1000
+			before_num = Integer.parseInt(before.substring(0, 4)) * 1000
 					+ Integer.parseInt(before.substring(5, 7)) * 32
 					+ Integer.parseInt(before.substring(8, 10));
-			System.out.println(after_num+":::;"+before_num);
+			System.out.println(after_num + ":::;" + before_num);
 		}
 
 		if (!AllDevice.equals(closeEquiptName)
@@ -817,7 +850,6 @@ public class HisEvent extends HisEventTable implements IObject {
 				// List<String> lstRow_his = new ArrayList<String>();
 				return true;
 			}
-			
 
 			// System.out.println("sssss:"+his_event_list.size());
 			// 遍历做容错处理 去除重复采集的告警
@@ -861,7 +893,7 @@ public class HisEvent extends HisEventTable implements IObject {
 				return false;
 			Iterator<String> iterator_key = key2.iterator();
 			while (iterator_key.hasNext()) {
-				
+
 				String his_event_key = iterator_key.next();
 				if (his_event_key == null || "".equals(his_event_key))
 					continue;
@@ -882,15 +914,14 @@ public class HisEvent extends HisEventTable implements IObject {
 				}
 				//
 				String startTime = his_event.start_time.substring(0, 10);// 截取年月日
-				int time_num = Integer.parseInt(startTime.substring(0, 4))*1000
-						+ Integer.parseInt(startTime.substring(5, 7)) * 32
-						+ Integer.parseInt(startTime.substring(8, 10));
+				int time_num = Integer.parseInt(startTime.substring(0, 4))
+						* 1000 + Integer.parseInt(startTime.substring(5, 7))
+						* 32 + Integer.parseInt(startTime.substring(8, 10));
 				if (!(time_num <= after_num && time_num >= before_num)) {
 
 					continue;
 				}
-				
-				
+
 				//
 				// 重复的强制处理
 				if ((lstContends != null) || (lstContends.size() != 0)) {
@@ -902,7 +933,6 @@ public class HisEvent extends HisEventTable implements IObject {
 					}
 				}
 
-				
 				String eventName = DataGetter.getEventName(str_EquiptId,
 						his_event.event_id);
 				lstRow_his.add(closeEquiptName);
@@ -912,20 +942,17 @@ public class HisEvent extends HisEventTable implements IObject {
 				lstRow_his.add(his_event.severity); // 告警等级
 				lstRow_his.add(his_event.start_time); // 开始时间
 				lstRow_his.add(finishTime);// 结束时间
-			//	System.out.println(closeEquiptName+":"+eventName+":"+his_event.event_mean+":"+his_event.value+":"+his_event.severity+":"+his_event.start_time+":"+finishTime);
+				// System.out.println(closeEquiptName+":"+eventName+":"+his_event.event_mean+":"+his_event.value+":"+his_event.severity+":"+his_event.start_time+":"+finishTime);
 				lstContends.add(lstRow_his);
-				//updateContends(lstTitles, lstContends);
+				// updateContends(lstTitles, lstContends);
 			}
 
-			
-			if(lstContends.size()<=30)
-			{
+			if (lstContends.size() <= 30) {
 				updateList(lstTitles, lstContends);
-			}else
-			{
+			} else {
 				updateList(lstTitles, lstContends.subList(0, 30));
-			}	
-		//	lstContends.clear();
+			}
+			// lstContends.clear();
 			hast_his.clear();
 			his_event_list.clear();
 			key.clear();
@@ -941,7 +968,7 @@ public class HisEvent extends HisEventTable implements IObject {
 				m_bneedupdate = false; // 如果为真，表示数据不根据数据更新时时刷界面
 				his_event_list = new ArrayList<local_his_event>();
 				his_event_list = getHisEvent();
-				
+
 				// List<String> lstRow_his1 = new ArrayList<String>();
 				//
 				if (his_event_list == null) {
@@ -971,7 +998,8 @@ public class HisEvent extends HisEventTable implements IObject {
 					String startTime = his_event.start_time.substring(0, 10);// 截取年月日
 					String eventName = DataGetter.getEventName(str_Equiptidlsy,
 							his_event.event_id);
-					int time_num = Integer.parseInt(startTime.substring(0, 4))*1000
+					int time_num = Integer.parseInt(startTime.substring(0, 4))
+							* 1000
 							+ Integer.parseInt(startTime.substring(5, 7)) * 32
 							+ Integer.parseInt(startTime.substring(8, 10));
 					if (!(time_num <= after_num && time_num >= before_num)) {
@@ -1009,21 +1037,17 @@ public class HisEvent extends HisEventTable implements IObject {
 
 			}
 
-		
-			if(lsyLs1.size()<=30)
-			{
+			if (lsyLs1.size() <= 30) {
 				updateList(lstTitles, lsyLs1);
-			}else
-			{
+			} else {
 				updateList(lstTitles, lsyLs1.subList(0, 30));
-			}	
-			//lsyLs1.clear();
-			
+			}
+			// lsyLs1.clear();
 
 		} else if ("二次下电".equals(closeEquiptName)) {
 			handler.sendEmptyMessage(1);
 			m_bneedupdate = false;
-			long l1=System.currentTimeMillis();
+			long l1 = System.currentTimeMillis();
 			try {
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						new FileInputStream(logFile), "GBK"));
@@ -1044,15 +1068,13 @@ public class HisEvent extends HisEventTable implements IObject {
 
 					lsyLs2.add(list_alarm);
 				}
-				long l2=System.currentTimeMillis();
-				if(lsyLs2.size()<=30)
-				{
+				long l2 = System.currentTimeMillis();
+				if (lsyLs2.size() <= 30) {
 					updateList(AlarmTitles, lsyLs2);
-				}else
-				{
+				} else {
 					updateList(AlarmTitles, lsyLs2.subList(0, 30));
-				}	
-				long l3=System.currentTimeMillis();
+				}
+				long l3 = System.currentTimeMillis();
 			} catch (Exception e) {
 
 				e.printStackTrace();
@@ -1091,7 +1113,6 @@ public class HisEvent extends HisEventTable implements IObject {
 				local_his_event his_event = new local_his_event();
 
 				his_event.read_string(buf);
-			
 
 				his_event_list.add(his_event);
 
@@ -1160,14 +1181,11 @@ public class HisEvent extends HisEventTable implements IObject {
 		}
 		return true;
 	}
-	
-	private void updateList(List<String> items,List<List<String>> data)
-	{
-		 System.out.println(data.size());
-		 updateContends(items, data);
+
+	private void updateList(List<String> items, List<List<String>> data) {
+		System.out.println(data.size());
+		updateContends(items, data);
 	}
-	
-	
 
 	@Override
 	public boolean needupdate() {
@@ -1248,7 +1266,7 @@ public class HisEvent extends HisEventTable implements IObject {
 	List<String> lstTitles = null;
 	List<String> AlarmTitles = null;
 	List<List<String>> lstContends = null;
-//	List<List<String>> lsyLs = null;
+	// List<List<String>> lsyLs = null;
 	List<List<String>> lsyLs1 = null;
 	List<List<String>> lsyLs2 = null;
 	@SuppressWarnings("unused")
@@ -1258,6 +1276,6 @@ public class HisEvent extends HisEventTable implements IObject {
 	private ArrayList<String> nameList = new ArrayList<String>();
 
 	private int X, Y, mY;
-	private int index=1;
+	private int index = 1;
 
 }

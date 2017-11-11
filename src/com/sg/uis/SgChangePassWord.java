@@ -87,9 +87,9 @@ public class SgChangePassWord extends TextView implements IObject {
 		tvOld.setTextColor(Color.BLACK);
 
 		m_oEditTextOLD
-				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(12) });
+				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });
 		m_oEditTextNEW
-				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(12) });
+				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });
 		m_oEditTextOLD.setSingleLine();
 		m_oEditTextNEW.setSingleLine();
 		m_oEditTextOLD.setGravity(Gravity.CENTER);

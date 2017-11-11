@@ -34,6 +34,7 @@ public class SgHalfCircleChart extends TextView implements IObject {
 	private GaugeChart Gchart;
 	private List<String> label_list = new ArrayList<String>();
 	private List<String> color_list = new ArrayList<String>();
+	private List<String> andel_list = new ArrayList<String>();
 	public SgHalfCircleChart(Context context) {
 		super(context);
 		m_oPaint = new Paint();
@@ -129,44 +130,70 @@ public class SgHalfCircleChart extends TextView implements IObject {
 			}
 		} else if ("ChassisColor".equals(strName)) {
 			colorData = strValue;
-			parse_color();
+			System.out.println(colorData);
+			if(!strValue.isEmpty())
+			{
+				parse_color();	
+			}
+			 
 		} else if ("HorizontalContentAlignment".equals(strName))
 			m_strHorizontalContentAlignment = strValue;
 		else if ("VerticalContentAlignment".equals(strName))
-			m_strVerticalContentAlignment = strValue;
-		else if ("Expression".equals(strName)) {
+			m_strVerticalContentAlignment = strValue; 
+		else if ("Expression".equals(strName)) { 
 			mExpression = strValue;
 			parse_cmd();
-		//	setRandom();
-		} else if ("Content".equals(strName)) {
+		//	setRandom(); 
+		} else if ("Content".equals(strName)) { 
 			labelData = strValue;
 			parse_label();
+		}else if ("AngleData".equals(strName)) { 
+			angelData=strValue;
+			parse_angel();
 		}
 	}
-
+  
+	private void parse_angel() {
+		if (angelData == null || angelData.equals("")
+				|| angelData.equals("角度")) 
+		{
+			
+			return;
+		}
+		String[] s = angelData.split("\\|");
+		for (int i = 0; i < s.length; i++) {
+			andel_list.add(s[i]);  
+		}
+		Gauge01View.mAngels=andel_list; 
+	} 
+	
+	
 	private void parse_label() {
 		if (labelData == null || labelData.equals("")
-				|| labelData.equals("设置内容"))
+				|| labelData.equals("设置内容")) 
 		{
 			Gauge01View.initViews();
 			return;
 		}
 		String[] s = labelData.split("\\|");
 		for (int i = 0; i < s.length; i++) {
-			label_list.add(s[i]);
+			label_list.add(s[i]);  
 		}
 		max_data=Float.parseFloat(label_list.get(label_list.size()-1));
 		Gauge01View.mLabels.clear();
 		Gauge01View.mLabels=label_list;
 		Gauge01View.initViews();
-	}
+	} 
 
-	private void parse_color() {
+	private void parse_color() {  
 		if (colorData == null || colorData.equals(""))
+			
 			return;
-		String[] s = colorData.split("\\|");
+		String[] s = colorData.split("\\|"); 
+	
 		for (int i = 0; i < s.length; i++) {
 			color_list.add(s[i]);
+			
 		}
 		Gauge01View.colorData.clear();
 		Gauge01View.mPartitionSet.clear();
@@ -183,50 +210,50 @@ public class SgHalfCircleChart extends TextView implements IObject {
 		};
 	};
 
-	private void setRandom() {
-		final Random r = new Random();
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (true) {
-					DangQianValue = r.nextInt((int)max_data);
-					DangQianValue= (int) (DangQianValue / max_data * 180);
-					if (DangQianValue > DuiBiValue) {
-						for (int m = DuiBiValue; m <= DangQianValue; m++) {					
-							Gchart.setCurrentAngle(m);
-							try {
-								Thread.sleep(10);
-							} catch (InterruptedException e) {
-
-								e.printStackTrace();
-							}
-							handler.sendEmptyMessage(0);
-						}
-					} else {
-						for (int m = DuiBiValue; m >= DangQianValue; m--) {
-
-							Gchart.setCurrentAngle(m);
-							try {
-								Thread.sleep(10);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							handler.sendEmptyMessage(0);
-						}
-					}
-					DuiBiValue = DangQianValue;
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
-	}
+//	private void setRandom() {
+//		final Random r = new Random();
+// 
+//		new Thread(new Runnable() { 
+//
+//			@Override
+//			public void run() {
+//				while (true) {
+//					DangQianValue = r.nextInt((int)max_data);
+//					DangQianValue= (int) (DangQianValue / max_data * 180);
+//					if (DangQianValue > DuiBiValue) {
+//						for (int m = DuiBiValue; m <= DangQianValue; m++) {					
+//							Gchart.setCurrentAngle(m);
+//							try {
+//								Thread.sleep(10);
+//							} catch (InterruptedException e) {
+//
+//								e.printStackTrace();
+//							}
+//							handler.sendEmptyMessage(0);
+//						}
+//					} else {
+//						for (int m = DuiBiValue; m >= DangQianValue; m--) {
+//
+//							Gchart.setCurrentAngle(m);
+//							try {
+//								Thread.sleep(10);
+//							} catch (InterruptedException e) {
+//								e.printStackTrace();
+//							}
+//							handler.sendEmptyMessage(0);
+//						}
+//					}
+//					DuiBiValue = DangQianValue;
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}).start();
+//	}
 
 	@Override
 	public void initFinished() {
@@ -378,10 +405,10 @@ public class SgHalfCircleChart extends TextView implements IObject {
 	private String newValue = "";
 	private String oldValue = "";
 	public boolean m_bneedupdate = true;
-	private String mExpression = "";
+	private String mExpression = ""; 
 	private int DangQianValue, DuiBiValue;
 
-	private String FontColor, ScaleColor, PointColor, ChassisColor;
+	private String FontColor, ScaleColor, PointColor, ChassisColor,angelData;
 	private int FontSize;
 	private String labelData;
 	private String colorData;

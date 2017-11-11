@@ -112,11 +112,11 @@ public class SgChangXmlPW extends TextView implements IObject {
 		tvOld.setTextColor(Color.BLACK);
 
 		m_oEditTextOLD
-				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(12) });
+				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });
 		m_oEditTextNEW
-				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(12) });
+				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });
 		E_CPassword
-				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(12) });
+				.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });
 		m_oEditTextOLD.setSingleLine();
 		E_CPassword.setSingleLine();
 		m_oEditTextNEW.setSingleLine();

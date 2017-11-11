@@ -30,7 +30,7 @@ public class UtTable extends ListView {
 	}
 
 	public void update() {
-		m_tableAdapter.notifyDataSetChanged();
+		m_tableAdapter.notifyDataSetChanged(); 
 		this.layout(m_nLeft, m_nTop, m_nRight, m_nBottom
 				- m_nLayoutBottomOffset);
 		m_nLayoutBottomOffset = -m_nLayoutBottomOffset;

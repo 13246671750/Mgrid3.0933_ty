@@ -35,6 +35,7 @@ import com.mgrid.main.MainWindow;
 import com.mgrid.main.R;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
+import com.sg.common.MySimpleAdapter;
 import com.sg.common.UtTable;
 
 /** 告警等级分类 */
@@ -42,7 +43,7 @@ import com.sg.common.UtTable;
 		"ClickableViewAccessibility" })
 public class AlarmLevel extends TextView implements IObject {
 
-	//TabHost tablehost;
+	// TabHost tablehost;
 
 	public AlarmLevel(Context context) {
 		super(context);
@@ -52,22 +53,21 @@ public class AlarmLevel extends TextView implements IObject {
 
 		listView = new ListView(context);
 		getData();
-		adapter = new SimpleAdapter(context, list, R.layout.vlist,
+		adapter = new MySimpleAdapter(context, list, R.layout.vlist,
 				new String[] { "time", "value", "img" }, new int[] {
 						R.id.title, R.id.info, R.id.img });
 		// listView.setDivider();
 		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-
-				Toast.makeText(getContext(), "点击了第" + position + "项", 1000)
-						.show();
-			}
-		});
-
+		// listView.setOnItemClickListener(new OnItemClickListener() {
+		//
+		// @Override
+		// public void onItemClick(AdapterView<?> parent, View view,
+		// int position, long id) {
+		//
+		// Toast.makeText(getContext(), "点击了第" + position + "项", 1000)
+		// .show();
+		// }
+		// });
 
 	}
 
@@ -110,7 +110,7 @@ public class AlarmLevel extends TextView implements IObject {
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
 
 			listView.layout(nX, nY, nX + nWidth, nY + nHeight);
-		
+
 		}
 	}
 
@@ -147,7 +147,7 @@ public class AlarmLevel extends TextView implements IObject {
 			if (strValue.isEmpty())
 				return;
 			m_cBackgroundColor = Color.parseColor(strValue);
-			
+
 		} else if ("Content".equals(strName)) {
 			m_strContent = strValue;
 
@@ -161,13 +161,18 @@ public class AlarmLevel extends TextView implements IObject {
 		} else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
-			m_cFontColor = Color.parseColor(strValue);
-			// this.setTextColor(m_cFontColor);
-		} else if ("ClickEvent".equals(strName))
-			m_strClickEvent = strValue;
-		else if ("Url".equals(strName))
-			m_strUrl = strValue;
-		else if ("CmdExpression".equals(strName))
+			if (!strValue.isEmpty())
+				adapter.setInfoColor(strValue);
+		} else if ("ColorData".equals(strName)) {
+			if (!strValue.isEmpty())
+				adapter.setLinColor(strValue);
+
+		} else if ("ScaleColor".equals(strName)) {
+			if (!strValue.isEmpty()) {
+				adapter.setTitleColor(strValue);
+				adapter.notifyDataSetChanged();
+			}
+		} else if ("CmdExpression".equals(strName))
 			m_strCmdExpression = strValue;
 
 		else if ("HorizontalContentAlignment".equals(strName))
@@ -206,7 +211,7 @@ public class AlarmLevel extends TextView implements IObject {
 			switch (msg.what) {
 			case 0:
 
-			    list.clear();
+				list.clear();
 				for (int i = 0; i < old_list.size(); i++) {
 					list.add(old_list.get(i));
 				}
@@ -281,16 +286,15 @@ public class AlarmLevel extends TextView implements IObject {
 	@Override
 	public boolean updateValue() {
 
-		m_bneedupdate=false;
-		
+		m_bneedupdate = false;
+
 		Hashtable<String, Hashtable<String, Event>> listEvents = DataGetter
 				.getRTEventList();
 
 		if (listEvents == null || listEvents.size() == 0)
 			return false;
-		
-		if (OldSize == listEvents.size())
-		{
+
+		if (OldSize == listEvents.size()) {
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
@@ -313,13 +317,29 @@ public class AlarmLevel extends TextView implements IObject {
 					.entrySet().iterator();
 			while (it.hasNext()) {
 				Hashtable.Entry<String, Event> event_entry = it.next();
-				String eventid=event_entry.getKey();
+				String eventid = event_entry.getKey();
 				Event event = event_entry.getValue();
-//			    HashMap<Long, String> hash=MGridActivity.AlarmShieldTimer.get(equitid+"_"+eventid);
-//			    if(hash!=null) continue;
+				// HashMap<Long, String>
+				// hash=MGridActivity.AlarmShieldTimer.get(equitid+"_"+eventid);
+				// if(hash!=null) continue;
+				String gradeLevel= "";
+				switch (event.grade) {
+				case 1:
+					gradeLevel = "通知"; 
+					break; 
 
+				case 2:
+					gradeLevel = "一般告警";
+					break;
+				case 3:
+					gradeLevel = "严重告警";
+					break;
+				case 4:
+					gradeLevel = "紧急告警";
+					break;
+				}
 				String value = equipname + "——" + event.name + ":"
-						+ event.meaning + "    等级：" + event.grade;
+						+ event.meaning + "    等级：" + gradeLevel;
 				Map<String, Object> map_Value = new HashMap<String, Object>();
 				map_Value.put("time", event.starttime * 1000);
 				map_Value.put("value", value);
@@ -429,14 +449,14 @@ public class AlarmLevel extends TextView implements IObject {
 	public float m_yscal = 0;
 
 	private ListView listView = null;
-   
+
 	Intent m_oHomeIntent = null;
 	public boolean m_bneedupdate = true;
 	private String mExpression = "";
 	private List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-    private List<Map<String, Object>> old_list = new ArrayList<Map<String, Object>>();
+	private List<Map<String, Object>> old_list = new ArrayList<Map<String, Object>>();
 	private int OldSize = 0;
-	private SimpleAdapter adapter;
+	private MySimpleAdapter adapter;
 	private int m_nLayoutBottomOffset = 1;
 	private String grade = "0";
 }

@@ -20,12 +20,12 @@ public class UtTableAdapter extends BaseAdapter {
     @Override  
     public int getCount() {
     	// 试行，如果逻辑出现漏洞再调整为计算方式。-- Charles
-        //return Math.min(table.size(), m_nWaterMarker);
+        //return table.size();
     	return m_nWaterMarker;
     }
     
     @Override  
-    public long getItemId(int position) {
+    public long getItemId(int position) { 
         return position;
     }
     

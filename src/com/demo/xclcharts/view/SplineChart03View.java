@@ -17,11 +17,9 @@ import org.xclcharts.renderer.XEnum;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint.Align;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.Button;
 import android.widget.Toast;
 
 public class SplineChart03View  extends TouchView {
@@ -74,11 +72,10 @@ protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 
 private void chartRender()
 {
-	try {
-					
+	try {				
 		//设置绘图区默认缩进px值,留置空间显示Axis,Axistitle....		
 		int [] ltrb = getBarLnDefaultSpadding();
-		chart.setPadding(ltrb[0], ltrb[1], ltrb[2], ltrb[3]);	
+		chart.setPadding(35,30,10, 20);	
 		
 		//显示边框
 		//chart.showRoundBorder();
@@ -122,8 +119,8 @@ private void chartRender()
 		chart.setTopAxisVisible(false);
 		chart.setRightAxisVisible(false);				
 		
-		chart.getPlotGrid().getHorizontalLinePaint().setColor(Color.WHITE);
-		chart.getPlotGrid().getHorizontalLinePaint().setStrokeWidth(0.1f);
+		chart.getPlotGrid().getHorizontalLinePaint().setColor(Color.parseColor("#62666D"));
+		chart.getPlotGrid().getHorizontalLinePaint().setStrokeWidth(0.05f);
 		chart.getCategoryAxis().getAxisPaint().setColor(Color.WHITE);
 		chart.getCategoryAxis().getAxisPaint().setStrokeWidth(1);
 		
@@ -201,14 +198,14 @@ private void chartDataSet()
 
 		
 		SplineData dataSeries2 = new SplineData("mPUE",linePoint2,
-				(int)Color.rgb(221, 164, 159) );
+				(int)Color.parseColor("#FF76A1EC") );
 		
 		
 		
 			
 		dataSeries2.setDotStyle(XEnum.DotStyle.HIDE);				
 		dataSeries2.getDotLabelPaint().setColor(Color.RED);
-		dataSeries2.getLinePaint().setStrokeWidth(3);	
+		dataSeries2.getLinePaint().setStrokeWidth(2);	
 			
 		//设定数据源		
 	//	chartData.add(dataSeries1);				
@@ -217,7 +214,7 @@ private void chartDataSet()
 
 private void chartLabels()
 {
-	labels.add("0");
+	labels.add("0"); 
 	//labels.add("");
 	labels.add("6");
 	//labels.add("");
@@ -225,7 +222,7 @@ private void chartLabels()
 	//labels.add("");
 	labels.add("18");
 	//labels.add("");
-	labels.add("24");
+	labels.add("24"); 
 }
 
 @Override
@@ -288,8 +285,7 @@ private void triggerClick(float x,float y)
 		     break;
 		}
         i++;
-	}//end while
-			
+	}//end while			
 }
 
 }

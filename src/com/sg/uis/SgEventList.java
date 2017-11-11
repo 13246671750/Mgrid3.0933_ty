@@ -42,7 +42,7 @@ public class SgEventList extends UtTable implements IObject {
 	private String AlarmMeaning;
 	private String AlarmSeverity;
 	private String StartTime;
-
+    private Hashtable<String, Hashtable<String, Event>> listEvents = null;
 	private List<String> cmd_list = new ArrayList<String>();
 
 	public SgEventList(Context context) {
@@ -108,6 +108,9 @@ public class SgEventList extends UtTable implements IObject {
 					System.out.println("发送成功");
 				}
 				break;
+			case 5:
+				stopSound();
+				break;
 			default:
 				break;
 			}
@@ -118,6 +121,12 @@ public class SgEventList extends UtTable implements IObject {
 		Intent intent = new Intent(m_rRenderWindow.m_oMgridActivity,
 				SoundService.class);
 		intent.putExtra("playing", true);
+		m_rRenderWindow.m_oMgridActivity.startService(intent);
+	}
+	private void stopSound() {
+		Intent intent = new Intent(m_rRenderWindow.m_oMgridActivity,
+				SoundService.class);
+		intent.putExtra("playing", false);
 		m_rRenderWindow.m_oMgridActivity.startService(intent);
 	}
 
@@ -346,7 +355,7 @@ public class SgEventList extends UtTable implements IObject {
 		m_bneedupdate = false;
 		if (m_rRenderWindow == null)
 			return false;
-		Hashtable<String, Hashtable<String, Event>> listEvents = null;
+		
 		if (m_rRenderWindow.m_bHasRandomData == false) { // 是否用随机数据
 			listEvents = m_rRenderWindow.m_oShareObject.m_mapEventListDatas
 					.get(this.getUniqueID());
@@ -354,9 +363,12 @@ public class SgEventList extends UtTable implements IObject {
 		} else {
 			listEvents = m_listTempEvents; // 要用随机数据
 		}
+		
 
 		if (listEvents == null) { //
 			lstContends.clear();
+			oldEvenLists=null;
+			handler.sendEmptyMessage(5);
 			/*
 			 * List<String> fjwRow = new ArrayList<String>();
 			 * fjwRow.add("暂无告警信息"); fjwRow.add("暂无告警信息"); fjwRow.add("暂无告警信息");
@@ -374,7 +386,7 @@ public class SgEventList extends UtTable implements IObject {
 
 				@Override
 				public void run() {
-					if (needAlarm()) {
+					if (needAlarm(listEvents)) {
 						if (MGridActivity.alarmWay.equals("wav")) {
 							handler.sendEmptyMessage(2);
 						} else if (MGridActivity.alarmWay.equals("DO1")) {
@@ -469,9 +481,9 @@ public class SgEventList extends UtTable implements IObject {
 		return m_bneedupdate;
 	}
 
-	private boolean needAlarm() {
-		Hashtable<String, Hashtable<String, Event>> newEvenLists = DataGetter
-				.getRTEventList();
+	private boolean needAlarm(Hashtable<String, Hashtable<String, Event>> event) {
+		Hashtable<String, Hashtable<String, Event>> newEvenLists = event;
+		
 		if (newEvenLists == null || newEvenLists.size() == 0)
 			return false;
 		if (oldEvenLists == null) { // 第一次判断时 old_eventss为空 如果new_eventss包含这个告警

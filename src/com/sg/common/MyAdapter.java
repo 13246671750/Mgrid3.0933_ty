@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.mgrid.main.R;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,26 @@ public class MyAdapter extends BaseAdapter{
 
 	private  LayoutInflater inflater;
 	private  ArrayList<String> list;
+	private String textColor="#000000";
+	private String btnColor="#DCDCDC";
+	
 	
 	public MyAdapter(Context context,ArrayList<String> list){
 		
 		inflater=LayoutInflater.from(context);
 		this.list=list;
 		
+	}
+	
+	
+	public void setTextColor(String textColor)
+	{
+		this.textColor=textColor;
+	}
+	
+	public void setBtnColor(String btnColor)
+	{
+		this.btnColor=btnColor;
 	}
 	
 	@Override
@@ -41,6 +56,8 @@ public class MyAdapter extends BaseAdapter{
 		return position;
 	}
 
+	
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
@@ -50,6 +67,8 @@ public class MyAdapter extends BaseAdapter{
 		}
 		TextView text=(TextView) convertView.findViewById(R.id.text);
 		text.setText(list.get(position));
+		text.setTextColor(Color.parseColor(textColor));
+		text.setBackgroundColor(Color.parseColor(btnColor));
 		
 		return convertView;
 	}

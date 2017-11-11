@@ -38,7 +38,7 @@ public class AutoSig extends TextView implements IObject {
 		int nY = t + (int) (((float)m_nPosY / (float)MainWindow.FORM_HEIGHT) * (b-t));
 		int nWidth = (int) (((float)m_nWidth / (float)MainWindow.FORM_WIDTH) * (r-l));
 		int nHeight = (int) (((float)m_nHeight / (float)MainWindow.FORM_HEIGHT) * (b-t));
-
+ 
 		m_rBBox.left = nX;
 		m_rBBox.top = nY;
 		m_rBBox.right = nX+nWidth;

@@ -3,6 +3,7 @@
     android:layout_width="900dp"
     android:layout_height="50dp"
     android:background="#FFFFFF"
+    android:id="@+id/linLayout"
     android:orientation="horizontal" >
 
     <LinearLayout
@@ -23,18 +24,20 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/list_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#7B68EE"
-            android:textSize="13px" />
+            android:textSize="13px" 
+            android:text="123"/>
 
         <TextView
-            android:id="@+id/info"
+            android:id="@+id/list_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#7B68EE"
-            android:textSize="13px" />
+            android:textSize="13px"
+            android:text="234" />
     </LinearLayout>
     
   

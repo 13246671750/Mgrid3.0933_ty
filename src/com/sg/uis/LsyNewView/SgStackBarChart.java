@@ -190,7 +190,7 @@ public class SgStackBarChart extends TextView implements IObject {
 //									chartLabels.add("ио╡Ю");
 //								else
 //									chartLabels.add("об╡Ю");
-//							}
+//							}			
 //							for (int i = 0; i < 10; i++) {
 //								dataSeriesA.add((double) r.nextInt(4)+1);
 //								dataSeriesB.add((double) r.nextInt(4)+1);
@@ -230,6 +230,7 @@ public class SgStackBarChart extends TextView implements IObject {
 //					}
 //				}).start();
 		//	}
+			
 		} else if ("Expression".equals(strName)) {
 			mExpression = strValue;
 			parse_cmd();

@@ -44,6 +44,8 @@ public class SgRectangle extends View implements IObject {
 		m_oPaint.setAntiAlias(false); // 设置画笔的锯齿效果
 		m_oPaint.setStrokeWidth(m_nBorderWidth);
 		m_oPaint.setStyle(Paint.Style.STROKE);
+		m_oPaint.setShadowLayer(5, 3, 3, 0xFF855A30);
+		
         
         int nWidth = (int) (((float)(m_nWidth) / (float)MainWindow.FORM_WIDTH) * (m_rRenderWindow.VIEW_RIGHT - m_rRenderWindow.VIEW_LEFT));
 		int nHeight = (int) (((float)(m_nHeight) / (float)MainWindow.FORM_HEIGHT) * (m_rRenderWindow.VIEW_BOTTOM - m_rRenderWindow.VIEW_TOP));

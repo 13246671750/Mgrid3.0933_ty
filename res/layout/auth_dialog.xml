@@ -23,7 +23,7 @@
         android:layout_toRightOf="@+id/tvuserName"
         android:singleLine="true"
         android:ems="10"
-        android:maxLength="8" >
+        android:maxLength="20" >
  
         <requestFocus />
     </EditText>
@@ -46,7 +46,7 @@
         android:layout_toRightOf="@+id/tvPWD"
         android:singleLine="true"
         android:ems="10"
-        android:maxLength="12"
+        android:maxLength="20"
         android:inputType="textPassword" />
 
 </RelativeLayout>

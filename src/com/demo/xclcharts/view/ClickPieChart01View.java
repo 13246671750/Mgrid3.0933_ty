@@ -33,7 +33,7 @@ public class ClickPieChart01View extends GraphicalView {
 		super(context);
 		initView();
 	 }	
-	
+	 
 	 public ClickPieChart01View(Context context, AttributeSet attrs){   
        super(context, attrs);   
        initView();
@@ -64,10 +64,10 @@ public class ClickPieChart01View extends GraphicalView {
    	//图的内边距
 		//注释折线较长，缩进要多些	
 		int [] ltrb = new int[4];
-		ltrb[0] = DensityUtil.dip2px(getContext(), w/6); //left	
-		ltrb[1] = DensityUtil.dip2px(getContext(), h/6); //top	
-		ltrb[2] = DensityUtil.dip2px(getContext(), w/6); //right
-		ltrb[3] = DensityUtil.dip2px(getContext(), h/6); //bottom				
+		ltrb[0] = DensityUtil.dip2px(getContext(), w/5); //left	
+		ltrb[1] = DensityUtil.dip2px(getContext(), h/5); //top	
+		ltrb[2] = DensityUtil.dip2px(getContext(), w/5); //right
+		ltrb[3] = DensityUtil.dip2px(getContext(), h/5); //bottom				
 						
 		chart.setPadding(ltrb[0], ltrb[1], ltrb[2], ltrb[3]);
    }  	

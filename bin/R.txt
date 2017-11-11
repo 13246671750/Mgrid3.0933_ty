@@ -38,6 +38,9 @@ int id itemImage 0x7f08000f
 int id itemText 0x7f080010
 int id lastpagebtn 0x7f080015
 int id layout_pageID 0x7f080017
+int id linLayout 0x7f08001c
+int id list_info 0x7f08001e
+int id list_title 0x7f08001d
 int id lv_list 0x7f08001a
 int id nextbtn 0x7f080016
 int id pageet 0x7f080019

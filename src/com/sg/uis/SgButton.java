@@ -111,7 +111,7 @@ public class SgButton extends TextView implements IObject {
 		// BitmapDrawable(Environment.getExternalStorageDirectory().getPath() +
 		// "/MGridRes/button.png"));
 		setBackgroundResource(android.R.drawable.btn_default);
-		setPadding(0, 4, 0, 0);
+		setPadding(0, 0, 0, 0);
 	}
 
 	@SuppressLint("DrawAllocation")

@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.demo.xclcharts.view.SplineChart01View;
 import com.mgrid.data.DataGetter;
@@ -332,7 +331,7 @@ public class SgBrokenLine extends TextView implements IObject {
 				
 					dataSeries.getDotLabelPaint().setColor(Color.parseColor("#A9A9A9"));
 					dataSeries.getDotLabelPaint().setTextSize(10);
-					chartData.add(dataSeries);
+					chartData.add(dataSeries); 
 				}
 				handler.sendEmptyMessage(0);
 				try {

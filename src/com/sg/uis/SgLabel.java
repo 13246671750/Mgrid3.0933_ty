@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
@@ -212,7 +213,10 @@ public class SgLabel extends TextView implements IObject {
 			m_strContent = strValue;
 			this.setText(m_strContent);
 		} else if ("FontFamily".equals(strName))
+		{
 			m_strFontFamily = strValue;
+            this.setTypeface(Typeface.MONOSPACE);
+		}
 		else if ("FontSize".equals(strName)) {
 			float fWinScale = (float) MainWindow.SCREEN_WIDTH
 					/ (float) MainWindow.FORM_WIDTH;

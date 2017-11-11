@@ -47,7 +47,8 @@ public class GaugeChart01View  extends GraphicalView {
 	private GaugeChart chart = new GaugeChart();
 	
 	public List<String> mLabels = new ArrayList<String>();
-	public List<Pair> mPartitionSet = new ArrayList<Pair>();		
+	public List<Pair> mPartitionSet = new ArrayList<Pair>();	
+	public List<String> mAngels = new ArrayList<String>();
 	private float mAngle = 0.0f;
 
 	public String tColor="#B2D4E9";
@@ -109,7 +110,7 @@ public class GaugeChart01View  extends GraphicalView {
 		
 	public void chartRender()
 	{
-		try {								
+		try {								 
 						
 			//璁剧疆鏍囬
 			//chart.setTitle("鍒诲害鐩� ");
@@ -146,9 +147,20 @@ public class GaugeChart01View  extends GraphicalView {
 	//鍒嗗尯[瑙掑害(0-mStartAngle)锛岄鑹瞉		
 	private void chartDataSet()
 	{
-		int Angle = 180/colorData.size();
-		for (int i = 0; i < colorData.size(); i++) {
-			mPartitionSet.add(new Pair<Float,Integer>((float)Angle, Color.parseColor(colorData.get(i))));
+		
+		
+		if(mAngels.size()>0&&colorData.size()==mAngels.size())
+		{			
+			for (int i = 0; i < colorData.size(); i++) {
+				mPartitionSet.add(new Pair<Float,Integer>((float)Float.parseFloat(mAngels.get(i)), Color.parseColor(colorData.get(i))));
+			}
+		}
+		else
+		{
+			int Angle = 180/colorData.size();
+			for (int i = 0; i < colorData.size(); i++) {
+				mPartitionSet.add(new Pair<Float,Integer>((float)Angle, Color.parseColor(colorData.get(i))));
+			}
 		}
 		
 	}

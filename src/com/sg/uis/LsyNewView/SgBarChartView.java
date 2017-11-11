@@ -1,8 +1,6 @@
 package com.sg.uis.LsyNewView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,30 +27,26 @@ import com.mgrid.main.MainWindow;
 import com.mgrid.util.ExpressionUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
-import com.sg.common.UtExpressionParser;
-import com.sg.common.UtExpressionParser.stBindingExpression;
-import com.sg.common.UtExpressionParser.stExpression;
 
-/**柱状图 */
-@SuppressLint({ "ShowToast", "InflateParams", "RtlHardcoded", "ClickableViewAccessibility" })
+/** 柱状图 */
+@SuppressLint({ "ShowToast", "InflateParams", "RtlHardcoded",
+		"ClickableViewAccessibility" })
 public class SgBarChartView extends TextView implements IObject {
 
-	
-	private BarChart Bchart =null;
+	private BarChart Bchart = null;
 	private List<String> chartLabels = new LinkedList<String>();
 	private List<BarData> chartData = new LinkedList<BarData>();
-	
+
 	public SgBarChartView(Context context) {
 		super(context);
-		
+
 		m_oPaint = new Paint();
 		m_rBBox = new Rect();
-		chart=new BarChart01View(context);
-		chart.setTouch(false); 
-		Bchart=chart.getBarChart();
-	    
+		chart = new BarChart01View(context);
+		chart.setTouch(false);
+		Bchart = chart.getBarChart();
+
 	}
-	
 
 	@SuppressLint("DrawAllocation")
 	protected void onDraw(Canvas canvas) {
@@ -78,17 +72,18 @@ public class SgBarChartView extends TextView implements IObject {
 		m_rBBox.right = nX + nWidth;
 		m_rBBox.bottom = nY + nHeight;
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
-		
+
 			chart.layout(nX, nY, nX + nWidth, nY + nHeight);
 		}
 	}
 
 	@Override
-	public void addToRenderWindow(MainWindow rWin) {;
+	public void addToRenderWindow(MainWindow rWin) {
+		;
 		m_rRenderWindow = rWin;
 		rWin.addView(this);
 		rWin.addView(chart);
-		
+
 	}
 
 	@Override
@@ -112,52 +107,78 @@ public class SgBarChartView extends TextView implements IObject {
 			m_nHeight = Integer.parseInt(arrSize[1]);
 		} else if ("Alpha".equals(strName)) {
 			m_fAlpha = Float.parseFloat(strValue);
-		} else if ("BackgroundColor".equals(strName)) {
-			if (strValue.isEmpty())
-				return;
-			m_cBackgroundColor = Color.parseColor(strValue);
-			// this.setBackgroundColor(m_cBackgroundColor);
+		} else if ("ScaleColor".equals(strName)) {
+			if (!strValue.isEmpty())
+			{
+				Bchart.getDataAxis().getAxisPaint().setColor(Color.parseColor(strValue));
+				Bchart.getCategoryAxis().getAxisPaint().setColor(Color.parseColor(strValue));			
+				Bchart.getDataAxis().getTickMarksPaint().setColor(Color.parseColor(strValue));
+				Bchart.getCategoryAxis().getTickMarksPaint().setColor(Color.parseColor(strValue));
+			}
+		
 		} else if ("Content".equals(strName)) {
 			m_strContent = strValue;
 			parse_content();
-		
+  
 		} else if ("FontFamily".equals(strName))
 			m_strFontFamily = strValue;
 		else if ("FontSize".equals(strName)) {
 			float fWinScale = (float) MainWindow.SCREEN_WIDTH
 					/ (float) MainWindow.FORM_WIDTH;
-			m_fFontSize = Float.parseFloat(strValue) * fWinScale;	
-		} else if ("IsBold".equals(strName))
+			m_fFontSize = Float.parseFloat(strValue) * fWinScale;
+		} else if ("IsBold".equals(strName)) 
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
-			m_cFontColor = Color.parseColor(strValue);
+			if (!strValue.isEmpty())
+			{
+				//x轴刻度文字画笔
+				Bchart.getCategoryAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));
+			
+				//y轴刻度文字画笔
+				Bchart.getDataAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));
+				
+			}
 		} else if ("ClickEvent".equals(strName))
 			m_strClickEvent = strValue;
 		else if ("Url".equals(strName))
 			m_strUrl = strValue;
-		else if ("ColorData".equals(strName))
-		{
-			if(!strValue.isEmpty())
-			{
-				color_data=strValue;
+		else if ("ColorData".equals(strName)) {
+			if (!strValue.isEmpty()) {
+				color_data = strValue;
 				parse_color();
 			}
-		
-		}
-		else if ("HorizontalContentAlignment".equals(strName))
+		} else if ("HorizontalContentAlignment".equals(strName))
 			m_strHorizontalContentAlignment = strValue;
 		else if ("VerticalContentAlignment".equals(strName))
 			m_strVerticalContentAlignment = strValue;
 		else if ("Expression".equals(strName)) {
-			 cmd = strValue; 
-			 mExpression=strValue;
-			 parse_cmd();
-//           setlable();			 
+			cmd = strValue;
+			mExpression = strValue;
+			parse_cmd();
+			
+		}else if ("Xlabel".equals(strName)) {
+			labelData = strValue;
+			parse_label();
 		}
 	}
 
-		
+	private void parse_label(){
+		if (labelData == null || labelData.equals("")
+				|| labelData.equals("设置内容")) {
 
+			setlable();
+			return;
+		}
+			
+		String[] s = labelData.split("\\|");
+		for (int i = 0; i < s.length; i++) {
+			chartLabels.add(s[i]);
+		}
+		Bchart.setCategories(chartLabels);
+		
+	}
+	
+	
 	@Override
 	public void initFinished() {
 		int nFlag = Gravity.NO_GRAVITY;
@@ -205,67 +226,62 @@ public class SgBarChartView extends TextView implements IObject {
 		return m_strType;
 	}
 
-	
-	private void parse_content()
-	{
+	private void parse_content() {
 		if (m_strContent == null || m_strContent.equals("")
-				|| m_strContent.equals("设置内容"))
-		{			
+				|| m_strContent.equals("设置内容")) {
 			return;
 		}
 		String[] s = m_strContent.split("\\|");
-		chartLabels.clear();
-		for (int i = 0; i < s.length; i++) {
-			chartLabels.add(s[i]);
-		}
-		Bchart.setCategories(chartLabels);	
-	}
-	
-	
-	private void parse_color()
-	{
-		if(data_cmd.size()==0) return;
-		String[] str=color_data.split("\\|");
 		for (int i = 0; i < data_cmd.size(); i++) {
-			if(i<str.length)
-			data_color.add(str[i]);
+			if (i < s.length)
+				data_label.add(s[i]);
 			else
-			data_color.add(str[str.length-1]);	
-		}		
+				data_label.add(s[s.length - 1]);
+		}
+
+	}
+
+	private void parse_color() {
+		if (data_cmd.size() == 0)
+			return;
+		String[] str = color_data.split("\\|");
+		for (int i = 0; i < data_cmd.size(); i++) {
+			if (i < str.length)
+				data_color.add(str[i]);
+			else
+				data_color.add(str[str.length - 1]);
+		}
 	}
 
 	// fjw add 按钮控制命令功能的控制命令的绑定表达式解析
 	// 解析出控件表达式，返回控件表达式类
-	public boolean parse_cmd() {	
-		if(cmd.equals("")||cmd==null) return false;
-		String[] Expression=cmd.split("/");
+	public boolean parse_cmd() {
+		if (cmd.equals("") || cmd == null)
+			return false;
+		String[] Expression = cmd.split("/");
 		for (int i = 0; i < Expression.length; i++) {
-			List<String> list_cmd=ExpressionUtils.getExpressionUtils().parse(Expression[i]);
-			index=list_cmd.size();
+			List<String> list_cmd = ExpressionUtils.getExpressionUtils().parse(
+					Expression[i]);
+			index = list_cmd.size();
 			data_cmd.add(list_cmd);
 		}
 		return true;
 	}
-	
-	
-	private void setlable() {
-		
-		
-		if(chartLabels.size()!=0) return;
-		for(int i=1;i<=index;i++)
-		{
-			chartLabels.add(i+"");
-		}
-		Bchart.setCategories(chartLabels);	
-	}
-	
-	
 
+	private void setlable() {
+
+		if (chartLabels.size() != 0)
+			return;
+		for (int i = 1; i <= index; i++) {
+			chartLabels.add(i + "");
+		}
+		Bchart.setCategories(chartLabels);
+	}
 
 	@Override
 	public void updateWidget() {
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				handler.sendEmptyMessage(0);
@@ -274,82 +290,87 @@ public class SgBarChartView extends TextView implements IObject {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				m_bneedupdate=true;
+				m_bneedupdate = true;
 			}
 		}).start();
-		
+
 	}
 
-	private Handler handler=new Handler()
-	{
+	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
-				
+
+				Bchart.getDataAxis().setAxisMax(max_Value + 50);
 				Bchart.setDataSource(chartData);
 				chart.invalidate();
-				
-				break;			
+
+				break;
 			}
-			
+
 		};
 	};
-	
-	
-	
-	
-	
+
 	@Override
 	public boolean updateValue() {
-		
-		
-		
-		if(data_cmd.size()<=0)
-			return false;	
+
+		if (data_cmd.size() <= 0)
+			return false;
 
 		float value;
-		
-		chartData=new ArrayList<BarData>();
-		
+
+		chartData = new ArrayList<BarData>();
+
 		List<Double> dataSeriesA = null;
-		int i=0;
-		for (List<String> list_cmd : data_cmd) {	
-			dataSeriesA= new LinkedList<Double>();
-			String label_name="";
-			for(String s:list_cmd)
-			{				
-				String[] spl=s.split("-");
-				equail=spl[0];
-				signal=spl[2];
-				
-				label_name=DataGetter.getSignalName(equail, signal);
-				
-				newValue=DataGetter.getSignalValue(equail, signal);				
-				if(newValue==null||newValue.equals("")) return false;
-				value=Float.parseFloat(newValue);
-				dataSeriesA.add((double) value);			
+		valueList.clear();
+		int i = 0;
+		for (List<String> list_cmd : data_cmd) {
+			dataSeriesA = new LinkedList<Double>();
+			// String label_name = "";
+			for (String s : list_cmd) {
+				String[] spl = s.split("-");
+				equail = spl[0];
+				signal = spl[2];
+
+				// label_name = DataGetter.getSignalName(equail, signal);
+
+				newValue = DataGetter.getSignalValue(equail, signal);
+				if (newValue == null || newValue.equals(""))
+					return false;
+				value = Float.parseFloat(newValue);
+				valueList.add((int) value);
+				dataSeriesA.add((double) value);
 			}
-			BarData BarDataA = new BarData(label_name,dataSeriesA,Color.parseColor(data_color.get(i)));
+
+			compareMax(valueList);
+			BarData BarDataA = new BarData(data_label.get(i), dataSeriesA,
+					Color.parseColor(data_color.get(i)));
 			chartData.add(BarDataA);
 			i++;
 		}
-		
-		m_bneedupdate=false;
+
+		m_bneedupdate = false;
 		return true;
+	}
+
+	private void compareMax(List<Integer> value) {
+		max_Value = 0;
+		for (int i = 0; i < value.size(); i++) {
+			int v = value.get(i);
+			if (v > max_Value)
+				max_Value = v;
+		}
 	}
 
 	@Override
 	public boolean needupdate() {
-		
-		
-		
+
 		return m_bneedupdate;
 	}
 
 	@Override
 	public void needupdate(boolean bNeedUpdate) {
-		
-		
+
 	}
 
 	public View getView() {
@@ -363,9 +384,6 @@ public class SgBarChartView extends TextView implements IObject {
 	public Rect getBBox() {
 		return m_rBBox;
 	}
-
-
-
 
 	// params:
 	String m_strID = "";
@@ -399,21 +417,24 @@ public class SgBarChartView extends TextView implements IObject {
 	public float m_xscal = 0;
 	public float m_yscal = 0;
 
-
 	Intent m_oHomeIntent = null;
+
+	private String signal = "";
+	private String equail = "";
+	BarChart01View chart = null;
+	// PieChart01View pieChart01View=null;
+	private String newValue = "";
+	private String cmd = "";
+	public boolean m_bneedupdate = true;
+	private String mExpression = "";
+	private String color_data = null;
+
+	private int index = 0;
+	private List<List<String>> data_cmd = new ArrayList<List<String>>();// 表达式分类
+	private List<String> data_color = new ArrayList<String>();// 颜色分类
+	private List<String> data_label = new ArrayList<String>();// 各个柱状图的含义
+	private int max_Value = 0; // 轴刻度最大值
+	private List<Integer> valueList = new ArrayList<Integer>();
 	
-	private String signal="";	
-	private String equail="";
-	BarChart01View chart=null;
-	//PieChart01View pieChart01View=null;
-	private String newValue="";
-    private String cmd="";
-    public boolean m_bneedupdate = true;
-    private String mExpression = "";
-    private String color_data=null;
-
-    private int index=0;
-    private List<List<String>> data_cmd=new ArrayList<List<String>>();
-    private List<String> data_color=new ArrayList<String>();
-
+	private String labelData="";
 }
