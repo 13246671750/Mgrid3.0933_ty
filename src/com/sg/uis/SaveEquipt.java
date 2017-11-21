@@ -135,7 +135,7 @@ public class SaveEquipt extends UtTable implements IObject {
 		view_text = new TextView(context);
 		view_text.setTextColor(Color.BLACK);
 		view_text.setText(DeviceList); //  Equiptment↓
-		view_text.setTextSize(16);
+		view_text.setTextSize(15);
 		view_text.setGravity(Gravity.CENTER);
 	//	view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
 		view_text.setBackgroundColor(Color.parseColor(btnColor));
@@ -145,7 +145,7 @@ public class SaveEquipt extends UtTable implements IObject {
 		view_timeButton = new Button(context);
 		view_timeButton.setText(SetTime);   // Set Time
 		//view_timeButton.setTextColor(Color.BLACK);
-		view_timeButton.setTextSize(16);
+		view_timeButton.setTextSize(15);
 		view_timeButton.setPadding(2, 2, 2, 2);
 		view_timeButton.setOnClickListener(l);//设置该控件的监听	
 		view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
@@ -154,7 +154,7 @@ public class SaveEquipt extends UtTable implements IObject {
 		view_PerveDay = new Button(context);	
 		view_PerveDay.setText(PreveDay);  // PreveDay
 		//view_PerveDay.setTextColor(Color.BLACK);
-		view_PerveDay.setTextSize(16);
+		view_PerveDay.setTextSize(15);
 		view_PerveDay.setPadding(2, 2, 2, 2);		
 		view_PerveDay.setOnClickListener(l);//设置该控件的监听	
 		view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
@@ -163,7 +163,7 @@ public class SaveEquipt extends UtTable implements IObject {
 		view_NextDay = new Button(context);	
 		view_NextDay.setText(NextDay);  // NextDay
 		//view_NextDay.setTextColor(Color.BLACK);
-		view_NextDay.setTextSize(16);	
+		view_NextDay.setTextSize(15);	
 		view_NextDay.setPadding(2, 2, 2, 2);
 		view_NextDay.setOnClickListener(l);//设置该控件的监听	
 		view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
@@ -172,7 +172,7 @@ public class SaveEquipt extends UtTable implements IObject {
 		view_Receive = new Button(context);		
 		view_Receive.setText(Receive); // Receive
 	//	view_Receive.setTextColor(Color.BLACK);
-		view_Receive.setTextSize(16);
+		view_Receive.setTextSize(15);
 		view_Receive.setPadding(2, 2, 2, 2);		
 		view_Receive.setOnClickListener(l);	//设置该控件的监听	
 		view_Receive.setBackgroundColor(Color.parseColor(btnColor));
@@ -534,19 +534,26 @@ public class SaveEquipt extends UtTable implements IObject {
         }else if ("BtnColor".equals(strName)) {
 			if(!strValue.isEmpty())
 			{
-			btnColor  = strValue;
-			view_text.setBackgroundColor(Color.parseColor(btnColor));
 			
-			view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
-		
-			view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
-		
-			view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
-		
-			view_Receive.setBackgroundColor(Color.parseColor(btnColor));
-			
-			
-			myAdapter.setBtnColor(btnColor);
+			if ("#FF000000".equals(strValue)) {
+				view_text.setBackgroundResource(R.drawable.bg_shadow);
+				view_timeButton.setBackgroundResource(R.drawable.bg_shadow);
+				view_PerveDay.setBackgroundResource(R.drawable.bg_shadow);
+				view_NextDay.setBackgroundResource(R.drawable.bg_shadow);
+				view_Receive.setBackgroundResource(R.drawable.bg_shadow);
+				//myAdapter.setBtnColor("#FFFFFFFF");
+				btnColor = "#FF4D4D4D";
+			} else {
+				btnColor = strValue;
+				view_text.setBackgroundColor(Color.parseColor(btnColor));
+				view_timeButton.setBackgroundColor(Color
+						.parseColor(btnColor));
+				view_PerveDay
+						.setBackgroundColor(Color.parseColor(btnColor));
+				view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
+				view_Receive.setBackgroundColor(Color.parseColor(btnColor));
+				myAdapter.setBtnColor(btnColor);
+			}
 			}
 		}else if ("TextColor".equals(strName)) {
 			if(!strValue.isEmpty())

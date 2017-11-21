@@ -2,7 +2,6 @@ package com.sg.uis.LsyNewView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.xclcharts.chart.GaugeChart;
 
@@ -25,6 +24,7 @@ import com.mgrid.data.DataGetter;
 import com.mgrid.main.MainWindow;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
+import com.sg.common.SgRealTimeData;
 
 /** ∞Î‘≤“«≈Ã±Ì */
 @SuppressLint({ "ShowToast", "InflateParams", "RtlHardcoded",
@@ -308,11 +308,23 @@ public class SgHalfCircleChart extends TextView implements IObject {
 
 		if (mExpression == null || mExpression.equals(""))
 			return false;
-		String[] arg1 = mExpression.split("-");
-		equail = arg1[0].split(":")[1];
-		signal = arg1[2].split(":")[1].split("]")[0];
-
+		
+		if (containMath(mExpression)) {
+			isMath=true;
+		} else {
+			isMath=false;
+			String[] arg1 = mExpression.split("-");
+			equail = arg1[0].split(":")[1];
+			signal = arg1[2].split(":")[1].split("]")[0];
+		}		
 		return true;
+	}
+	
+	public boolean containMath(String cmd) {
+		if (cmd.contains("(") || cmd.contains(")"))
+			return true;
+		else
+			return false;
 	}
 
 	@Override
@@ -324,7 +336,6 @@ public class SgHalfCircleChart extends TextView implements IObject {
 			return;
 		Gchart.setCurrentAngle(angle);
 		Gauge01View.invalidate();
-
 	}
 
 	@Override
@@ -332,10 +343,24 @@ public class SgHalfCircleChart extends TextView implements IObject {
 
 		if (mExpression == null || mExpression.equals(""))
 			return false;
-		if (equail.equals("") || signal.equals(""))
-			return false;
-
-		newValue = DataGetter.getSignalMeaning(equail, signal);
+		
+		if(isMath)
+		{
+			SgRealTimeData oRealTimeData = m_rRenderWindow.m_oShareObject.m_mapRealTimeDatas
+					.get(this.getUniqueID());
+			newValue = oRealTimeData.strValue;
+			System.out.println("∞Î‘≤£∫"+newValue);
+			if (newValue == null || newValue.equals("") || newValue.equals("-999999")) {
+				return false;
+			}
+			
+		}else
+		{
+			if (equail.equals("") || signal.equals(""))
+				return false;
+			newValue = DataGetter.getSignalMeaning(equail, signal);
+		}
+		
 		if (!newValue.equals(oldValue)) {
 			oldValue = newValue;
 			return true;
@@ -413,4 +438,5 @@ public class SgHalfCircleChart extends TextView implements IObject {
 	private String labelData;
 	private String colorData;
     private float max_data=30;
+    private boolean isMath=false;
 }

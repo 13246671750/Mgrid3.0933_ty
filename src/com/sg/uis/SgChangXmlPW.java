@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 
@@ -25,7 +26,7 @@ import com.sg.common.IObject;
  * ¸ÄÃÜÂë
  * 
  * @author lsy
- * 
+ *
  */
 public class SgChangXmlPW extends TextView implements IObject {
 
@@ -91,7 +92,7 @@ public class SgChangXmlPW extends TextView implements IObject {
 		tvNew.setPadding(0, 0, 0, 0);
 		T_CPassword.setPadding(0, 0, 0, 0);
 		tvOld.setPadding(0, 0, 0, 0);
-		MakeBtn.setPadding(0, 5, 0, 0);
+		MakeBtn.setPadding(0, 10, 0, 0);
 
 		tvNew.setTextSize(15);
 		T_CPassword.setTextSize(15);
@@ -134,7 +135,7 @@ public class SgChangXmlPW extends TextView implements IObject {
 				case MotionEvent.ACTION_DOWN:
 					m_bPressed = true;
 					//view.invalidate();
-                    view.setBackgroundColor(Color.GREEN);
+                    //view.setBackgroundColor(Color.GREEN);
 					m_xscal = event.getX();
 					m_yscal = event.getY();
 					break;
@@ -142,8 +143,8 @@ public class SgChangXmlPW extends TextView implements IObject {
 				case MotionEvent.ACTION_UP:
 					m_bPressed = false;
 					
-					MakeBtn.setBackgroundResource(android.R.drawable.btn_default_small);
-					MakeBtn.setText("ÐÞ¸Ä");
+					//MakeBtn.setBackgroundResource(android.R.drawable.btn_default_small);
+					//MakeBtn.setText("ÐÞ¸Ä");
 					if (m_xscal == event.getX() && m_yscal == event.getY())
 						onClicked();
 					break;
@@ -317,6 +318,7 @@ public class SgChangXmlPW extends TextView implements IObject {
 					+ (int) (nHeight * 1f));
 
 		}
+		MakeBtn.setPadding(0,(int)(nHeight * 0.18)/4, 0, 0);
 
 	}
 
@@ -370,7 +372,17 @@ public class SgChangXmlPW extends TextView implements IObject {
 		else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("BackgroundColor".equals(strName))
-			m_cBackgroundColor = Color.parseColor(strValue);
+			
+		    if("#FF000000".equals(strValue))
+		    {
+		    	m_oEditTextNEW.setBackgroundResource(R.drawable.et_select);
+				m_oEditTextOLD.setBackgroundResource(R.drawable.et_select);
+				E_CPassword.setBackgroundResource(R.drawable.et_select);
+				MakeBtn.setBackgroundResource(R.drawable.bg_shadow);
+		    }else
+		    {
+		    	m_cBackgroundColor = Color.parseColor(strValue);
+		    }
 		else if ("FontColor".equals(strName)) {
 			m_cFontColor = Color.parseColor(strValue);
 			this.setTextColor(m_cFontColor);

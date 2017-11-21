@@ -169,18 +169,19 @@ public class HisEvent extends HisEventTable implements IObject {
 		// 信号名显示text
 		view_text = new TextView(context);
 		view_text.setText(DeviceList); // 变为中文
-		view_text.setTextSize(16);
+		view_text.setTextSize(15);
 		view_text.setGravity(Gravity.CENTER);
 		view_text.setPadding(2, 2, 2, 2);
 		// view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
 		view_text.setBackgroundColor(Color.parseColor(btnColor));
+
 		view_text.setTextColor(Color.parseColor(textColor));
 
 		// 日期选择button
 		view_timeButton = new Button(context);
 		view_timeButton.setText(SetTime); // Set Time
 		// view_timeButton.setTextColor(Color.BLACK);
-		view_timeButton.setTextSize(16);
+		view_timeButton.setTextSize(15);
 		view_timeButton.setPadding(2, 2, 2, 2);
 		view_timeButton.setOnClickListener(l);// 设置该控件的监听
 		view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
@@ -189,7 +190,7 @@ public class HisEvent extends HisEventTable implements IObject {
 		view_PerveDay = new Button(context);
 		view_PerveDay.setText(PreveDay); // PreveDay
 		// view_PerveDay.setTextColor(Color.BLACK);
-		view_PerveDay.setTextSize(16);
+		view_PerveDay.setTextSize(15);
 		view_PerveDay.setPadding(2, 2, 2, 2);
 		view_PerveDay.setOnClickListener(l);// 设置该控件的监听
 		view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
@@ -205,7 +206,7 @@ public class HisEvent extends HisEventTable implements IObject {
 		view_NextDay = new Button(context);
 		view_NextDay.setText(NextDay); // NextDay
 		// view_NextDay.setTextColor(Color.BLACK);
-		view_NextDay.setTextSize(16);
+		view_NextDay.setTextSize(15);
 		view_NextDay.setPadding(2, 2, 2, 2);
 		view_NextDay.setOnClickListener(l);// 设置该控件的监听
 		view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
@@ -215,7 +216,7 @@ public class HisEvent extends HisEventTable implements IObject {
 		view_Receive = new Button(context);
 		view_Receive.setText(Receive);
 		// view_Receive.setTextColor(Color.BLACK);
-		view_Receive.setTextSize(16);
+		view_Receive.setTextSize(15);
 		view_Receive.setPadding(2, 2, 2, 2);
 		view_Receive.setOnClickListener(l);
 		view_Receive.setBackgroundColor(Color.parseColor(btnColor));
@@ -247,7 +248,6 @@ public class HisEvent extends HisEventTable implements IObject {
 			AlarmTitles.add("控制结果");
 		}
 
-		
 		myAdapter = new MyAdapter(getContext(), nameList);
 		view_text.setOnClickListener(new OnClickListener() {
 
@@ -263,7 +263,7 @@ public class HisEvent extends HisEventTable implements IObject {
 						.getLayoutInflater().inflate(R.layout.pop, null);
 				popupWindow = new PopupWindow(view, view_text.getWidth(), 200,
 						true);
-				// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失 
+				// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失
 				popupWindow.setBackgroundDrawable(new BitmapDrawable());
 
 				// 设置点击弹框外部，弹框消失
@@ -272,7 +272,7 @@ public class HisEvent extends HisEventTable implements IObject {
 				popupWindow.showAsDropDown(view_text);
 
 				ListView lv = (ListView) view.findViewById(R.id.lv_list);
-				
+
 				myAdapter.setTextColor(textColor);
 				myAdapter.setBtnColor(btnColor);
 				lv.setAdapter(myAdapter);
@@ -749,19 +749,29 @@ public class HisEvent extends HisEventTable implements IObject {
 			m_cEvenRowBackground = Color.parseColor(strValue);
 		} else if ("BtnColor".equals(strName)) {
 			if (!strValue.isEmpty()) {
-				btnColor = strValue;
-				
-				view_text.setBackgroundColor(Color.parseColor(btnColor));
-				
-				view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
 			
-				view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
-			
-				view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
-			
-				view_Receive.setBackgroundColor(Color.parseColor(btnColor));
+
+				if ("#FF000000".equals(strValue)) {
+					view_text.setBackgroundResource(R.drawable.bg_shadow);
+					view_timeButton.setBackgroundResource(R.drawable.bg_shadow);
+					view_PerveDay.setBackgroundResource(R.drawable.bg_shadow);
+					view_NextDay.setBackgroundResource(R.drawable.bg_shadow);
+					view_Receive.setBackgroundResource(R.drawable.bg_shadow);
+					//myAdapter.setBtnColor("#FFFFFFFF");
+					btnColor = "#FF4D4D4D";
+				} else {
+					btnColor = strValue;
+					view_text.setBackgroundColor(Color.parseColor(btnColor));
+					view_timeButton.setBackgroundColor(Color
+							.parseColor(btnColor));
+					view_PerveDay
+							.setBackgroundColor(Color.parseColor(btnColor));
+					view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
+					view_Receive.setBackgroundColor(Color.parseColor(btnColor));
+					myAdapter.setBtnColor(btnColor);
+				}
+
 				
-				myAdapter.setBtnColor(btnColor);
 			}
 		} else if ("TextColor".equals(strName)) {
 			if (!strValue.isEmpty()) {

@@ -112,6 +112,7 @@ import com.sg.uis.LsyNewView.AlarmRectangle;
 import com.sg.uis.LsyNewView.AlarmShieldTime;
 import com.sg.uis.LsyNewView.ChangeLabel;
 import com.sg.uis.LsyNewView.ChangeLabelBtn;
+import com.sg.uis.LsyNewView.CoolButton;
 import com.sg.uis.LsyNewView.EquipHistoryAlarm;
 import com.sg.uis.LsyNewView.EventLevelAlter;
 import com.sg.uis.LsyNewView.HistoryCurveChart;
@@ -1051,6 +1052,10 @@ public class MainWindow extends ViewGroup {
 						{
 							OnClickBtn OCB=new OnClickBtn(this.getContext());
 							m_mapUIs.put(strID, OCB);
+						}else if("CoolButton".equals(strType))
+						{
+							CoolButton CB=new CoolButton(this.getContext());
+							m_mapUIs.put(strID, CB);
 						}
  
  
@@ -1170,7 +1175,8 @@ public class MainWindow extends ViewGroup {
 								|| "EquipHistoryAlarm".equals(strElementType)
 								|| "EventLevelAlter".equals(strElementType)
 								|| "HistoryCurveChart".equals(strElementType)
-								|| "OnClickBtn".equals(strElementType)) {
+								|| "OnClickBtn".equals(strElementType)
+								|| "CoolButton".equals(strElementType)) {
 							try {
 								iCurrentObj.parseProperties(strName, strValue,
 										m_strResFolder);

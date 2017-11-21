@@ -43,9 +43,10 @@ public class SgBarChartView extends TextView implements IObject {
 		m_oPaint = new Paint();
 		m_rBBox = new Rect();
 		chart = new BarChart01View(context);
+		
 		chart.setTouch(false);
 		Bchart = chart.getBarChart();
-
+	
 	}
 
 	@SuppressLint("DrawAllocation")
@@ -114,8 +115,7 @@ public class SgBarChartView extends TextView implements IObject {
 				Bchart.getCategoryAxis().getAxisPaint().setColor(Color.parseColor(strValue));			
 				Bchart.getDataAxis().getTickMarksPaint().setColor(Color.parseColor(strValue));
 				Bchart.getCategoryAxis().getTickMarksPaint().setColor(Color.parseColor(strValue));
-			}
-		
+			}		
 		} else if ("Content".equals(strName)) {
 			m_strContent = strValue;
 			parse_content();
@@ -127,16 +127,17 @@ public class SgBarChartView extends TextView implements IObject {
 					/ (float) MainWindow.FORM_WIDTH;
 			m_fFontSize = Float.parseFloat(strValue) * fWinScale;
 		} else if ("IsBold".equals(strName)) 
+		{
 			m_bIsBold = Boolean.parseBoolean(strValue);
+		    isNenghao =m_bIsBold;
+		}
 		else if ("FontColor".equals(strName)) {
 			if (!strValue.isEmpty())
-			{
+			{			
 				//x轴刻度文字画笔
-				Bchart.getCategoryAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));
-			
+				Bchart.getCategoryAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));			
 				//y轴刻度文字画笔
-				Bchart.getDataAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));
-				
+				Bchart.getDataAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));			
 			}
 		} else if ("ClickEvent".equals(strName))
 			m_strClickEvent = strValue;
@@ -258,6 +259,7 @@ public class SgBarChartView extends TextView implements IObject {
 	public boolean parse_cmd() {
 		if (cmd.equals("") || cmd == null)
 			return false;
+		
 		String[] Expression = cmd.split("/");
 		for (int i = 0; i < Expression.length; i++) {
 			List<String> list_cmd = ExpressionUtils.getExpressionUtils().parse(
@@ -434,7 +436,7 @@ public class SgBarChartView extends TextView implements IObject {
 	private List<String> data_color = new ArrayList<String>();// 颜色分类
 	private List<String> data_label = new ArrayList<String>();// 各个柱状图的含义
 	private int max_Value = 0; // 轴刻度最大值
-	private List<Integer> valueList = new ArrayList<Integer>();
-	
+	private List<Integer> valueList = new ArrayList<Integer>();	
 	private String labelData="";
+	private boolean isNenghao=false;
 }

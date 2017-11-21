@@ -284,12 +284,7 @@ public class SgLabel extends TextView implements IObject {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean updateValue() {
-		// 注意在updateValue里面不应该对view的属性经行操作，因为属性操作本来就会调用updateValue.
-		// eg:setTextColor()
-		// if(!DataGetter.isLoading&&!MGridActivity.isLoading)
-		// {
-		
-		// }
+
 		m_bneedupdate = false;
 
 		SgRealTimeData oRealTimeData = m_rRenderWindow.m_oShareObject.m_mapRealTimeDatas

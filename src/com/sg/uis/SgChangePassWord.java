@@ -259,6 +259,10 @@ public class SgChangePassWord extends TextView implements IObject {
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("BackgroundColor".equals(strName))
 			m_cBackgroundColor = Color.parseColor(strValue);
+		    if("#FF000000".equals(m_cBackgroundColor))
+		    {
+		    	
+		    }
 		else if ("FontColor".equals(strName)) {
 			m_cFontColor = Color.parseColor(strValue);
 			this.setTextColor(m_cFontColor);

@@ -58,12 +58,13 @@ public class SgRectangle extends View implements IObject {
 		    LinearGradient lg = null;
 		    if (m_bIsHGradient) {
 		        lg = new LinearGradient(0, nHeight/2, nWidth, nHeight/2, m_arrGradientFillColor, 
-		        		m_arrGradientColorPos, TileMode.MIRROR);
+		        		m_arrGradientColorPos, TileMode.CLAMP);
 		    }
 		    else {
 		        lg = new LinearGradient(nWidth/2, 0, nWidth/2, nHeight, m_arrGradientFillColor, 
-		        		m_arrGradientColorPos, TileMode.MIRROR);      	
+		        		m_arrGradientColorPos, TileMode.CLAMP);      	
 		    }
+		    System.out.println("½¥±äÉ«");
 		    m_oPaint.setShader(lg);
         }
         else

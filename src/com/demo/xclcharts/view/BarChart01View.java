@@ -56,6 +56,7 @@ public class BarChart01View extends TouchView implements Runnable{
 	
 	private String TAG = "BarChart01View";
 	private BarChart chart = new BarChart();
+	private boolean isOnTouch=false;
 	
 	//鏍囩杞�
 	private List<String> chartLabels = new LinkedList<String>();
@@ -290,9 +291,12 @@ public class BarChart01View extends TouchView implements Runnable{
 	}
 	
 	
+	
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub		
+		if(!isOnTouch)  return false;
 		super.onTouchEvent(event);		
 		if(event.getAction() == MotionEvent.ACTION_UP) 
 		{			

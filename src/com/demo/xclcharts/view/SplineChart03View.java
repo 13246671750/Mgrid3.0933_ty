@@ -75,7 +75,7 @@ private void chartRender()
 	try {				
 		//设置绘图区默认缩进px值,留置空间显示Axis,Axistitle....		
 		int [] ltrb = getBarLnDefaultSpadding();
-		chart.setPadding(35,30,10, 20);	
+		chart.setPadding(40,30,10, 20);	
 		
 		//显示边框
 		//chart.showRoundBorder();

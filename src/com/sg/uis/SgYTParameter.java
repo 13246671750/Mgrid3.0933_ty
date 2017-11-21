@@ -2,6 +2,7 @@ package com.sg.uis;
 
 import java.io.IOException;
 
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 
@@ -59,28 +61,17 @@ public class SgYTParameter extends TextView implements IObject {
         });
         
         setBackgroundResource(android.R.drawable.btn_default);
+    //    setBackgroundResource(R.drawable.bg_shadow);
         setPadding(0, 0, 0, 0);
         
         m_oPaint = new Paint();
         m_rBBox = new Rect();
         m_oEditText = new EditText(context);
         m_oEditText.setBackgroundResource(android.R.drawable.edit_text);
-        m_oEditText.setPadding(0, 0, 0, 0);
-        //m_oEditText.setTextSize(12);
-        //m_oEditText.setBackgroundDrawable(new BitmapDrawable(Environment.getExternalStorageDirectory().getPath() + "/MGridRes/edittext.png"));
-        /*
-        try
-		{
-			m_oEditText.setBackgroundDrawable(getImageDrawable("/mnt/sdcard/YADA/edittext.png"));
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        */
+      //  m_oEditText.setBackgroundResource(R.drawable.et_select);
         
-        //m_oEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        //m_oEditText.setBackgroundColor(Color.parseColor("#F5F5DC"));
+        m_oEditText.setPadding(0, 0, 0, 0);
+  
         m_oEditText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(12)});
         m_oEditText.setSingleLine();
         m_oEditText.setGravity(Gravity.CENTER);
@@ -189,7 +180,7 @@ public class SgYTParameter extends TextView implements IObject {
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
 			this.layout(nX+(int)(nWidth*0.71f), nY, nX+nWidth, nY+nHeight);
 			
-			m_oEditText.layout(nX, nY, nX+(int)(nWidth*0.7f), nY+(int)(nHeight*1.0f));
+			m_oEditText.layout(nX, nY+nHeight/10, nX+(int)(nWidth*0.7f), nY+(int)(nHeight*1.0f)-nHeight/10);
 		}
 	}
 
@@ -236,7 +227,14 @@ public class SgYTParameter extends TextView implements IObject {
         else if ("IsBold".equals(strName))
        	 	m_bIsBold = Boolean.parseBoolean(strValue);
         else if ("BackgroundColor".equals(strName)) 
-        	m_cBackgroundColor = Color.parseColor(strValue);
+        	  if("#FF000000".equals(strValue))
+			    {
+        		    setBackgroundResource(R.drawable.bg_shadow);        	
+        	        m_oEditText.setBackgroundResource(R.drawable.et_select);
+			    }else
+			    {
+			    	m_cBackgroundColor = Color.parseColor(strValue);
+			    }
         else if ("FontColor".equals(strName)) {
 	       	 m_cFontColor = Color.parseColor(strValue);
 	       	 this.setTextColor(m_cFontColor);

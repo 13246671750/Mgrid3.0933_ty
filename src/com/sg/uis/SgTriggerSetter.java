@@ -1,46 +1,26 @@
 package com.sg.uis;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import com.mgrid.main.MGridActivity;
-import com.mgrid.main.MainWindow;
-import com.sg.common.CFGTLS;
-import com.sg.common.IObject;
-import com.sg.common.MutiThreadShareObject;
-
-import comm_service.service;
-import data_model.ipc_cfg_trigger_value;
-import android.R;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Environment;
 import android.text.InputFilter;
-import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
+import com.sg.common.CFGTLS;
+import com.sg.common.IObject;
 
 public class SgTriggerSetter extends TextView implements IObject {
 	public SgTriggerSetter(Context context) {
@@ -113,23 +93,7 @@ public class SgTriggerSetter extends TextView implements IObject {
 		            	break;
 		            	
 		            case MotionEvent.ACTION_CANCEL:
-		            	/*
-		            	//imm.showSoftInput(m_oEditText, 0);
-		            	m_oEditText.setFocusable(true);
-		            	m_oEditText.requestFocus();
-		            	m_oEditText.setInputType(EditorInfo.TYPE_CLASS_PHONE);
-		            	imm.showSoftInput(m_oEditText, InputMethodManager.SHOW_FORCED);
-		            	*/
-		            	/*
-		        		boolean isOpen = imm.isActive();
-		    			if (!isOpen)
-		    			{
-		    				imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);  // 隐藏任何可能出现的软键盘
-		    			}
-		    			*/
-						//m_oEditText.setSelection(m_oEditText.getText().length());  //光标移动最后
-		            	//return true;
-		            	//break;
+		            
 		            	
 		            default: 
 		            	break;
@@ -137,19 +101,7 @@ public class SgTriggerSetter extends TextView implements IObject {
 	            
 				return false;
         	}});
-        /*
-        m_oEditText.setOnLongClickListener(new View.OnLongClickListener() {
-            
-			@Override
-			public boolean onLongClick(View v) {
-				imm.showSoftInput(m_oEditText, InputMethodManager.SHOW_FORCED);
-				m_oEditText.setSelection(m_oEditText.getText().length());  //光标移动最后
-				
-				bEditable = true;
-				SgYTParameter.this.setEnabled(bEditable); 
-				return true;
-			}
-		});*/
+
         
         m_oEditText.setOnClickListener(new View.OnClickListener()
 		{
@@ -171,11 +123,16 @@ public class SgTriggerSetter extends TextView implements IObject {
         m_oEditText.setFilters(new  InputFilter[]{ new  InputFilter.LengthFilter(7)});  // TODO: 写死可输入位数
         m_oEditText.setTextColor(Color.BLACK);
         //m_oEditText.setBackgroundDrawable(new BitmapDrawable(Environment.getExternalStorageDirectory().getPath() + "/MGridRes/edittext.png"));
-        m_oEditText.setBackgroundResource(android.R.drawable.edit_text);
-        m_oEditText.setPadding(0, 0, 0, 0);
+   
+          m_oEditText.setBackgroundResource(android.R.drawable.edit_text);
         
+//        m_oEditText.setBackgroundResource(R.drawable.et_select);
+        m_oEditText.setPadding(0, 2, 0, 0);
+        m_oEditText.setTextSize(14);        
         setText("设置");
-        setBackgroundResource(R.drawable.btn_default);
+        setTextColor(Color.WHITE);
+//       setBackgroundResource(R.drawable.bg_shadow);
+		setBackgroundResource(android.R.drawable.btn_default);
         setPadding(0, 0, 0, 0);
 	}
 	
@@ -212,9 +169,9 @@ public class SgTriggerSetter extends TextView implements IObject {
 		m_rBBox.bottom = nY+nHeight;
 		
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
-			this.layout(nX+(int)(nWidth*0.71f), nY, nX+nWidth, nY+nHeight);
+			this.layout(nX+(int)(nWidth*0.65f), nY, nX+nWidth, nY+nHeight);
 			
-			m_oEditText.layout(nX, nY, nX+(int)(nWidth*0.7f), nY+(int)(nHeight*1.0f));
+			m_oEditText.layout(nX, nY+nHeight/10, nX+(int)(nWidth*0.64f), nY+nHeight-nHeight/10);
 		}
 	}
 
@@ -261,10 +218,19 @@ public class SgTriggerSetter extends TextView implements IObject {
         else if ("IsBold".equals(strName))
        	 	m_bIsBold = Boolean.parseBoolean(strValue);
         else if ("BackgroundColor".equals(strName)) 
-        	m_cBackgroundColor = Color.parseColor(strValue);
+        {
+        	
+        	  if("#FF000000".equals(strValue))
+			    {
+               m_oEditText.setBackgroundResource(R.drawable.et_select);
+       	       setBackgroundResource(R.drawable.bg_shadow);
+			    }else
+			    {
+			    	m_cBackgroundColor = Color.parseColor(strValue);
+			    }
+        }
         else if ("FontColor".equals(strName)) {
-	       	 m_cFontColor = Color.parseColor(strValue);
-	       	 this.setTextColor(m_cFontColor);
+	       	 m_cFontColor = Color.parseColor(strValue);	       	 
         }
         else if ("Expression".equals(strName)) {
        	 	m_strCmdExpression = strValue;
@@ -305,26 +271,13 @@ public class SgTriggerSetter extends TextView implements IObject {
 	}
 	
 	private void onClicked() {
-		/*
-		boolean isOpen = imm.isActive();
-		if (isOpen)
-		{
-			imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);  // 隐藏任何可能出现的软键盘
-		}
-		*/
-		
-		//this.requestFocus();
+	
 		
 		String editvalue = m_oEditText.getText().toString().trim();
 		
 		if (editvalue.isEmpty()) return;
 		
-		/*
-		public static boolean isNumeric(String str){
-		Pattern pattern = Pattern.compile("-?[0-9]+.?[0-9]+");
-		return pattern.matcher(str).matches();
-		}
-		 */
+		
 		
 		try {
 			Double.parseDouble(editvalue);
@@ -344,29 +297,7 @@ public class SgTriggerSetter extends TextView implements IObject {
 				m_rRenderWindow.m_oShareObject.m_mapTriggerCommand.put(getUniqueID(), m_oEditText.getText().toString().trim());
 			}
 		}
-//		 System.out.println("我进来了1");
-//		 MGridActivity.xianChengChi.execute(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					Iterator<String> iter =m_rRenderWindow.m_mapUIs.keySet().iterator();	
-//					while (iter.hasNext()) {
-//						String strKey = iter.next();
-//						IObject obj = m_rRenderWindow.m_mapUIs.get(strKey);
-//						System.out.println("我进来了2");
-//			            if(obj.getType().equals("tigerLabel"))
-//			            {
-//			            	System.out.println("我进来了3");
-//			            	if(obj.getBindingExpression().equals(getBindingExpression()))
-//			            	{
-//			            		System.out.println("我进来了4");
-//			            		obj.needupdate(true);
-//			            	}
-//			            }						
-//					}
-//					
-//				}
-//		 });
+
 		
 	}
 	

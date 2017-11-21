@@ -182,8 +182,13 @@ public class SgButton extends TextView implements IObject {
 		} else if ("BackgroundColor".equals(strName)) {
 			if (strValue.isEmpty())
 				return;
-			m_cBackgroundColor = Color.parseColor(strValue);
-			//this.setBackgroundColor(m_cBackgroundColor);
+			  if("#FF000000".equals(strValue))
+			    {
+				  this.setBackgroundResource(R.drawable.bg_shadow);
+			    }else
+			    {
+			    	m_cBackgroundColor = Color.parseColor(strValue);
+			    }
 		} else if ("Content".equals(strName)) {
 			m_strContent = strValue;
 			this.setText(m_strContent);

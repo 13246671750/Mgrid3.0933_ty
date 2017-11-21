@@ -15,6 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 
@@ -123,7 +125,7 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 			delete = "Delete";
 		}
 
-		setBackgroundResource(android.R.drawable.btn_default);
+	
 		setPadding(0, 0, 0, 0);
 
 		m_oPaint = new Paint();
@@ -143,17 +145,20 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 		// btState=new Button(context);
 		btDelete = new Button(context);
 
-		etName.setBackgroundResource(android.R.drawable.edit_text);
-		etPhone.setBackgroundResource(android.R.drawable.edit_text);
-		etState.setBackgroundResource(android.R.drawable.edit_text);
-		etType.setBackgroundResource(android.R.drawable.edit_text);
-		// btState.setBackgroundResource(android.R.drawable.btn_default);
-		btDelete.setBackgroundResource(android.R.drawable.btn_default_small);
+//		etName.setBackgroundResource(android.R.drawable.edit_text);
+//		etPhone.setBackgroundResource(android.R.drawable.edit_text);
+//		etState.setBackgroundResource(android.R.drawable.edit_text);
+//		etType.setBackgroundResource(android.R.drawable.edit_text);
+//		btDelete.setBackgroundResource(android.R.drawable.btn_default_small);
+//		setBackgroundResource(android.R.drawable.btn_default);
+		etName.setBackgroundResource(R.drawable.et_select);
+		etPhone.setBackgroundResource(R.drawable.et_select);
+		etState.setBackgroundResource(R.drawable.et_select);
+		etType.setBackgroundResource(R.drawable.et_select);
+		btDelete.setBackgroundResource(R.drawable.bg_shadow);
+		setBackgroundResource(R.drawable.bg_shadow);
 
-		etName.setPadding(0, 10, 0, 0);
-		etPhone.setPadding(0, 10, 0, 0);
-		etState.setPadding(0,10, 0, 0);
-		etType.setPadding(0, 10, 0, 0);
+	
 
 		tvName.setPadding(0, 0, 0, 0);
 		tvPhone.setPadding(0, 0, 0, 0);
@@ -162,8 +167,7 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 		tvTagorder.setPadding(0, 0, 0, 0);
 
 		// btState.setPadding(0, 0, 0, 0);
-		btDelete.setPadding(0, 10, 0, 0);
-
+	
 		tvName.setTextSize(15);
 		tvPhone.setTextSize(15);
 		tvState.setTextSize(15);
@@ -631,24 +635,30 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 			tvName.layout(nX + (int) (nWidth * 0.051f),
 					(int) (nY + 0.15 * nHeight), nX + (int) (nWidth * 0.111f),
 					nY + nHeight);
-			etName.layout(nX + (int) (nWidth * 0.112f), nY, nX
-					+ (int) (nWidth * 0.262f), nY + nHeight);
+			etName.layout(nX + (int) (nWidth * 0.112f), nY+nHeight/10, nX
+					+ (int) (nWidth * 0.262f), nY + nHeight-nHeight/10);
 			tvPhone.layout(nX + (int) (nWidth * 0.263f),
 					(int) (nY + 0.15 * nHeight), nX + (int) (nWidth * 0.323f),
 					nY + nHeight);
-			etPhone.layout(nX + (int) (nWidth * 0.324f), nY, nX
-					+ (int) (nWidth * 0.474f), nY + nHeight);
+			etPhone.layout(nX + (int) (nWidth * 0.324f), nY+nHeight/10, nX
+					+ (int) (nWidth * 0.474f), nY + nHeight-nHeight/10);
 			tvType.layout(nX + (int) (nWidth * 0.475f),
 					(int) (nY + 0.15 * nHeight), nX + (int) (nWidth * 0.535f),
 					nY + nHeight);
-			etType.layout(nX + (int) (nWidth * 0.536f), nY, nX
-					+ (int) (nWidth * 0.686f), nY + nHeight);
+			etType.layout(nX + (int) (nWidth * 0.536f), nY+nHeight/10, nX
+					+ (int) (nWidth * 0.686f), nY + nHeight-nHeight/10);
 			this.layout(nX + (int) (nWidth * 0.687f), nY, nX
 					+ (int) (nWidth * 0.788f), nY + nHeight);
 			btDelete.layout(nX + (int) (nWidth * 0.789f), nY, nX
 					+ (int) (nWidth * 0.890f), nY + nHeight);
-
 		}
+		
+		btDelete.setPadding(0, nHeight/5, 0, 0);
+		etName.setPadding(0, nHeight/5, 0, 0);
+		etPhone.setPadding(0, nHeight/5, 0, 0);
+		etState.setPadding(0,nHeight/5, 0, 0);
+		etType.setPadding(0, nHeight/5, 0, 0);
+	    this.setPadding(0, nHeight/5, 0, 0);
 
 	}
 
@@ -742,7 +752,9 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 				etState.setTextSize(fontSize);
 				etType.setTextSize(fontSize);
 				this.setTextSize(fontSize);
-			
+				
+		
+
 		}
 	}
 

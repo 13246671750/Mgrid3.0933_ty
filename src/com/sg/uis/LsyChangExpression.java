@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
 import com.mgrid.util.XmlUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
@@ -38,13 +39,17 @@ public class LsyChangExpression extends TextView implements IObject {
 		this.setClickable(true);
 		this.setGravity(Gravity.CENTER);
 		setBackgroundResource(android.R.drawable.btn_default);
-		setPadding(0, 0, 0, 0);
+//		setPadding(0, 0, 0, 0);
 		this.setTextSize(20);
 		setTextColor(Color.BLACK);
 		m_rBBox = new Rect();
 		Et_ChangeValue = new EditText(context);
 		Et_ChangeValue.setBackgroundResource(android.R.drawable.edit_text);
-		Et_ChangeValue.setPadding(0, 0, 0, 0);
+		
+	//	Et_ChangeValue.setBackgroundResource(R.drawable.et_select);
+	//	setBackgroundResource(R.drawable.bg_shadow);
+		
+//		Et_ChangeValue.setPadding(0, 0, 0, 0);
 		Et_ChangeValue.setTextSize(20);
 		Et_ChangeValue.setTextColor(Color.BLACK);
 		Et_ChangeValue.setSingleLine();
@@ -110,10 +115,12 @@ public class LsyChangExpression extends TextView implements IObject {
 		m_rBBox.bottom = nY + nHeight;
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
 
-			Et_ChangeValue.layout(nX, nY, nX + (int) (0.69 * nWidth), nY
-					+ nHeight);
+			Et_ChangeValue.layout(nX, nY+nHeight/10, nX + (int) (0.69 * nWidth), nY
+					+ nHeight-nHeight/10);
 			layout(nX + (int) (0.7 * nWidth), nY, nX + nWidth, nY + nHeight);
 		}
+		Et_ChangeValue.setPadding(0, nHeight/5, 0, 0);
+		this.setPadding((int)(0.3 * nWidth/5), nHeight/5, 0, 0);
 	}
 
 	public void onDraw(Canvas canvas) {
@@ -178,14 +185,27 @@ public class LsyChangExpression extends TextView implements IObject {
 		} else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
-
+             this.setTextColor(Color.parseColor(strValue));
 		} else if ("HorizontalContentAlignment".equals(strName))
 			m_strHorizontalContentAlignment = strValue;
 		else if ("VerticalContentAlignment".equals(strName))
 			m_strVerticalContentAlignment = strValue;
 		else if ("Expression".equals(strName))
+		{
 			m_strExpression = strValue;
-		parsingExp();
+		    parsingExp();
+		}else if ("BackgroundColor".equals(strName)) {
+			if (strValue.isEmpty())
+				return;
+			  if("#FF000000".equals(strValue))
+			    {
+					Et_ChangeValue.setBackgroundResource(R.drawable.et_select);
+						setBackgroundResource(R.drawable.bg_shadow);
+			    }else
+			    {
+			    	
+			    }
+		}
 
 	}
 

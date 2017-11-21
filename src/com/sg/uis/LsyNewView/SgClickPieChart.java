@@ -120,6 +120,7 @@ public class SgClickPieChart extends TextView implements IObject {
 			float fWinScale = (float) MainWindow.SCREEN_WIDTH
 					/ (float) MainWindow.FORM_WIDTH;
 			m_fFontSize = Float.parseFloat(strValue) * fWinScale;
+			Pchart.getLabelPaint().setTextSize(m_fFontSize);
 		} else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
@@ -311,19 +312,19 @@ public class SgClickPieChart extends TextView implements IObject {
 		    	if (label_list.size()<=0) 	//	如果没有设定标签 则用获取的名字
 				{
 					if(listName.size()==i+1)  	//如果到了最后一项
-					chartData.add(new PieData(listName.get(i), listName.get(i) + "-"
+					chartData.add(new PieData(listName.get(i), listName.get(i) + " "
 							+ score + "%", score, Color.parseColor(colorData.get(i))));
 					else
-					chartData.add(new PieData(listName.get(i), listName.get(i) + "-"
+					chartData.add(new PieData(listName.get(i), listName.get(i) + " "
 								+ score + "%", score, Color.parseColor(colorData.get(i))));	
 				}			
 				else
 				{
 					if(label_list.size()==i+1)
-				    chartData.add(new PieData(label_list.get(i), label_list.get(i) + "-"
+				    chartData.add(new PieData(label_list.get(i), label_list.get(i) + " "
 						    + score + "%", score, Color.parseColor(colorData.get(i))));
 					else
-					chartData.add(new PieData(label_list.get(i), label_list.get(i) + "-"
+					chartData.add(new PieData(label_list.get(i), label_list.get(i) + " "
 								+ score + "%", score, Color.parseColor(colorData.get(i))));	
 				}
 			} catch (Exception e) {

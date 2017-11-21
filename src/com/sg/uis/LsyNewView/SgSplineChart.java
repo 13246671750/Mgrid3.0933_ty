@@ -42,6 +42,7 @@ import com.mgrid.util.ExpressionUtils;
 import com.mgrid.util.TimeUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
+import com.sg.common.SgRealTimeData;
 
 /** mPUE曲线图 */
 @SuppressLint({ "ShowToast", "InflateParams", "RtlHardcoded",
@@ -213,7 +214,7 @@ public class SgSplineChart extends TextView implements IObject {
 						.setColor(Color.parseColor(strValue));
 			}
 		} else if ("ScaleColor".equals(strName)) {
-			if (!strValue.isEmpty()) { 
+			if (!strValue.isEmpty()) {
 				Schart.getPlotGrid().getHorizontalLinePaint()
 						.setColor(Color.parseColor(strValue));
 				Schart.getCategoryAxis().getAxisPaint()
@@ -253,7 +254,7 @@ public class SgSplineChart extends TextView implements IObject {
 				ycount = Integer.parseInt(strValue);
 				Schart.getDataAxis().setAxisSteps(max_value / ycount);
 			}
-		} 
+		}
 	}
 
 	private void addLabels(int index) {
@@ -364,10 +365,18 @@ public class SgSplineChart extends TextView implements IObject {
 
 		if (mExpression.equals("") || mExpression == null)
 			return false;
-		cmdList = ExpressionUtils.getExpressionUtils().parse(mExpression);
+
+		if (containMath(mExpression)) {
+			isMath=true;
+		} else {
+			isMath=false;
+			cmdList = ExpressionUtils.getExpressionUtils().parse(mExpression);
+		}
+		
+		sizeMath=ExpressionUtils.getExpressionUtils().getSize(mExpression);
 		for (int i = 1; i <= 4; i++) {
 			List<LinkedHashMap<Double, Double>> linePointData = new ArrayList<LinkedHashMap<Double, Double>>();
-			for (int j = 0; j < cmdList.size(); j++) {
+			for (int j = 0; j < sizeMath; j++) {
 				LinkedHashMap<Double, Double> linePoint = new LinkedHashMap<Double, Double>();
 				linePointData.add(linePoint);
 			}
@@ -376,38 +385,42 @@ public class SgSplineChart extends TextView implements IObject {
 		return true;
 	}
 
+	public boolean containMath(String cmd) {
+		if (cmd.contains("(") || cmd.contains(")"))
+			return true;
+		else
+			return false;
+	}
+
 	@Override
 	public void updateWidget() {
 
 		// 数据源
 		Schart.setDataSource(chartData);
 
-		
-
 		chart.invalidate();
 		if (isAuth) {
 			handler.postDelayed(runnable, 30 * 1000); // 10秒
 			isAuth = false;
 			if (isDay) {
-				isDay = false;		
+				isDay = false;
 				handDay.postDelayed(runDay, 10 * 1000 * 60);
 			}
 			if (isMon) {
-				
-				isMon = false;			
+
+				isMon = false;
 				handMon.postDelayed(runMon, 12 * 60 * 1000 * 60);
 
 			}
 			if (isYear) {
-			
-				isYear = false;			
+
+				isYear = false;
 				handYear.postDelayed(runYear, 24 * 60 * 60 * 1000);
 
 			}
-			if(isSave)
-			{	
-			    isSave = false;
-			    waitTime();
+			if (isSave) {
+				isSave = false;
+				waitTime();
 			}
 		}
 
@@ -467,11 +480,157 @@ public class SgSplineChart extends TextView implements IObject {
 	@Override
 	public boolean updateValue() {
 
-		if (cmdList.size() <= 0 || mode == 0 || linePointMapData.size() <= 0)
-			return false;
+	
 
 		// linePoint1.clear();
 		// chartData.clear();
+	   if(isMath)
+	   {
+		  if (sizeMath <= 0 || mode == 0 || linePointMapData.size() <= 0)
+				return false;
+		  System.out.println("我已经进来了");
+		  return updateMathData();
+		   
+	   }else
+	   {
+		   if (cmdList.size() <= 0 || mode == 0 || linePointMapData.size() <= 0)
+				return false;
+		  return updateData();
+	   }
+		
+	}
+	
+	private boolean updateMathData()
+	{
+		chartData = new LinkedList<SplineData>();
+		int i = 0;
+		for (;i<sizeMath;i++) {
+		
+			SgRealTimeData oRealTimeData = m_rRenderWindow.m_oShareObject.m_mapRealTimeDatas
+					.get(this.getUniqueID());
+			String value = oRealTimeData.strValue;
+			System.out.println(value);
+			if (value == null || value.equals("") || value.equals("-999999")) {
+				return false;
+			}
+
+			String Yeartime = TimeUtils.getYear();
+			String Monthtime = TimeUtils.getMonth();
+			String Daytime = TimeUtils.getDay();
+			String HourTime = TimeUtils.getHour();
+			String Mintime = TimeUtils.getMintus();
+			String Sintime = TimeUtils.getScroce();
+
+			if (isFirstIN) {
+				for (int j = 1; j <= 4; j++) {
+					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
+							.get(j);
+
+				//	readData(linePointData.get(i), equail, signal, j);
+					System.out.println(i + "::" + j + "::"
+							+ linePointData.get(i).size());
+				}
+			}
+
+			double time = 0;
+			if (isHour) {
+				time = Double.parseDouble(Mintime)
+						+ (Double.parseDouble(Sintime) / 60);
+				Double H = Double.parseDouble(HourTime);
+				linePointMapData.get(1).get(i)
+						.put(time, Double.parseDouble(value));
+				if (H != currentHour) {
+					currentHour = H;
+					cleanData(1);
+				}
+			}
+			if (isDay) {
+				time = Double.parseDouble(HourTime)
+						+ (Double.parseDouble(Mintime) / 60)
+						+ (Double.parseDouble(Sintime) / 60 / 60);
+				Double D = Double.parseDouble(Daytime);
+				linePointMapData.get(2).get(i)
+						.put(time, Double.parseDouble(value));
+				if (D != currentDay) {
+					currentDay = D;
+					cleanData(2);
+				}
+			}
+			if (isMon) {
+				time = Double.parseDouble(Daytime)
+						+ (Double.parseDouble(HourTime) / 24)
+						+ (Double.parseDouble(Mintime) / 24 / 60)
+						+ (Double.parseDouble(Sintime) / 24 / 60 / 60);
+				Double M = Double.parseDouble(Monthtime);
+				linePointMapData.get(3).get(i)
+						.put(time, Double.parseDouble(value));
+				if (M != currentMonth) {
+					currentMonth = M;
+					cleanData(3);
+				}
+			}
+			if (isYear) {
+				time = Double.parseDouble(Monthtime)
+						+ (Double.parseDouble(Daytime) / 31)
+						+ (Double.parseDouble(HourTime) / 31 / 24)
+						+ (Double.parseDouble(Mintime) / 31 / 24 / 60)
+						+ (Double.parseDouble(Sintime) / 31 / 24 / 60 / 60);
+				Double Y = Double.parseDouble(Yeartime);
+				linePointMapData.get(4).get(i)
+						.put(time, Double.parseDouble(value));
+				if (Y != currentYear) {
+					currentYear = Y;
+					cleanData(4);
+				}
+			}
+
+		//	String name = DataGetter.getSignalName(equail, signal);
+			SplineData dataSeries = null;
+
+			if (label_data.size() <= 0) {
+//				if (colorData.size() - 1 >= i)
+//					dataSeries = new SplineData(name, linePointMapData
+//							.get(mode).get(i), Color.parseColor(colorData
+//							.get(i)));
+//				else
+//					dataSeries = new SplineData(name, linePointMapData
+//							.get(mode).get(i),
+//							(int) Color.parseColor("#FF76A1EC"));
+			} else {
+				if (colorData.size() - 1 >= i)
+					dataSeries = new SplineData(label_data.get(i),
+							linePointMapData.get(mode).get(i),
+							Color.parseColor(colorData.get(i)));
+				else
+					dataSeries = new SplineData(label_data.get(i),
+							linePointMapData.get(mode).get(i),
+							(int) Color.parseColor("#FF76A1EC"));
+			}
+
+			dataSeries.setDotStyle(XEnum.DotStyle.HIDE);
+			dataSeries.getDotLabelPaint().setColor(Color.RED);
+			dataSeries.getLinePaint().setStrokeWidth(2);
+			chartData.add(dataSeries);
+
+			if (isSave) {
+				for (int j = 1; j <= 4; j++) {
+					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
+							.get(j);
+					//saveData(linePointData.get(i), equail, signal, j);
+				}
+			}
+			i++;
+		}
+
+		isFirstIN = false;
+		m_bneedupdate = false;
+		return true;
+	}
+	
+	
+	
+	private boolean updateData()
+	{
 		chartData = new LinkedList<SplineData>();
 		int i = 0;
 		for (String list : cmdList) {
@@ -555,7 +714,7 @@ public class SgSplineChart extends TextView implements IObject {
 
 			String name = DataGetter.getSignalName(equail, signal);
 			SplineData dataSeries = null;
-		
+
 			if (label_data.size() <= 0) {
 				if (colorData.size() - 1 >= i)
 					dataSeries = new SplineData(name, linePointMapData
@@ -567,12 +726,12 @@ public class SgSplineChart extends TextView implements IObject {
 							(int) Color.parseColor("#FF76A1EC"));
 			} else {
 				if (colorData.size() - 1 >= i)
-					dataSeries = new SplineData(label_data.get(i), linePointMapData
-							.get(mode).get(i), Color.parseColor(colorData
-							.get(i)));
+					dataSeries = new SplineData(label_data.get(i),
+							linePointMapData.get(mode).get(i),
+							Color.parseColor(colorData.get(i)));
 				else
-					dataSeries = new SplineData(label_data.get(i), linePointMapData
-							.get(mode).get(i),
+					dataSeries = new SplineData(label_data.get(i),
+							linePointMapData.get(mode).get(i),
 							(int) Color.parseColor("#FF76A1EC"));
 			}
 
@@ -590,12 +749,12 @@ public class SgSplineChart extends TextView implements IObject {
 			}
 			i++;
 		}
-	
-		isFirstIN = false;		
-		m_bneedupdate = false;
 
+		isFirstIN = false;
+		m_bneedupdate = false;
 		return true;
 	}
+	
 
 	private void waitTime() {
 		handler2.postDelayed(runnable2, 1000 * 60 * 30);
@@ -803,4 +962,6 @@ public class SgSplineChart extends TextView implements IObject {
 	private boolean isHour = true, isDay = true, isMon = true, isYear = true;
 	private boolean isAuth = true;
 	private List<String> label_data = new ArrayList<String>();
+	private boolean isMath=false;
+	private int sizeMath=0;
 }

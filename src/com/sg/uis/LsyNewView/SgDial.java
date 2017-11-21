@@ -101,9 +101,7 @@ public class SgDial extends TextView implements IObject {
 		} else if ("BackgroundColor".equals(strName)) {
 			if (strValue != null || !strValue.equals("")) {
 				chart.BcColor = strValue;
-
 			}
-
 		} else if ("Content".equals(strName)) {
 			m_strContent = strValue;
 
@@ -238,21 +236,31 @@ public class SgDial extends TextView implements IObject {
 		// สýพÝิด
 		// Schart.setCategories(labels);
 		// Schart.setDataSource(chartData);
-		MGridActivity.xianChengChi.execute(new Runnable() {
-
-			@Override
-			public void run() {
-
-				handler.sendEmptyMessage(0);
-				try {
-					Thread.sleep(5 * 1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				m_bneedupdate = true;
-			}
-		});
+//		MGridActivity.xianChengChi.execute(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//
+//				handler.sendEmptyMessage(0);
+//				try {
+//					Thread.sleep(5 * 1000);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//				m_bneedupdate = true;
+//			}
+//		});
+		handler.sendEmptyMessage(0);
+		
 	}
+	
+	Runnable runnable=new Runnable() {
+		
+		@Override
+		public void run() {
+			m_bneedupdate = true;
+		}
+	};
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -261,7 +269,7 @@ public class SgDial extends TextView implements IObject {
 
 				chart.setCurrent(F_dial);
 				chart.invalidate();
-
+                handler.postDelayed(runnable, 5000);
 				break;
 			}
 
