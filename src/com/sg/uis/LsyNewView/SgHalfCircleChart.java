@@ -349,7 +349,6 @@ public class SgHalfCircleChart extends TextView implements IObject {
 			SgRealTimeData oRealTimeData = m_rRenderWindow.m_oShareObject.m_mapRealTimeDatas
 					.get(this.getUniqueID());
 			newValue = oRealTimeData.strValue;
-			System.out.println("∞Î‘≤£∫"+newValue);
 			if (newValue == null || newValue.equals("") || newValue.equals("-999999")) {
 				return false;
 			}

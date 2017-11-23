@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.xclcharts.chart.SplineChart;
 import org.xclcharts.chart.SplineData;
@@ -202,6 +203,7 @@ public class SgSplineChart extends TextView implements IObject {
 				if (!strValue.isEmpty() && strValue != null
 						&& !strValue.equals("")) {
 					isSave = Boolean.parseBoolean(strValue);
+					
 				}
 			} catch (Exception e) {
 				Toast.makeText(getContext(), "曲线控件Content属性错误", 200).show();
@@ -488,7 +490,7 @@ public class SgSplineChart extends TextView implements IObject {
 	   {
 		  if (sizeMath <= 0 || mode == 0 || linePointMapData.size() <= 0)
 				return false;
-		  System.out.println("我已经进来了");
+	
 		  return updateMathData();
 		   
 	   }else
@@ -509,7 +511,8 @@ public class SgSplineChart extends TextView implements IObject {
 			SgRealTimeData oRealTimeData = m_rRenderWindow.m_oShareObject.m_mapRealTimeDatas
 					.get(this.getUniqueID());
 			String value = oRealTimeData.strValue;
-			System.out.println(value);
+//			Random random=new Random();
+//			String value = random.nextInt(5)+"";
 			if (value == null || value.equals("") || value.equals("-999999")) {
 				return false;
 			}
@@ -526,9 +529,8 @@ public class SgSplineChart extends TextView implements IObject {
 					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
 							.get(j);
 
-				//	readData(linePointData.get(i), equail, signal, j);
-					System.out.println(i + "::" + j + "::"
-							+ linePointData.get(i).size());
+					readData(linePointData.get(i), "PUE", "", j);
+				
 				}
 			}
 
@@ -616,7 +618,7 @@ public class SgSplineChart extends TextView implements IObject {
 				for (int j = 1; j <= 4; j++) {
 					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
 							.get(j);
-					//saveData(linePointData.get(i), equail, signal, j);
+					saveData(linePointData.get(i), "PUE", "", j);
 				}
 			}
 			i++;
@@ -637,6 +639,9 @@ public class SgSplineChart extends TextView implements IObject {
 			String[] str = list.split("-");
 			equail = str[0];
 			signal = str[2];
+			
+//			Random random=new Random();
+//			String value = random.nextInt(100)+"";
 			String value = DataGetter.getSignalValue(equail, signal);
 			if (value == null || value.equals("") || value.equals("-999999")) {
 				return false;
@@ -653,10 +658,7 @@ public class SgSplineChart extends TextView implements IObject {
 				for (int j = 1; j <= 4; j++) {
 					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
 							.get(j);
-
-					readData(linePointData.get(i), equail, signal, j);
-					System.out.println(i + "::" + j + "::"
-							+ linePointData.get(i).size());
+					readData(linePointData.get(i), equail, signal, j);				
 				}
 			}
 
@@ -740,6 +742,7 @@ public class SgSplineChart extends TextView implements IObject {
 			dataSeries.getLinePaint().setStrokeWidth(2);
 			chartData.add(dataSeries);
 
+			
 			if (isSave) {
 				for (int j = 1; j <= 4; j++) {
 					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData

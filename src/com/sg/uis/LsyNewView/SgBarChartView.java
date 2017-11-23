@@ -1,8 +1,20 @@
 package com.sg.uis.LsyNewView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.xclcharts.chart.BarChart;
 import org.xclcharts.chart.BarData;
@@ -19,12 +31,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.demo.xclcharts.view.BarChart01View;
 import com.mgrid.data.DataGetter;
 import com.mgrid.main.MainWindow;
 import com.mgrid.util.ExpressionUtils;
+import com.mgrid.util.TimeUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 
@@ -37,16 +51,89 @@ public class SgBarChartView extends TextView implements IObject {
 	private List<String> chartLabels = new LinkedList<String>();
 	private List<BarData> chartData = new LinkedList<BarData>();
 
+	private Map<Integer, List<Map<Double, Double>>> linePointListData = new HashMap<Integer, List<Map<Double, Double>>>();
+
+	private List<RadioButton> rButton = new ArrayList<RadioButton>();
+	private int mode = 1;
+
 	public SgBarChartView(Context context) {
 		super(context);
 
 		m_oPaint = new Paint();
 		m_rBBox = new Rect();
 		chart = new BarChart01View(context);
-		
+
 		chart.setTouch(false);
 		Bchart = chart.getBarChart();
-	
+		addRadio();
+	}
+
+	private void addRadio() {
+
+		RadioButton ridobuttons1 = new RadioButton(getContext());
+		ridobuttons1.setText("日");
+		rButton.add(ridobuttons1);
+		ridobuttons1.setChecked(true);
+
+		RadioButton ridobuttons2 = new RadioButton(getContext());
+		ridobuttons2.setText("月");
+		rButton.add(ridobuttons2);
+		ridobuttons2.setChecked(false);
+
+		RadioButton ridobuttons3 = new RadioButton(getContext());
+		ridobuttons3.setText("年");
+		rButton.add(ridobuttons3);
+		ridobuttons3.setChecked(false);
+
+		for (int i = 0; i < rButton.size(); i++) {
+			rButton.get(i).setTextSize(13);
+			rButton.get(i).setTag(i + 1);
+			rButton.get(i).setOnClickListener(linClickListener);
+		}
+
+	}
+
+	private OnClickListener linClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			for (int i = 0; i < rButton.size(); i++) {
+				rButton.get(i).setChecked(false);
+			}
+			int tag = (Integer) ((RadioButton) v).getTag();
+			mode = tag;
+			rButton.get(mode - 1).setChecked(true);
+			addLabels(mode);
+			isUpdate=true;
+			m_bneedupdate = true;
+		}
+	};
+
+	private void addLabels(int index) {
+		chartLabels = null;
+		chartLabels = new LinkedList<String>();
+		switch (index) {
+		case 1:// 日
+			for (int i = 1; i <= 31; i++) {
+				chartLabels.add(i + "");
+			}
+			break;
+		case 2:// 月
+			for (int i = 1; i <= 12; i++) {
+				chartLabels.add(i + "");
+			}
+			break;
+		case 3:// 月
+
+			if (startYear < 0)
+				startYear = Integer.parseInt(TimeUtils.getYear());
+
+			for (int i = 0; i < 10; i++) {
+				chartLabels.add((startYear + i) + "");
+			}
+			break;
+		}
+		Bchart.setCategories(chartLabels);
 	}
 
 	@SuppressLint("DrawAllocation")
@@ -73,8 +160,11 @@ public class SgBarChartView extends TextView implements IObject {
 		m_rBBox.right = nX + nWidth;
 		m_rBBox.bottom = nY + nHeight;
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
-
 			chart.layout(nX, nY, nX + nWidth, nY + nHeight);
+			for (int i = 0; i < rButton.size(); i++) {
+				rButton.get(i).layout(nX + (i + 1) * nWidth / 4, nY,
+						nX + (i + 2) * nWidth / 4, nY + 18);
+			}
 		}
 	}
 
@@ -84,7 +174,9 @@ public class SgBarChartView extends TextView implements IObject {
 		m_rRenderWindow = rWin;
 		rWin.addView(this);
 		rWin.addView(chart);
-
+		for (int i = 0; i < rButton.size(); i++) {
+			rWin.addView(rButton.get(i));
+		}
 	}
 
 	@Override
@@ -109,35 +201,45 @@ public class SgBarChartView extends TextView implements IObject {
 		} else if ("Alpha".equals(strName)) {
 			m_fAlpha = Float.parseFloat(strValue);
 		} else if ("ScaleColor".equals(strName)) {
-			if (!strValue.isEmpty())
-			{
-				Bchart.getDataAxis().getAxisPaint().setColor(Color.parseColor(strValue));
-				Bchart.getCategoryAxis().getAxisPaint().setColor(Color.parseColor(strValue));			
-				Bchart.getDataAxis().getTickMarksPaint().setColor(Color.parseColor(strValue));
-				Bchart.getCategoryAxis().getTickMarksPaint().setColor(Color.parseColor(strValue));
-			}		
+			if (!strValue.isEmpty()) {
+				Bchart.getDataAxis().getAxisPaint()
+						.setColor(Color.parseColor(strValue));
+				Bchart.getCategoryAxis().getAxisPaint()
+						.setColor(Color.parseColor(strValue));
+				Bchart.getDataAxis().getTickMarksPaint()
+						.setColor(Color.parseColor(strValue));
+				Bchart.getCategoryAxis().getTickMarksPaint()
+						.setColor(Color.parseColor(strValue));
+			}
 		} else if ("Content".equals(strName)) {
 			m_strContent = strValue;
 			parse_content();
-  
+
 		} else if ("FontFamily".equals(strName))
 			m_strFontFamily = strValue;
 		else if ("FontSize".equals(strName)) {
 			float fWinScale = (float) MainWindow.SCREEN_WIDTH
 					/ (float) MainWindow.FORM_WIDTH;
 			m_fFontSize = Float.parseFloat(strValue) * fWinScale;
-		} else if ("IsBold".equals(strName)) 
-		{
+		} else if ("IsBold".equals(strName)) {
 			m_bIsBold = Boolean.parseBoolean(strValue);
-		    isNenghao =m_bIsBold;
-		}
-		else if ("FontColor".equals(strName)) {
-			if (!strValue.isEmpty())
-			{			
-				//x轴刻度文字画笔
-				Bchart.getCategoryAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));			
-				//y轴刻度文字画笔
-				Bchart.getDataAxis().getTickLabelPaint().setColor(Color.parseColor(strValue));			
+			isNenghao = m_bIsBold;
+			if (!isNenghao) {
+				for (int i = 0; i < rButton.size(); i++) {
+					rButton.get(i).setVisibility(View.INVISIBLE);
+				}
+			} else {
+				addListData();
+				addLabels(mode);
+			}
+		} else if ("FontColor".equals(strName)) {
+			if (!strValue.isEmpty()) {
+				// x轴刻度文字画笔
+				Bchart.getCategoryAxis().getTickLabelPaint()
+						.setColor(Color.parseColor(strValue));
+				// y轴刻度文字画笔
+				Bchart.getDataAxis().getTickLabelPaint()
+						.setColor(Color.parseColor(strValue));
 			}
 		} else if ("ClickEvent".equals(strName))
 			m_strClickEvent = strValue;
@@ -156,30 +258,28 @@ public class SgBarChartView extends TextView implements IObject {
 			cmd = strValue;
 			mExpression = strValue;
 			parse_cmd();
-			
-		}else if ("Xlabel".equals(strName)) {
+		} else if ("Xlabel".equals(strName)) {
 			labelData = strValue;
-			parse_label();
+			if (chartLabels.size() == 0)
+				parse_label();
 		}
 	}
 
-	private void parse_label(){
+	private void parse_label() {
 		if (labelData == null || labelData.equals("")
 				|| labelData.equals("设置内容")) {
-
 			setlable();
 			return;
 		}
-			
+
 		String[] s = labelData.split("\\|");
 		for (int i = 0; i < s.length; i++) {
 			chartLabels.add(s[i]);
 		}
+
 		Bchart.setCategories(chartLabels);
-		
 	}
-	
-	
+
 	@Override
 	public void initFinished() {
 		int nFlag = Gravity.NO_GRAVITY;
@@ -203,7 +303,6 @@ public class SgBarChartView extends TextView implements IObject {
 					MainWindow.FORM_HEIGHT, getTextSize()) / 2f;
 			setPadding(0, (int) padSize, 0, (int) padSize);
 		}
-
 		setGravity(nFlag);
 	}
 
@@ -239,7 +338,6 @@ public class SgBarChartView extends TextView implements IObject {
 			else
 				data_label.add(s[s.length - 1]);
 		}
-
 	}
 
 	private void parse_color() {
@@ -259,7 +357,6 @@ public class SgBarChartView extends TextView implements IObject {
 	public boolean parse_cmd() {
 		if (cmd.equals("") || cmd == null)
 			return false;
-		
 		String[] Expression = cmd.split("/");
 		for (int i = 0; i < Expression.length; i++) {
 			List<String> list_cmd = ExpressionUtils.getExpressionUtils().parse(
@@ -268,6 +365,17 @@ public class SgBarChartView extends TextView implements IObject {
 			data_cmd.add(list_cmd);
 		}
 		return true;
+	}
+
+	private void addListData() {
+		for (int i = 1; i <= 3; i++) {
+			List<Map<Double, Double>> list = new ArrayList<Map<Double, Double>>();
+			for (int j = 0; j < data_cmd.size(); j++) {
+				Map<Double, Double> map = new TreeMap<Double, Double>();
+				list.add(map);
+			}
+			linePointListData.put(i, list);
+		}
 	}
 
 	private void setlable() {
@@ -286,16 +394,11 @@ public class SgBarChartView extends TextView implements IObject {
 
 			@Override
 			public void run() {
+
 				handler.sendEmptyMessage(0);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				m_bneedupdate = true;
+				handler.postDelayed(runnable, 1000 * 3);
 			}
 		}).start();
-
 	}
 
 	private Handler handler = new Handler() {
@@ -303,7 +406,7 @@ public class SgBarChartView extends TextView implements IObject {
 			switch (msg.what) {
 			case 0:
 
-				Bchart.getDataAxis().setAxisMax(max_Value + 50);
+				Bchart.getDataAxis().setAxisMax((int) max_Value + 50);
 				Bchart.setDataSource(chartData);
 				chart.invalidate();
 
@@ -313,9 +416,272 @@ public class SgBarChartView extends TextView implements IObject {
 		};
 	};
 
+	Runnable runnable = new Runnable() {
+
+		@Override
+		public void run() {
+
+			m_bneedupdate = true;
+		}
+	};
+
 	@Override
 	public boolean updateValue() {
+		if (isNenghao) {
+			return updateNenghao();
+		} else {
+			return updateData();
+		}
 
+	}
+
+	private void cleanData(int index) {
+		List<Map<Double, Double>> linePointData = linePointListData.get(index);
+		for (int j = 0; j < linePointData.size(); j++) {
+			linePointData.get(j).clear();
+		}
+	}
+
+	private boolean updateNenghao() {
+		if (data_cmd.size() <= 0)
+			return false;
+
+		double Yeartime = Double.parseDouble(TimeUtils.getYear());
+		double Monthtime = Double.parseDouble(TimeUtils.getMonth());
+		double Daytime = Double.parseDouble(TimeUtils.getDay());
+
+		if (Daytime != currentDay || Monthtime != currentMonth
+				|| Yeartime != currentYear || isUpdate) {
+			isUpdate=false;
+			if (Monthtime != currentMonth) {
+				cleanData(1);
+			}
+			if (Yeartime != currentYear) {
+				cleanData(2);
+			}
+
+			double value;
+			chartData = new ArrayList<BarData>();
+			List<Double> dataSeriesA = null;
+
+			int i = 0;
+			for (List<String> list_cmd : data_cmd) {
+				dataSeriesA = new LinkedList<Double>();
+
+				for (String s : list_cmd) {
+
+					String[] spl = s.split("-");
+					equail = spl[0];
+					signal = spl[2];
+					 newValue = DataGetter.getSignalValue(equail, signal);
+//					Random random = new Random();
+//					newValue = random.nextInt(100) + "";
+					if (newValue == null || newValue.equals(""))
+						continue;
+					value = Double.parseDouble(newValue);
+
+					if (isFirstIN) {
+						for (int j = 1; j <= 3; j++) {
+
+							List<Map<Double, Double>> linePointData = linePointListData
+									.get(j);
+
+							readData(linePointData.get(i), equail, signal, j);
+
+						}
+					}
+
+					if (Daytime != currentDay) {
+
+						for (double a = 1; a < Daytime; a++) {
+
+							if (linePointListData.get(1).get(i).get(a) == null) {
+
+								linePointListData.get(1).get(i).put(a, value);
+							}
+						}
+						if (linePointListData.get(1).get(i).get(Daytime) == null)
+							linePointListData.get(1).get(i).put(Daytime, value);
+
+						saveData(linePointListData.get(1).get(i), equail,
+								signal, 1);
+
+					}
+
+					if (Monthtime != currentMonth) {
+
+						for (int a = 1; a < (int) Monthtime; a++) {
+							if (!linePointListData.get(2).get(i)
+									.containsKey((double) a)) {
+
+								linePointListData.get(2).get(i)
+										.put((double) a, value);
+							}
+						}
+						if (!linePointListData.get(2).get(i)
+								.containsKey(Monthtime))
+							linePointListData.get(2).get(i)
+									.put(Monthtime, value);
+
+						saveData(linePointListData.get(2).get(i), equail,
+								signal, 2);
+
+					}
+
+					if (Yeartime != currentYear) {
+
+						if (startYear < 0)
+							startYear = (int) Yeartime;
+						for (int a = startYear; a < (int) Yeartime; a++) {
+							if (!linePointListData.get(3).get(i)
+									.containsKey((double) a)) {
+
+								linePointListData.get(3).get(i)
+										.put((double) a, value);
+							}
+						}
+						if (!linePointListData.get(3).get(i)
+								.containsKey(Yeartime))
+							linePointListData.get(3).get(i)
+									.put(Yeartime, value);
+
+						saveData(linePointListData.get(3).get(i), equail,
+								signal, 3);
+
+					}
+				}
+
+				Map<Double, Double> map = linePointListData.get(mode).get(i);
+				setData(dataSeriesA, map);
+				compareMax(dataSeriesA);
+				BarData BarDataA = new BarData(data_label.get(i), dataSeriesA,
+						Color.parseColor(data_color.get(i)));
+				chartData.add(BarDataA);
+
+				i++;
+			}
+			currentDay = Daytime;
+			currentMonth = Monthtime;
+			currentYear = Yeartime;
+			m_bneedupdate = false;
+			isFirstIN = false;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void saveData(Map<Double, Double> data, String eqstr, String sistr,
+			int index) {
+		String Yeartime = TimeUtils.getYear();
+		String Monthtime = TimeUtils.getMonth();
+
+		String fileName = "";
+		File path = new File(RC_nenghao);
+		if (!path.exists()) {
+			path.mkdir();
+		}
+
+		try {
+			switch (index) {
+
+			case 1:// 一天
+				fileName = RC_nenghao + "/" + Yeartime + "-" + Monthtime + "-"
+						+ eqstr + "-" + sistr;
+				break;
+			case 2:// 一月
+				fileName = RC_nenghao + "/" + Yeartime + "-" + eqstr + "-"
+						+ sistr;
+				break;
+			case 3:// 一年
+				fileName = RC_nenghao + "/" + eqstr + "-" + sistr;
+				break;
+			}
+
+			File f = new File(fileName);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(f), "GB2312"));
+			Iterator<Entry<Double, Double>> iterator = data.entrySet()
+					.iterator();
+			while (iterator.hasNext()) {
+				Entry<Double, Double> entry = iterator.next();
+				double d1 = entry.getKey();
+				double d2 = entry.getValue();
+				bw.write(d1 + "-" + d2);
+				bw.newLine();
+			}
+			bw.flush();
+			bw.close();
+		} catch (Exception e) {
+
+		}
+	}
+
+	private void setData(List<Double> list, Map<Double, Double> map) {
+
+		if (mode == 3) {
+
+			for (double i = 1; i < map.size(); i++) {
+				list.add(map.get(i + (double) startYear)
+						- map.get((double) startYear+i-1));
+			}
+
+		} else {
+			for (double i = 1; i < map.size(); i++) {
+				list.add(map.get(i + 1) - map.get(i));
+			}
+		}
+	}
+
+	private void readData(Map<Double, Double> data, String eqstr, String sistr,
+			int index) {
+		String Yeartime = TimeUtils.getYear();
+		String Monthtime = TimeUtils.getMonth();
+
+		String fileName = "";
+		try {
+			switch (index) {
+
+			case 1:// 一天
+				fileName = RC_nenghao + "/" + Yeartime + "-" + Monthtime + "-"
+						+ eqstr + "-" + sistr;
+				break;
+			case 2:// 一月
+				fileName = RC_nenghao + "/" + Yeartime + "-" + eqstr + "-"
+						+ sistr;
+				break;
+			case 3:// 一年
+				fileName = RC_nenghao + "/" + eqstr + "-" + sistr;
+
+				break;
+			}
+			File f = new File(fileName);
+			if (f.exists()) {
+
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						new FileInputStream(f), "gb2312"));
+				String str = "";
+				double tem = -1;
+				while ((str = br.readLine()) != null) {
+
+					String[] s = str.split("-");
+					if (index == 3 && tem < 0) {
+						tem = Double.parseDouble(s[0]);
+						startYear = (int) tem;
+					}
+					data.put(Double.parseDouble(s[0]), Double.parseDouble(s[1]));
+				}
+				br.close();
+			}
+		} catch (Exception e) {
+
+		}
+	}
+
+	private boolean updateData() {
 		if (data_cmd.size() <= 0)
 			return false;
 
@@ -324,7 +690,7 @@ public class SgBarChartView extends TextView implements IObject {
 		chartData = new ArrayList<BarData>();
 
 		List<Double> dataSeriesA = null;
-		valueList.clear();
+
 		int i = 0;
 		for (List<String> list_cmd : data_cmd) {
 			dataSeriesA = new LinkedList<Double>();
@@ -333,18 +699,16 @@ public class SgBarChartView extends TextView implements IObject {
 				String[] spl = s.split("-");
 				equail = spl[0];
 				signal = spl[2];
-
-				// label_name = DataGetter.getSignalName(equail, signal);
-
 				newValue = DataGetter.getSignalValue(equail, signal);
+//				 Random random = new Random();
+//				 newValue = random.nextInt(100) + "";
 				if (newValue == null || newValue.equals(""))
 					return false;
 				value = Float.parseFloat(newValue);
-				valueList.add((int) value);
 				dataSeriesA.add((double) value);
 			}
 
-			compareMax(valueList);
+			compareMax(dataSeriesA);
 			BarData BarDataA = new BarData(data_label.get(i), dataSeriesA,
 					Color.parseColor(data_color.get(i)));
 			chartData.add(BarDataA);
@@ -355,10 +719,10 @@ public class SgBarChartView extends TextView implements IObject {
 		return true;
 	}
 
-	private void compareMax(List<Integer> value) {
+	private void compareMax(List<Double> value) {
 		max_Value = 0;
 		for (int i = 0; i < value.size(); i++) {
-			int v = value.get(i);
+			double v = value.get(i);
 			if (v > max_Value)
 				max_Value = v;
 		}
@@ -435,8 +799,15 @@ public class SgBarChartView extends TextView implements IObject {
 	private List<List<String>> data_cmd = new ArrayList<List<String>>();// 表达式分类
 	private List<String> data_color = new ArrayList<String>();// 颜色分类
 	private List<String> data_label = new ArrayList<String>();// 各个柱状图的含义
-	private int max_Value = 0; // 轴刻度最大值
-	private List<Integer> valueList = new ArrayList<Integer>();	
-	private String labelData="";
-	private boolean isNenghao=false;
+	private double max_Value = 0; // 轴刻度最大值
+
+	private String labelData = "";
+	private boolean isNenghao = false;
+
+	private String RC_nenghao = "/mgrid/log/RC_nenghao";
+	private double currentYear = -1, currentMonth = -1, currentDay = -1;
+	private boolean isFirstIN = true;
+	private boolean isUpdate = true;
+	private int startYear = -1;
+	
 }
