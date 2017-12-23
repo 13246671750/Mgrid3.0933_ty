@@ -332,7 +332,7 @@ public class SgButton extends TextView implements IObject {
 					}
 				}).start();
 
-			} else if ("跳转应用".equals(m_strClickEvent)) {
+			} else if ("跳转应用".equals(m_strClickEvent)) {                                                                            
 				// 包名 类名都知道
 				ComponentName componetName = new ComponentName(
 				// 这个是另外一个应用程序的包名

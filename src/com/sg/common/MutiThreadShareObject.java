@@ -44,18 +44,9 @@ public class MutiThreadShareObject {
 		m_mapSaveSignal = new HashMap<String,List<local_his_signal>>();
 		m_mapHisPoint = new HashMap<String,save_curve_signal>();
 		m_mapMultiPoint = new HashMap<String,save_multipoint_signal>();
-		 m_mapLocalEvent = new HashMap<String,List<local_his_event>>();
-		 m_SgIsolationEventSetter=new HashMap<String, stBindingExpression>();
+		m_mapLocalEvent = new HashMap<String,List<local_his_event>>();
+		m_SgIsolationEventSetter=new HashMap<String, stBindingExpression>();
 	}
-	/*
-	private volatile static MutiThreadShareObject _instance = null;
-	public synchronized static MutiThreadShareObject getInstance() {
-		if (_instance == null) {
-			_instance = new MutiThreadShareObject();
-		}
-		
-		return _instance;
-	}*/
 
 	//列表清0
 	public void clearFromTcpValue() {
@@ -103,15 +94,7 @@ public class MutiThreadShareObject {
         	String strKey = iter.next();  
  
         	stExpression oExpress = mapCmds.get(strKey); 
-        	if(strKey.equals("YTParameter2"))
-        	{
-        	//	System.out.println("我绑定了");
-        		if(oExpress==null)
-        		{
-        	//		System.out.println("没有值");
-        		}
-        		
-        	}
+    
         	if (oExpress == null){
         		Log.e("threadShare-processCmdCommands","oExpress == null");
         		continue;
@@ -130,7 +113,7 @@ public class MutiThreadShareObject {
 				ipcC.value = m_mapCmdCommand.get(strKey);//bindingExpression.strValue;
 			
 				lstCtrl.add(ipcC);
-			//	System.out.println("呵呵："+ipcC.equipid+"::"+ipcC.ctrlid+""+ipcC.valuetype+"::"+ipcC.value );
+		
 				if (0 != service.send_control_cmd(service.IP, service.PORT, lstCtrl))
 				{
 					String str = new String("控制失败！");

@@ -1,7 +1,5 @@
 package com.sg.uis;
 
-import java.io.IOException;
-
 
 import android.annotation.SuppressLint;
 import android.content.Context;

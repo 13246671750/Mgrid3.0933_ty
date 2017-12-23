@@ -21,18 +21,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mgrid.data.DataGetter;
 import com.mgrid.data.EquipmentDataModel.Event;
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
 import com.mgrid.main.R;
+import com.mgrid.main.SoundService;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.MySimpleAdapter;
@@ -52,27 +49,14 @@ public class AlarmLevel extends TextView implements IObject {
 		m_rBBox = new Rect();
 
 		listView = new ListView(context);
-		getData();
 		adapter = new MySimpleAdapter(context, list, R.layout.vlist,
 				new String[] { "time", "value", "img" }, new int[] {
 						R.id.title, R.id.info, R.id.img });
-		// listView.setDivider();
 		listView.setAdapter(adapter);
-		// listView.setOnItemClickListener(new OnItemClickListener() {
-		//
-		// @Override
-		// public void onItemClick(AdapterView<?> parent, View view,
-		// int position, long id) {
-		//
-		// Toast.makeText(getContext(), "点击了第" + position + "项", 1000)
-		// .show();
-		// }
-		// });
 
 	}
 
 	private void getData() {
-
 		for (int i = 0; i < 20; i++) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("time", "G" + i);
@@ -80,7 +64,6 @@ public class AlarmLevel extends TextView implements IObject {
 			map.put("img", R.drawable.ic_jiqiren);
 			list.add(map);
 		}
-
 	}
 
 	@SuppressLint("DrawAllocation")
@@ -108,9 +91,7 @@ public class AlarmLevel extends TextView implements IObject {
 		m_rBBox.right = nX + nWidth;
 		m_rBBox.bottom = nY + nHeight;
 		if (m_rRenderWindow.isLayoutVisible(m_rBBox)) {
-
 			listView.layout(nX, nY, nX + nWidth, nY + nHeight);
-
 		}
 	}
 
@@ -221,9 +202,33 @@ public class AlarmLevel extends TextView implements IObject {
 						m_rBBox.bottom - m_nLayoutBottomOffset);
 				m_nLayoutBottomOffset = -m_nLayoutBottomOffset;
 				break;
+
+			case 2:
+				System.out.println("我要开始播放了");
+				startSound();
+				break;
+
+			case 5:
+				stopSound();
+				break;
+
 			}
 		};
 	};
+
+	private void startSound() {
+		Intent intent = new Intent(m_rRenderWindow.m_oMgridActivity,
+				SoundService.class);
+		intent.putExtra("playing", true);
+		m_rRenderWindow.m_oMgridActivity.startService(intent);
+	}
+
+	private void stopSound() {
+		Intent intent = new Intent(m_rRenderWindow.m_oMgridActivity,
+				SoundService.class);
+		intent.putExtra("playing", false);
+		m_rRenderWindow.m_oMgridActivity.startService(intent);
+	}
 
 	@Override
 	public void initFinished() {
@@ -288,11 +293,40 @@ public class AlarmLevel extends TextView implements IObject {
 
 		m_bneedupdate = false;
 
-		Hashtable<String, Hashtable<String, Event>> listEvents = DataGetter
+		final Hashtable<String, Hashtable<String, Event>> listEvents = DataGetter
 				.getRTEventList();
 
-		if (listEvents == null || listEvents.size() == 0)
-			return false;
+		if (listEvents == null || listEvents.size() == 0) {
+			
+			OldSize = 0;
+			old_list.clear();
+			handler.sendEmptyMessage(5);
+			return true;
+		}
+
+		if (MGridActivity.alarmWay != null
+				&& !MGridActivity.alarmWay.equals("")) {
+			MGridActivity.xianChengChi.execute(new Runnable() {
+
+				@Override
+				public void run() {
+				
+					if (needAlarm(listEvents)) {
+						if (MGridActivity.alarmWay.equals("wav")) {
+							
+							handler.sendEmptyMessage(2);
+						} else if (MGridActivity.alarmWay.equals("DO1")) {
+							if (MGridActivity.lstCtrlDo1 != null)
+								handler.sendEmptyMessage(3);
+						} else {
+							if (MGridActivity.lstCtrlDo2 != null)
+								handler.sendEmptyMessage(4);
+						}
+
+					}
+				}
+			});
+		}
 
 		if (OldSize == listEvents.size()) {
 			try {
@@ -317,16 +351,13 @@ public class AlarmLevel extends TextView implements IObject {
 					.entrySet().iterator();
 			while (it.hasNext()) {
 				Hashtable.Entry<String, Event> event_entry = it.next();
-				String eventid = event_entry.getKey();
+
 				Event event = event_entry.getValue();
-				// HashMap<Long, String>
-				// hash=MGridActivity.AlarmShieldTimer.get(equitid+"_"+eventid);
-				// if(hash!=null) continue;
-				String gradeLevel= "";
+				String gradeLevel = "";
 				switch (event.grade) {
 				case 1:
-					gradeLevel = "通知"; 
-					break; 
+					gradeLevel = "通知";
+					break;
 
 				case 2:
 					gradeLevel = "一般告警";
@@ -383,6 +414,54 @@ public class AlarmLevel extends TextView implements IObject {
 			}
 		}
 		return true;
+	}
+
+	private boolean needAlarm(Hashtable<String, Hashtable<String, Event>> event) {
+		Hashtable<String, Hashtable<String, Event>> newEvenLists = event;
+
+		if (newEvenLists == null || newEvenLists.size() == 0)
+			return false;
+		if (oldEvenLists == null) { // 第一次判断时 old_eventss为空 如果new_eventss包含这个告警
+			// 就报警.
+			System.out.println("old_eventss为空");
+			oldEvenLists = newEvenLists;
+			return true;
+		} else {
+			if (newEvenLists.size() > oldEvenLists.size()) {
+				oldEvenLists = newEvenLists;
+				return true;
+			} else {
+				Iterator<String> equip_it = newEvenLists.keySet().iterator();
+				while (equip_it.hasNext()) {
+					String e_equipId = equip_it.next();
+
+					if (oldEvenLists.containsKey(e_equipId)) {
+						Hashtable<String, Event> new_events = newEvenLists
+								.get(e_equipId);
+						Hashtable<String, Event> old_events = oldEvenLists
+								.get(e_equipId);
+
+						Iterator<String> event_itt = new_events.keySet()
+								.iterator();
+						while (event_itt.hasNext()) {
+							String event_id = event_itt.next();
+
+							if (old_events.containsKey(event_id) == false) {
+
+								oldEvenLists = newEvenLists;
+								return true;
+							}
+						}
+					} else {
+
+						oldEvenLists = newEvenLists;
+						return true;
+					}
+				}
+			}
+		}
+		oldEvenLists = newEvenLists;
+		return false;
 	}
 
 	class SortByEventTime implements Comparator<Object> {
@@ -459,4 +538,5 @@ public class AlarmLevel extends TextView implements IObject {
 	private MySimpleAdapter adapter;
 	private int m_nLayoutBottomOffset = 1;
 	private String grade = "0";
+	private Hashtable<String, Hashtable<String, Event>> oldEvenLists = null;
 }

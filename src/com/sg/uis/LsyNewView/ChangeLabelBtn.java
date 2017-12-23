@@ -1,11 +1,15 @@
 package com.sg.uis.LsyNewView;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -31,9 +35,6 @@ import com.mgrid.util.XmlUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.TotalVariable;
-import com.sg.common.UtExpressionParser;
-import com.sg.common.UtExpressionParser.stBindingExpression;
-import com.sg.common.UtExpressionParser.stExpression;
 
 @SuppressLint("RtlHardcoded")
 @SuppressWarnings("unused")
@@ -77,44 +78,109 @@ public class ChangeLabelBtn extends TextView implements IObject {
 
 			@Override
 			public void onClick(View v) {
-				
-				String text=Et_ChangeValue.getText().toString();
-				
-				if(text==null||text.equals(""))
-				{
+
+				String text = Et_ChangeValue.getText().toString();
+
+				if (text == null || text.equals("")) {
 					Toast.makeText(context, "不能为空", 200).show();
 					return;
 				}
-								
-				if (TotalVariable.ORDERLISTS.size() != 0&&text!=null) {
+
+				if (TotalVariable.ORDERLISTS.size() != 0 && text != null) {
 
 					if (index != null && !index.equals("")) {
 						if (TotalVariable.ORDERLISTS.containsKey(index)) {
 
-							ChangeLabel Cl=(ChangeLabel) TotalVariable.ORDERLISTS.get(index);
+							ChangeLabel Cl = (ChangeLabel) TotalVariable.ORDERLISTS
+									.get(index);
 							Cl.updateText(text);
-						}else
-						{
+							if(MGridActivity.isLogin==true)
+							setLoginPassWord(text);
+
+						} else {
 							Toast.makeText(context, "index配置可能有误", 200).show();
 						}
 					}
 
-				}else
-				{
+				} else {
 					Toast.makeText(context, "没有配置属性或者输入错误", 200).show();
 				}
 
 			}
 		});
-
 	}
-	
-	
-	
-	public void setText()
-	{ 
-		if(Et_ChangeValue.getText().toString()!=null||!Et_ChangeValue.getText().toString().equals(""))
-		Et_ChangeValue.setText(Et_ChangeValue.getText().toString());		
+
+	private void setLoginPassWord(String text) {
+		File f = new File(filePath + "/vtu_pagelist/key.txt");
+		if (!f.exists()) {
+			Toast.makeText(getContext(), "key表不存在", 2000).show();
+			return;
+		}
+		
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(f), "gb2312"));
+			String s = "";
+			while ((s = reader.readLine()) != null) {
+				String[] str = s.split("-");
+				loginRandomCode.put(str[0], str[1]);
+			}
+			reader.close();
+			String Code = text.substring(text.length() - 4, text.length());
+		
+			String RandomCode = loginRandomCode.get(Code);
+			
+			if(RandomCode!=null&&!RandomCode.equals(""))
+			{
+				
+				//makeLoginPassWord(Code, RandomCode);
+				MGridActivity.loginPassWord=RandomCode;
+				saveLoginPassWord();
+			}else
+			{
+				Toast.makeText(getContext(), "没有在key表里面找到对应的值", 2000).show();
+			}
+			
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void makeLoginPassWord(String Code, String RandomCode) {
+		char[] CodeChar = Code.toCharArray();
+		char[] RandomCodeChar = RandomCode.toCharArray();
+		System.out.println(Code+"::"+RandomCode);
+		MGridActivity.loginPassWord = CodeChar[0] + "" + RandomCodeChar[0] + ""
+				+ CodeChar[1] + "" + RandomCodeChar[1] + "" + CodeChar[2] + ""
+				+ RandomCodeChar[2] + "" + CodeChar[3] + "A";
+		saveLoginPassWord();
+	}
+
+	private void saveLoginPassWord() {
+		try {
+			File f = new File(MGridActivity.logeFilePath);
+			if (!f.exists()) {
+				f.createNewFile();
+			}		
+			BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f),"gb2312"));
+			writer.write(MGridActivity.loginPassWord);
+			writer.flush();
+			writer.close();
+			File file = new File(filePath + "/vtu_pagelist/key.txt");
+			if (file.exists()) {
+				file.delete();
+			}			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setText() {
+		if (Et_ChangeValue.getText().toString() != null
+				|| !Et_ChangeValue.getText().toString().equals(""))
+			Et_ChangeValue.setText(Et_ChangeValue.getText().toString());
 	}
 
 	@Override
@@ -199,10 +265,13 @@ public class ChangeLabelBtn extends TextView implements IObject {
 					/ (float) MainWindow.FORM_WIDTH;
 			m_fFontSize = Float.parseFloat(strValue) * fWinScale;
 			this.setTextSize(m_fFontSize);
+			Et_ChangeValue.setTextSize(m_fFontSize);
 		} else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
-
+			if (!strValue.isEmpty())
+				this.setTextColor(Color.parseColor(strValue));
+			Et_ChangeValue.setTextColor(Color.parseColor(strValue));
 		} else if ("HorizontalContentAlignment".equals(strName))
 			m_strHorizontalContentAlignment = strValue;
 		else if ("VerticalContentAlignment".equals(strName))
@@ -211,59 +280,55 @@ public class ChangeLabelBtn extends TextView implements IObject {
 			m_strExpression = strValue;
 		else if ("index".equals(strName))
 			index = strValue;
-		    MGridActivity.xianChengChi.execute(new Runnable() {
-				
-				@Override
-				public void run() {
-					
-					String str=readText();
-					if(str!=null)
-					{
-						Message mes=new Message();
-						mes.what=0;
-						mes.obj=str;
-						handler.sendMessage(mes);
-								
-					}
+		MGridActivity.xianChengChi.execute(new Runnable() {
+
+			@Override
+			public void run() {
+
+				String str = readText();
+				if (str != null) {
+					Message mes = new Message();
+					mes.what = 0;
+					mes.obj = str;
+					handler.sendMessage(mes);
+
 				}
-			});
+			}
+		});
 
 	}
-	
-	Handler handler=new Handler(){
+
+	Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case 0:
-				
-				Et_ChangeValue.setText((String)msg.obj);
+
+				Et_ChangeValue.setText((String) msg.obj);
 				break;
 
 			case 1:
-				
+
 				break;
 			}
-			
+
 		};
 	};
-	
-	
-	private String readText()
-	{
-		File f=new File(filePath+"/"+index+".index");
-		if(!f.exists())
-		{
+
+	private String readText() {
+		File f = new File(filePath + "/" + index + ".index");
+		if (!f.exists()) {
 			return null;
 		}
 		try {
-			BufferedReader reader=new BufferedReader(new InputStreamReader(new FileInputStream(f), "gb2312"));
-			String str=reader.readLine();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(f), "gb2312"));
+			String str = reader.readLine();
 			reader.close();
 			return str;
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null; 
-		
+		return null;
 	}
 
 	@Override
@@ -298,7 +363,6 @@ public class ChangeLabelBtn extends TextView implements IObject {
 	}
 
 	public void updateWidget() {
-	
 
 	}
 
@@ -351,7 +415,7 @@ public class ChangeLabelBtn extends TextView implements IObject {
 	float m_fAlpha = 1.0f;
 	float m_fRotateAngle = 0.0f;
 	String m_strContent = "设置内容";
-	String m_strFontFamily = "微软雅黑"; 
+	String m_strFontFamily = "微软雅黑";
 	float m_fFontSize = 12.0f;
 	boolean m_bIsBold = false;
 	int m_cFontColor = 0xFF008000;
@@ -373,6 +437,7 @@ public class ChangeLabelBtn extends TextView implements IObject {
 	private NodeList nodeList = null;
 	private Element element = null;
 	private XmlUtils xml = null;
-	String filePath=Environment.getExternalStorageDirectory().getPath();
+	String filePath = Environment.getExternalStorageDirectory().getPath();
 	private String index = "";
+	private Map<String, String> loginRandomCode = new HashMap<String, String>();
 }

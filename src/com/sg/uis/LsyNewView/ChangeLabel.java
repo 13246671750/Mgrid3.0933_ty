@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -23,7 +21,6 @@ import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
@@ -225,7 +222,7 @@ public class ChangeLabel extends TextView implements IObject {
 		setText(text);
 		System.out.println(text);
 		invalidate();
-		Toast.makeText(getContext(), "修改成功", 200).show();
+		//Toast.makeText(getContext(), "修改成功", 200).show();
 		MGridActivity.xianChengChi.execute(new Runnable() {
 			
 			@Override
@@ -278,7 +275,7 @@ public class ChangeLabel extends TextView implements IObject {
 	}
 	
 
-	@Override
+	@Override 
 	public boolean updateValue() {
 
 		return false;

@@ -28,6 +28,19 @@ public class SoundService extends Service {
         }
 	}
 	
+	//ÊÍ·Å
+	 private void ReleasePlayer() {
+	        if (mp != null) {
+	        	mp.stop();
+
+	            //¹Ø¼üÓï¾ä
+	        	mp.reset();
+
+	        	mp.release();
+	        	mp = null;
+	        }
+
+	  }
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -48,11 +61,33 @@ public class SoundService extends Service {
 		
 		boolean playing = intent.getBooleanExtra("playing", false);
 		 if (playing) {
-			    if(!mp.isPlaying())
-	            mp.start();
+			    if(mp!=null&&!mp.isPlaying())
+			    {
+	                mp.start();	           
+			    }
+			    else if(mp==null)
+			    {
+			    	mp=new MediaPlayer();
+					mp.setLooping(true); 
+					String song = Environment.getExternalStorageDirectory().getPath()  + "/vtu_pagelist/Alarm.wav";
+					try {
+			            mp.setDataSource(song);
+			            mp.prepare();
+			            mp.start();
+			        } catch (Exception e) {
+			            e.printStackTrace();
+			        }
+			    }
 	        } else {
-	            if(mp.isPlaying())
-	            mp.pause(); 
+	        
+	            if(mp!=null&&mp.isPlaying())
+	            {
+	            	mp.pause();
+	                mp.stop(); 
+	                mp.reset();
+		        	mp.release();
+	                mp=null;
+	            }
 	        }
 		
 		 /*

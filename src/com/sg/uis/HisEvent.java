@@ -71,9 +71,10 @@ public class HisEvent extends HisEventTable implements IObject {
 	private String Receive;
 	private String AllDevice;
 
-	private String textColor = "#FFFFFFFF";
-	private String btnColor = "#FF008B8B";
-	private String titleColor = "#87008B8B";
+	
+	private String textColor="#FF000000";
+	private String btnColor="#FFC0C0C0";
+	private String titleColor="#FF242424";
 	private MyAdapter myAdapter = null;
 
 	private String logPath = "/mgrid/data/Command/0.log";
@@ -169,58 +170,63 @@ public class HisEvent extends HisEventTable implements IObject {
 		// 信号名显示text
 		view_text = new TextView(context);
 		view_text.setText(DeviceList); // 变为中文
+		view_text.setTextColor(Color.BLACK);
 		view_text.setTextSize(15);
 		view_text.setGravity(Gravity.CENTER);
 		view_text.setPadding(2, 2, 2, 2);
-		// view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
-		view_text.setBackgroundColor(Color.parseColor(btnColor));
-
-		view_text.setTextColor(Color.parseColor(textColor));
+	    view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
+//		view_text.setBackgroundColor(Color.parseColor(btnColor));
+//
+//		view_text.setTextColor(Color.parseColor(textColor));
 
 		// 日期选择button
 		view_timeButton = new Button(context);
 		view_timeButton.setText(SetTime); // Set Time
-		// view_timeButton.setTextColor(Color.BLACK);
+	    view_timeButton.setTextColor(Color.BLACK);
 		view_timeButton.setTextSize(15);
 		view_timeButton.setPadding(2, 2, 2, 2);
 		view_timeButton.setOnClickListener(l);// 设置该控件的监听
-		view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
-		view_timeButton.setTextColor(Color.parseColor(textColor));
+//		view_timeButton.setBackgroundResource(android.R.drawable.btn_default);
+//		view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
+//		view_timeButton.setTextColor(Color.parseColor(textColor));
 		// 结束时间button
 		view_PerveDay = new Button(context);
 		view_PerveDay.setText(PreveDay); // PreveDay
-		// view_PerveDay.setTextColor(Color.BLACK);
+		 view_PerveDay.setTextColor(Color.BLACK);
 		view_PerveDay.setTextSize(15);
 		view_PerveDay.setPadding(2, 2, 2, 2);
 		view_PerveDay.setOnClickListener(l);// 设置该控件的监听
-		view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
-		view_PerveDay.setTextColor(Color.parseColor(textColor));
+//		view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
+//		view_PerveDay.setTextColor(Color.parseColor(textColor));
+//		view_PerveDay.setBackgroundResource(android.R.drawable.btn_default);
 
 		view_Text = new TextView(context);
 		view_Text.setText("——");
 		view_Text.setTextColor(Color.BLACK);
-		view_Text.setTextSize(16);
+		view_Text.setTextSize(12);
 		view_Text.setPadding(2, 2, 2, 2);
 
 		// 开始时间button
 		view_NextDay = new Button(context);
 		view_NextDay.setText(NextDay); // NextDay
-		// view_NextDay.setTextColor(Color.BLACK);
+		 view_NextDay.setTextColor(Color.BLACK);
 		view_NextDay.setTextSize(15);
 		view_NextDay.setPadding(2, 2, 2, 2);
 		view_NextDay.setOnClickListener(l);// 设置该控件的监听
-		view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
-		view_NextDay.setTextColor(Color.parseColor(textColor));
+//		view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
+//		view_NextDay.setTextColor(Color.parseColor(textColor));
+//		view_NextDay.setBackgroundResource(android.R.drawable.btn_default);
 
 		// 接收receive
 		view_Receive = new Button(context);
 		view_Receive.setText(Receive);
-		// view_Receive.setTextColor(Color.BLACK);
+	    view_Receive.setTextColor(Color.BLACK);
 		view_Receive.setTextSize(15);
 		view_Receive.setPadding(2, 2, 2, 2);
 		view_Receive.setOnClickListener(l);
-		view_Receive.setBackgroundColor(Color.parseColor(btnColor));
-		view_Receive.setTextColor(Color.parseColor(textColor));
+//		view_Receive.setBackgroundColor(Color.parseColor(btnColor));
+//		view_Receive.setTextColor(Color.parseColor(textColor));
+//		view_NextDay.setBackgroundResource(android.R.drawable.btn_default);
 
 		calendar = Calendar.getInstance();
 		year = calendar.get(Calendar.YEAR);
@@ -443,7 +449,6 @@ public class HisEvent extends HisEventTable implements IObject {
 										+ after_months + "-" + after_days);
 							}
 						});
-
 				dialog_after.show();
 				return;
 			}
@@ -581,10 +586,10 @@ public class HisEvent extends HisEventTable implements IObject {
 				&& position == (index * 30 - 1)) {
 
 			if (listData.size() <= (index + 1) * 30) {
-				updateList(AlarmTitles,
+				updateList(lstTitles,
 						listData.subList(index * 30, listData.size()));
 			} else {
-				updateList(AlarmTitles,
+				updateList(lstTitles,
 						listData.subList(index * 30, (index + 1) * 30));
 				index++;
 			}
@@ -749,7 +754,6 @@ public class HisEvent extends HisEventTable implements IObject {
 			m_cEvenRowBackground = Color.parseColor(strValue);
 		} else if ("BtnColor".equals(strName)) {
 			if (!strValue.isEmpty()) {
-			
 
 				if ("#FF000000".equals(strValue)) {
 					view_text.setBackgroundResource(R.drawable.bg_shadow);
@@ -757,7 +761,7 @@ public class HisEvent extends HisEventTable implements IObject {
 					view_PerveDay.setBackgroundResource(R.drawable.bg_shadow);
 					view_NextDay.setBackgroundResource(R.drawable.bg_shadow);
 					view_Receive.setBackgroundResource(R.drawable.bg_shadow);
-					//myAdapter.setBtnColor("#FFFFFFFF");
+					// myAdapter.setBtnColor("#FFFFFFFF");
 					btnColor = "#FF4D4D4D";
 				} else {
 					btnColor = strValue;
@@ -771,11 +775,17 @@ public class HisEvent extends HisEventTable implements IObject {
 					myAdapter.setBtnColor(btnColor);
 				}
 
-				
 			}
 		} else if ("TextColor".equals(strName)) {
 			if (!strValue.isEmpty()) {
 				textColor = strValue;
+				view_text.setTextColor(Color.parseColor(textColor));
+				view_timeButton.setTextColor(Color
+						.parseColor(textColor));
+				view_PerveDay
+						.setTextColor(Color.parseColor(textColor));
+				view_NextDay.setTextColor(Color.parseColor(textColor));
+				view_Receive.setTextColor(Color.parseColor(textColor));
 				myAdapter.setTextColor(textColor);
 			}
 		} else if ("TitleColor".equals(strName)) {
@@ -949,7 +959,27 @@ public class HisEvent extends HisEventTable implements IObject {
 				lstRow_his.add(eventName);// 告警名称
 				lstRow_his.add(his_event.event_mean);
 				lstRow_his.add(his_event.value); // 信号数值
-				lstRow_his.add(his_event.severity); // 告警等级
+				try {
+					int level = Integer.parseInt(his_event.severity);
+					switch (level) {
+					case 1:
+						lstRow_his.add("通知");
+						break;
+					case 2:
+						lstRow_his.add("一般告警");
+						break;
+					case 3:
+						lstRow_his.add("严重告警");
+						break;
+					case 4:
+						lstRow_his.add("致命告警");
+						break;
+
+					}
+				} catch (Exception e) {
+
+				}
+
 				lstRow_his.add(his_event.start_time); // 开始时间
 				lstRow_his.add(finishTime);// 结束时间
 				// System.out.println(closeEquiptName+":"+eventName+":"+his_event.event_mean+":"+his_event.value+":"+his_event.severity+":"+his_event.start_time+":"+finishTime);
@@ -1038,7 +1068,26 @@ public class HisEvent extends HisEventTable implements IObject {
 					lstRow_his1.add(eventName1);// 告警名称
 					lstRow_his1.add(his_event.event_mean);
 					lstRow_his1.add(his_event.value); // 信号数值
-					lstRow_his1.add(his_event.severity); // 告警等级
+					try {
+						int level = Integer.parseInt(his_event.severity);
+						switch (level) {
+						case 1:
+							lstRow_his1.add("通知");
+							break;
+						case 2:
+							lstRow_his1.add("一般告警");
+							break;
+						case 3:
+							lstRow_his1.add("严重告警");
+							break;
+						case 4:
+							lstRow_his1.add("致命告警");
+							break;
+
+						}
+					} catch (Exception e) {
+
+					}
 					lstRow_his1.add(his_event.start_time); // 开始时间
 					lstRow_his1.add(finishTime);// 结束时间
 					lsyLs1.add(lstRow_his1);

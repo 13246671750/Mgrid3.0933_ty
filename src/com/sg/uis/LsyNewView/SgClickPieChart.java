@@ -287,8 +287,8 @@ public class SgClickPieChart extends TextView implements IObject {
 			String[] spl = s.split("_");
 			equail = spl[0];
 			signal = spl[1];
-         	newValue=DataGetter.getSignalValue(equail, signal);
-		//	newValue = Math.random() * 100 + "";
+         //	newValue=DataGetter.getSignalValue(equail, signal);
+			newValue = Math.random() * 100 + "";
 			Name = DataGetter.getSignalName(equail, signal);
 			if (newValue == null || newValue.equals(""))
 				return false;

@@ -16,6 +16,7 @@ import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
@@ -238,6 +239,14 @@ public class SgLabel extends TextView implements IObject {
 			m_strColorExpression = strValue; // 字体颜色变化表达式
 		else if ("CmdExpression".equals(strName))
 			m_cmdExpression = strValue;
+		else if ("MaxLevelExpression".equals(strName))
+			try {
+				if(strValue!=null&&!strValue.equals(""))
+					max = Float.parseFloat(strValue);
+			} catch (Exception e) {
+				Toast.makeText(getContext(), "Label出错了", 500).show();
+			}
+			
 	}
 
 	@Override
@@ -294,7 +303,7 @@ public class SgLabel extends TextView implements IObject {
 		if (oRealTimeData == null || oBindingExpression == null)
 			return false;
 
-		String strValue = oRealTimeData.strValue;
+		String strValue = oRealTimeData.strValue; 
 
 		if (strValue == null || "".equals(strValue) == true)
 			return false;
@@ -342,7 +351,18 @@ public class SgLabel extends TextView implements IObject {
 			m_strContent = strValue; // 界面数值赋予
 
 			parseFontcolor(oRealTimeData.strData); // 解析数值颜色表达式 fjw add
-
+			try {
+				float ff=Float.parseFloat(strValue);
+	            if(max!=-999&&ff>=max)
+	            {
+	            	m_strContent=max+"";
+	            }
+			} catch (Exception e) {
+	//			Toast.makeText(getContext(), "Label读数时出错", 500).show();
+			}
+		
+			
+			
 			return true;
 
 		}
@@ -458,7 +478,9 @@ public class SgLabel extends TextView implements IObject {
 	String m_strExpression = "Binding{[Value[Equip:114-Temp:173-Signal:1]]}";
 	String m_strColorExpression = ">20[#FF009090]>30[#FF0000FF]>50[#FFFF0000]>60[#FFFFFF00]";
     String m_cmdExpression="";
-	
+	float  max=-999;
+    
+    
 	MainWindow m_rRenderWindow = null;
 	String m_strSignalValue = "";
 

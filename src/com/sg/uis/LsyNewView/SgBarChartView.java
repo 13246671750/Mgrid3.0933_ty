@@ -65,7 +65,7 @@ public class SgBarChartView extends TextView implements IObject {
 
 		chart.setTouch(false);
 		Bchart = chart.getBarChart();
-		addRadio();
+		addRadio(); 
 	}
 
 	private void addRadio() {

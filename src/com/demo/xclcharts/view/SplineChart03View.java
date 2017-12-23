@@ -13,6 +13,7 @@ import org.xclcharts.common.IFormatterTextCallBack;
 import org.xclcharts.event.click.PointPosition;
 import org.xclcharts.renderer.XChart;
 import org.xclcharts.renderer.XEnum;
+import org.xclcharts.renderer.plot.PlotGridRender;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -113,16 +114,22 @@ private void chartRender()
 		chart.getDataAxis().getTickLabelPaint().setTextSize(10);
 		//调轴线与网络线风格
 		chart.getCategoryAxis().setTickMarksVisible(false);
-		chart.getDataAxis().setAxisLineVisible(false);
+		//chart.getDataAxis().setAxisLineVisible(true);
 		chart.getDataAxis().setTickMarksVisible(false);		
 		chart.getPlotGrid().showHorizontalLines();
 		chart.setTopAxisVisible(false);
 		chart.setRightAxisVisible(false);				
 		
 		chart.getPlotGrid().getHorizontalLinePaint().setColor(Color.parseColor("#62666D"));
-		chart.getPlotGrid().getHorizontalLinePaint().setStrokeWidth(0.05f);
-		chart.getCategoryAxis().getAxisPaint().setColor(Color.WHITE);
+		chart.getPlotGrid().getHorizontalLinePaint().setStrokeWidth(1);
+		
+		
+		
+		chart.getCategoryAxis().getAxisPaint().setColor(Color.BLUE);
 		chart.getCategoryAxis().getAxisPaint().setStrokeWidth(1);
+		
+		chart.getDataAxis().getAxisPaint().setColor(Color.BLUE);
+		chart.getDataAxis().getAxisPaint().setStrokeWidth(1);
 		
 			
 		//定义交叉点标签显示格式,特别备注,因曲线图的特殊性，所以返回格式为:  x值,y值

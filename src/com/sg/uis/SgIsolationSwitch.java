@@ -12,7 +12,6 @@ import android.view.View;
 import com.mgrid.main.MainWindow;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
-import com.sg.common.MutiThreadShareObject;
 import com.sg.common.SgRealTimeData;
 /** 开关 */
 public class SgIsolationSwitch extends View implements IObject {
@@ -24,7 +23,6 @@ public class SgIsolationSwitch extends View implements IObject {
 				return true;
 			}
         });
-
 		m_oPaint = new Paint();
 		m_rBBox = new Rect();
 		m_rRectF = new RectF();
@@ -63,7 +61,9 @@ public class SgIsolationSwitch extends View implements IObject {
 
         // 画开关
         if (m_bState == true) {
+        	
         	canvas.drawLine(nHeight / 8, nHeight / 2, nWidth, nHeight / 2-1, m_oPaint);
+        	
         }
         else{
         	canvas.drawLine(nHeight / 8, nHeight / 2, nWidth, 0, m_oPaint);

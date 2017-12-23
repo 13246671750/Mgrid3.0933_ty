@@ -214,18 +214,21 @@ public class SgSplineChart extends TextView implements IObject {
 						.setColor(Color.parseColor(strValue));
 				Schart.getDataAxis().getTickLabelPaint()
 						.setColor(Color.parseColor(strValue));
+				for (int i = 0; i < rButton.size(); i++) {
+					rButton.get(i).setTextColor(Color.parseColor(strValue));	
+					
+				}
 			}
 		} else if ("ScaleColor".equals(strName)) {
 			if (!strValue.isEmpty()) {
 				Schart.getPlotGrid().getHorizontalLinePaint()
 						.setColor(Color.parseColor(strValue));
-				Schart.getCategoryAxis().getAxisPaint()
-						.setColor(Color.parseColor(strValue));
+				
 			}
 		} else if ("ColorData".equals(strName)) {
 			if (!strValue.isEmpty()) {
 				parse_color(strValue);
-			}
+			}  
 		} else if ("ClickEvent".equals(strName))
 			m_strClickEvent = strValue;
 		else if ("Url".equals(strName))
@@ -255,6 +258,14 @@ public class SgSplineChart extends TextView implements IObject {
 			if (!strValue.isEmpty() && strValue != null && !strValue.equals("")) {
 				ycount = Integer.parseInt(strValue);
 				Schart.getDataAxis().setAxisSteps(max_value / ycount);
+			}
+		}else if("XColor".equals(strName))
+		{
+			if (!strValue.isEmpty()) {
+				Schart.getCategoryAxis().getAxisPaint()
+						.setColor(Color.parseColor(strValue));
+				Schart.getDataAxis().getAxisPaint()
+				.setColor(Color.parseColor(strValue));
 			}
 		}
 	}
@@ -785,7 +796,7 @@ public class SgSplineChart extends TextView implements IObject {
 
 				fileName = RC_signal + Yeartime + "-" + Monthtime + "-"
 						+ Daytime + "-" + Hourtime + "-" + eqstr + "-" + sistr;
-				break;
+				return;
 			case 2:// Ò»Ìì
 				fileName = RC_signal + Yeartime + "-" + Monthtime + "-"
 						+ Daytime + "-" + eqstr + "-" + sistr;

@@ -23,7 +23,7 @@ public class UtTableAdapter extends BaseAdapter {
         //return table.size();
     	return m_nWaterMarker;
     }
-    
+
     @Override  
     public long getItemId(int position) { 
         return position;
@@ -103,8 +103,7 @@ public class UtTableAdapter extends BaseAdapter {
 				cellview.setBackgroundColor(tableCell.cRowColor);
 				cellview.setText(String.valueOf(tableCell.value));
 			}
-		}
-		
+		}		
 		private List<AlwaysMarqueeTextView> mlstCellView = null;
 	}
 

@@ -44,6 +44,7 @@ public class Breaker extends View implements IObject {
         float nWidth = ((float)(m_nWidth) / (float)MainWindow.FORM_WIDTH) * (float)(m_rRenderWindow.VIEW_RIGHT - m_rRenderWindow.VIEW_LEFT);
 		float nHeight = ((float)(m_nHeight) / (float)MainWindow.FORM_HEIGHT) * (float)(m_rRenderWindow.VIEW_BOTTOM - m_rRenderWindow.VIEW_TOP);
 
+		
 		// 调整画布坐标系
 		canvas.save();    //保存canvas状态
 		canvas.rotate(m_fRotateAngle-90, nWidth/2, nHeight/2); // 通过计算中心点旋转坐标系

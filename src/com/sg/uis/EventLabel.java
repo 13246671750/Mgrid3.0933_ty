@@ -43,6 +43,7 @@ public class EventLabel extends TextView implements IObject {
     	public void handleMessage(Message msg){
     		switch (msg.what){
     		case 1:
+    			parseFontcolor(m_strContent);
     			EventLabel.this.setText(m_strContent);
     			EventLabel.this.setTextColor(m_cFontColor);
     			break;

@@ -47,8 +47,7 @@ public class SgEventList extends UtTable implements IObject {
 
 	public SgEventList(Context context) {
 		super(context);
-		m_rBBox = new Rect();
-
+		m_rBBox = new Rect();	
 		m_listTempEvents = new Hashtable<String, Hashtable<String, Event>>();
 
 		// System.out.println(MGridActivity.whatLanguage);
@@ -142,7 +141,6 @@ public class SgEventList extends UtTable implements IObject {
 
 				}
 			}
-
 		}
 	});
 
@@ -416,7 +414,6 @@ public class SgEventList extends UtTable implements IObject {
 					.entrySet().iterator();
 			for (int i = 0; i < cmd_list.size(); i++) {
 				equiptID = cmd_list.get(i);
-				// System.out.println("cmd_list:"+equiptID+" id:"+id);
 				if ("0".equals(equiptID) || id.equals(equiptID)) {
 					while (it.hasNext()) {
 						Hashtable.Entry<String, Event> event_entry = it.next();

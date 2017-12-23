@@ -32,6 +32,7 @@ import com.mgrid.data.DataGetter;
 import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
 import com.mgrid.main.R;
+import com.mgrid.util.MediaUtil;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.SgRealTimeData;
@@ -431,6 +432,10 @@ public class SgImage extends View implements IObject {
 		if ("".equals(m_strClickEvent) == false) {
 			if ("显示桌面".equals(m_strClickEvent)) {
 				showWaiterAuthorizationDialog();
+			} else if (m_strClickEvent.equals("关闭告警")) {
+				
+				MediaUtil.getMediaUtil().stopSound(m_rRenderWindow.m_oMgridActivity);
+
 			} else {
 				if (MGridActivity.isNOChangPage) {
 					String[] arrStr = m_strClickEvent.split("\\(");

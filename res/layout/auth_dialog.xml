@@ -21,10 +21,10 @@
         android:layout_alignBottom="@+id/tvuserName"
         android:layout_marginLeft="56dp"
         android:layout_toRightOf="@+id/tvuserName"
-        android:singleLine="true"
         android:ems="10"
-        android:maxLength="20" >
- 
+        android:maxLength="20"
+        android:singleLine="true" >
+
         <requestFocus />
     </EditText>
 
@@ -44,9 +44,9 @@
         android:layout_alignBottom="@+id/tvPWD"
         android:layout_marginLeft="56dp"
         android:layout_toRightOf="@+id/tvPWD"
-        android:singleLine="true"
         android:ems="10"
+        android:inputType="textPassword"
         android:maxLength="20"
-        android:inputType="textPassword" />
+        android:singleLine="true" />
 
 </RelativeLayout>

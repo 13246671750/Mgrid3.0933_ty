@@ -123,6 +123,7 @@ import com.sg.uis.LsyNewView.SgBrokenLine;
 import com.sg.uis.LsyNewView.SgClickPieChart;
 import com.sg.uis.LsyNewView.SgDial;
 import com.sg.uis.LsyNewView.SgHalfCircleChart;
+import com.sg.uis.LsyNewView.SgPieChart3D;
 import com.sg.uis.LsyNewView.SgSplineChart;
 import com.sg.uis.LsyNewView.SgStackBarChart;
 import com.sg.uis.LsyNewView.SgVideoView;
@@ -1056,6 +1057,10 @@ public class MainWindow extends ViewGroup {
 						{
 							CoolButton CB=new CoolButton(this.getContext());
 							m_mapUIs.put(strID, CB);
+						}else if("SgPieChart3D".equals(strType))
+						{
+							SgPieChart3D spc=new SgPieChart3D(this.getContext());
+							m_mapUIs.put(strID, spc);
 						}
  
  
@@ -1176,7 +1181,8 @@ public class MainWindow extends ViewGroup {
 								|| "EventLevelAlter".equals(strElementType)
 								|| "HistoryCurveChart".equals(strElementType)
 								|| "OnClickBtn".equals(strElementType)
-								|| "CoolButton".equals(strElementType)) {
+								|| "CoolButton".equals(strElementType)
+								|| "SgPieChart3D".equals(strElementType)) {
 							try {
 								iCurrentObj.parseProperties(strName, strValue,
 										m_strResFolder);

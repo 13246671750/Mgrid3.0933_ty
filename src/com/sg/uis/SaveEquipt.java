@@ -76,9 +76,9 @@ public class SaveEquipt extends UtTable implements IObject {
 	private String Receive;
 	
 	
-	private String textColor="#FFFFFFFF";
-	private String btnColor="#FF008B8B";
-	private String titleColor="#87008B8B";
+	private String textColor="#FF000000";
+	private String btnColor="#FFC0C0C0";
+	private String titleColor="#FF242424";
 	
 	private MyAdapter myAdapter=null;
 	
@@ -137,46 +137,50 @@ public class SaveEquipt extends UtTable implements IObject {
 		view_text.setText(DeviceList); //  Equiptment↓
 		view_text.setTextSize(15);
 		view_text.setGravity(Gravity.CENTER);
-	//	view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
-		view_text.setBackgroundColor(Color.parseColor(btnColor));
-		view_text.setTextColor(Color.parseColor(textColor));
+		view_text.setBackgroundColor(Color.argb(100, 100, 100, 100));
+//		view_text.setBackgroundColor(Color.parseColor(btnColor));
+//		view_text.setTextColor(Color.parseColor(textColor));
 		
 		//日期选择button
 		view_timeButton = new Button(context);
 		view_timeButton.setText(SetTime);   // Set Time
-		//view_timeButton.setTextColor(Color.BLACK);
+		view_timeButton.setTextColor(Color.BLACK);
 		view_timeButton.setTextSize(15);
 		view_timeButton.setPadding(2, 2, 2, 2);
 		view_timeButton.setOnClickListener(l);//设置该控件的监听	
-		view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
-		view_timeButton.setTextColor(Color.parseColor(textColor));
+//		view_timeButton.setBackgroundResource(android.R.drawable.btn_default);
+//		view_timeButton.setBackgroundColor(Color.parseColor(btnColor));
+//		view_timeButton.setTextColor(Color.parseColor(textColor));
 		//前一天button
 		view_PerveDay = new Button(context);	
 		view_PerveDay.setText(PreveDay);  // PreveDay
-		//view_PerveDay.setTextColor(Color.BLACK);
+		view_PerveDay.setTextColor(Color.BLACK);
 		view_PerveDay.setTextSize(15);
 		view_PerveDay.setPadding(2, 2, 2, 2);		
 		view_PerveDay.setOnClickListener(l);//设置该控件的监听	
-		view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
-		view_PerveDay.setTextColor(Color.parseColor(textColor));
+//		view_PerveDay.setBackgroundResource(android.R.drawable.btn_default);
+//		view_PerveDay.setBackgroundColor(Color.parseColor(btnColor));
+//		view_PerveDay.setTextColor(Color.parseColor(textColor));
 		//后一天button
 		view_NextDay = new Button(context);	
 		view_NextDay.setText(NextDay);  // NextDay
-		//view_NextDay.setTextColor(Color.BLACK);
+		view_NextDay.setTextColor(Color.BLACK);
 		view_NextDay.setTextSize(15);	
 		view_NextDay.setPadding(2, 2, 2, 2);
 		view_NextDay.setOnClickListener(l);//设置该控件的监听	
-		view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
-		view_NextDay.setTextColor(Color.parseColor(textColor));
+//		view_NextDay.setBackgroundResource(android.R.drawable.btn_default);
+//		view_NextDay.setBackgroundColor(Color.parseColor(btnColor));
+//		view_NextDay.setTextColor(Color.parseColor(textColor));
 		//接收receive
 		view_Receive = new Button(context);		
 		view_Receive.setText(Receive); // Receive
-	//	view_Receive.setTextColor(Color.BLACK);
+		view_Receive.setTextColor(Color.BLACK);
 		view_Receive.setTextSize(15);
 		view_Receive.setPadding(2, 2, 2, 2);		
 		view_Receive.setOnClickListener(l);	//设置该控件的监听	
-		view_Receive.setBackgroundColor(Color.parseColor(btnColor));
-		view_Receive.setTextColor(Color.parseColor(textColor));
+//		view_Receive.setBackgroundResource(android.R.drawable.btn_default);
+//		view_Receive.setBackgroundColor(Color.parseColor(btnColor));
+//		view_Receive.setTextColor(Color.parseColor(textColor));
 	
 		calendar = Calendar.getInstance();
 		year = calendar.get(Calendar.YEAR);
@@ -236,23 +240,6 @@ public class SaveEquipt extends UtTable implements IObject {
 		});
 		
 		
-		//信号名选择spinner
-//		view_EquiptSpinner = new Spinner(context);//信号下拉列表控件
-//		adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item); 
-//		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		view_EquiptSpinner.setAdapter(adapter);
-//		adapter.add(DeviceList);	
-//		view_EquiptSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-//            public void onItemSelected(
-//                    AdapterView<?> parent, View view, int position, long id) {
-//            	parse_expression(); //解析下拉列表成员
-// 
-//            }
-//
-//            public void onNothingSelected(AdapterView<?> parent) {
-//            	
-//            }
-//		});
 		
 		
 		lstContends = new ArrayList<List<String>>();
@@ -560,6 +547,13 @@ public class SaveEquipt extends UtTable implements IObject {
 			{
 			textColor = strValue;
 			myAdapter.setTextColor(textColor);
+			view_text.setTextColor(Color.parseColor(textColor));
+			view_timeButton.setTextColor(Color
+					.parseColor(textColor));
+			view_PerveDay
+					.setTextColor(Color.parseColor(textColor));
+			view_NextDay.setTextColor(Color.parseColor(textColor));
+			view_Receive.setTextColor(Color.parseColor(textColor));
 			}
 		}else if ("TitleColor".equals(strName)) {
 			if(!strValue.isEmpty())

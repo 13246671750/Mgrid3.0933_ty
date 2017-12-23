@@ -53,9 +53,11 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.lsy.Service.TilmePlush.TimePlushService;
 import com.mgrid.MyDialog.MyDialog;
 import com.mgrid.data.DataGetter;
 import com.mgrid.util.CameraUtils;
+import com.mgrid.util.LoginUtil;
 import com.mgrid.util.XmlUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
@@ -78,41 +80,43 @@ import data_model.ipc_control;
 @SuppressWarnings("deprecation")
 public class MGridActivity extends Activity {
 
-
 	private int sleepTime = 2 * 60 * 60;// 屏保视频休眠时间
 	private Intent m_oTaskIntent = null;
 	private MainWindow m_oSgSgRenderManager = null;
 	private HashMap<String, MainWindow> m_oViewGroups = null;
-	private String Load="";
+	private String Load = "";
 	private long starttime = 0;
 	private DataGetter mDataGetter;
 	private ContainerView mContainer;
 	private MyDialog dialog;
 	private FlikerProgressBar bar;
-		
+	public static String logeFilePath = Environment
+			.getExternalStorageDirectory().getPath() + "/login" + ".login";
 	public WakeLock mWakeLock;// 锁屏类
 	public SgVideoView svv = null; // 播放视频
-	public Handler mTimeHandler = new Handler();	
-	
+	public Handler mTimeHandler = new Handler();
+
 	public static boolean isPlaymv = false;
 	public static boolean isPlaygif = false;
 	public static boolean isSleep = false;
+	public static boolean isLogin = false;
+	public static String loginPassWord = "12345678";
 	public static Context context = null;
-	public static String XmlFile = "";	
-	public InputMethodManager mImm = null;
+	public static String XmlFile = "";
+	public static String SIP = "192.168.1.238";
 
+	public InputMethodManager mImm = null;
 	// 加载用
 	public int tmp_load_int_time = 20;
 	public int tmp_load_pageseek = 0;
 	public boolean tmp_flag_loading = true;
 	public MainWindow tmp_load_prevpage = null;
-		
+
 	// Params:
 	public String m_sMainPage = null;
 	public String m_sRootFolder = null;
 	public ArrayList<String> m_oPageList = null;
 
-	
 	public static boolean m_bHasRandomData = false;
 	public static boolean m_bBitmapHIghQuality = false;
 	public static boolean m_bShowLoadProgress = true;
@@ -129,15 +133,14 @@ public class MGridActivity extends Activity {
 	public static String Subject = "标题"; // 邮箱标题
 	public static String fromName = "发件人名称"; // 发件人名称
 
-
-	
 	public static boolean whatLanguage = true;// 系统语言
 	public static Map<String, Map<String, String>> EventClose = new HashMap<String, Map<String, String>>();
 	public static HashMap<String, ArrayList<String>> AlarmShow = new HashMap<String, ArrayList<String>>();
-	public static ExecutorService xianChengChi = Executors.newCachedThreadPool();
+	public static ExecutorService xianChengChi = Executors
+			.newCachedThreadPool();
 	public static boolean isNOChangPage = false;
-	public static int saveTime;	//信号数据存储时间
-		
+	public static int saveTime; // 信号数据存储时间
+
 	// 用户名和密码
 	public static String m_UserName;
 	public static String m_PassWord;
@@ -151,21 +154,21 @@ public class MGridActivity extends Activity {
 
 	public static HashMap<String, IObject> AlarmAll = new HashMap<String, IObject>();
 	public static File all_Event_file = new File("/mgrid/data/Command/0.log");
-	
+
 	public static boolean isChangPage = false;
 	public static boolean isLoading = true;
 	public static boolean isChangGif = true;
 	public static ArrayList<String> LabelList = new ArrayList<String>();
 	public static HashMap<String, stBindingExpression> m_DoubleButton = null;
 	public static String usbName = "";
-	public static String alarmWay="";
+	public static String alarmWay = "";
 	public static List<ipc_control> lstCtrlDo1 = null;
 	public static List<ipc_control> lstCtrlDo2 = null;
-	
-	//告警屏蔽时间保存
-	public static HashMap<String,HashMap<Long,String>> AlarmShieldTimer=new HashMap<String, HashMap<Long,String>>();
-		
-	public Runnable runTime = new Runnable() { 
+
+	// 告警屏蔽时间保存
+	public static HashMap<String, HashMap<Long, String>> AlarmShieldTimer = new HashMap<String, HashMap<Long, String>>();
+
+	public Runnable runTime = new Runnable() {
 		public void run() {
 			if (svv != null) {
 				svv.pauseMv();
@@ -174,30 +177,36 @@ public class MGridActivity extends Activity {
 			}
 		}
 	};
-	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-			init();
-	} 
-	
+
+		init();
+	}
+
+	private void startTimeFlush() {
+		Intent intent = new Intent(this, TimePlushService.class);
+		startService(intent);
+	}
+
+	public void Mainfinish() {
+		this.finish();
+	}
+
 	private void init() {
-		
-		
+
 		starttime = System.currentTimeMillis();
 		context = this;
 		m_oViewGroups = new HashMap<String, MainWindow>();
 		m_oPageList = new ArrayList<String>();
-		whatLanguage = whatLanguage();				
-		if(whatLanguage)
-		{
-			Load="加载完";
-		}else
-		{
-			Load="Loaded";
+		whatLanguage = whatLanguage();
+		if (whatLanguage) {
+			Load = "加载完";
+		} else {
+			Load = "Loaded";
 		}
-		
+
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);// 强制为横屏
 		mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);// 输入法窗口
 		getWindow().setFlags(
@@ -205,25 +214,29 @@ public class MGridActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);// 对该window进行硬件加速.
 		// 设置屏幕宽高
 		mContainer = new ContainerView(this);
-		MainWindow.SCREEN_WIDTH = 1024; 
+		MainWindow.SCREEN_WIDTH = 1024;
 		MainWindow.SCREEN_HEIGHT = 768;
-			
+
 		setBroadcastReceiver(); // 注册广播
-		if(parseMgridIni())
-		{
-		    parseView();	
-		}else
-		{
+		if (parseMgridIni()) {
+			if (isLogin) {
+				LoginUtil loginUtil = new LoginUtil(context);
+				loginUtil.showWaiterAuthorizationDialog();
+			}
+			if (!SIP.equals("")) {
+				startTimeFlush();
+			}
+			parseView();
+		} else {
 			showTaskUI(true);
 		}
 
-	} 
-	
-	private void setProgressDialog()
-	{
-		dialog=new MyDialog(this);	
+	}
+
+	private void setProgressDialog() {
+		dialog = new MyDialog(this);
 		dialog.show();
-		bar=dialog.getBar();		
+		bar = dialog.getBar();
 	}
 
 	// 广播注册
@@ -237,29 +250,26 @@ public class MGridActivity extends Activity {
 			public void onReceive(Context arg0, Intent arg1) {
 
 				if (arg1.getAction().equals(Intent.ACTION_SCREEN_ON)) { // 监听屏幕亮
-					
-					
+
 					// 拍照功能是否开启
 					if (m_bTakePhoto) {
 						// 打开拍照工具
 						final CameraUtils cameraUtils = new CameraUtils(
 								getApplicationContext());
-				
-//						MGridActivity.xianChengChi.execute(new Runnable() {
-//
-//							@Override
-//							public void run() {
-								// 拍照并保存
-								cameraUtils.openCamera();
-//							}
-//						});
+
+						// MGridActivity.xianChengChi.execute(new Runnable() {
+						//
+						// @Override
+						// public void run() {
+						// 拍照并保存
+						cameraUtils.openCamera();
+						// }
+						// });
 					}
 				}
 
 				if (arg1.getAction().equals(Intent.ACTION_SCREEN_OFF)) {// 监听屏幕熄灭
-					
-					
-					
+
 					if (!isLoading && isPlaygif) {// 判断是否加载完成并且开启屏保gif功能
 						onPageChange("gif.xml");
 						if (isChangGif) {
@@ -267,7 +277,7 @@ public class MGridActivity extends Activity {
 							acquireWakeLock();
 						}
 					}
-					
+
 					if (!isLoading && isPlaymv) {// 判断是否加载完成并且开启屏保mv功能
 						if (isChangGif) {
 							if (isSleep) {
@@ -284,7 +294,7 @@ public class MGridActivity extends Activity {
 					}
 				}
 			}
-		};                                                                                                                            
+		};
 		getApplicationContext().registerReceiver(BroastcastScreenOn, filter);
 	}
 
@@ -323,17 +333,16 @@ public class MGridActivity extends Activity {
 		m_sMainPage = iniReader.getValue("SysConf", "MainPage");
 		m_UserName = iniReader.getValue("SysConf", "UserName", "admin");
 		m_PassWord = iniReader.getValue("SysConf", "PassWord", "12348765");
-		alarmWay=iniReader.getValue("SysConf", "ControlAlarmWay");
-		
-        xianChengChi.execute(new Runnable() {
-			
+		alarmWay = iniReader.getValue("SysConf", "ControlAlarmWay");
+		SIP = iniReader.getValue("SysConf", "SIP", "");
+
+		xianChengChi.execute(new Runnable() {
+
 			@Override
 			public void run() {
-				
-				if(alarmWay!=null)
-				{
-					if(alarmWay.equals("DO1"))
-					{
+
+				if (alarmWay != null) {
+					if (alarmWay.equals("DO1")) {
 						ipc_control ipc = new ipc_control();
 						ipc.equipid = 1;
 						XmlUtils xml = XmlUtils.getXml();
@@ -341,23 +350,19 @@ public class MGridActivity extends Activity {
 						if (list != null) {
 							for (int i = 0; i < list.getLength(); i++) {
 								Element e = (Element) list.item(i);
-								String name = e
-										.getAttribute("CommandName");
+								String name = e.getAttribute("CommandName");
 								if (name.equals("DO1")) {
-									String	ctrlid = e
-											.getAttribute("CommandId");
-									ipc.ctrlid = Integer
-											.parseInt(ctrlid);
+									String ctrlid = e.getAttribute("CommandId");
+									ipc.ctrlid = Integer.parseInt(ctrlid);
 									break;
 								}
 							}
 						}
 						ipc.valuetype = 1;
 						ipc.value = "1";
-						lstCtrlDo1=new ArrayList<ipc_control>();
+						lstCtrlDo1 = new ArrayList<ipc_control>();
 						lstCtrlDo1.add(ipc);
-					}else if(alarmWay.equals("DO2"))
-					{
+					} else if (alarmWay.equals("DO2")) {
 						ipc_control ipc = new ipc_control();
 						ipc.equipid = 1;
 						XmlUtils xml = XmlUtils.getXml();
@@ -365,52 +370,47 @@ public class MGridActivity extends Activity {
 						if (list != null) {
 							for (int i = 0; i < list.getLength(); i++) {
 								Element e = (Element) list.item(i);
-								String name = e
-										.getAttribute("CommandName");
+								String name = e.getAttribute("CommandName");
 								if (name.equals("DO2")) {
-									String	ctrlid = e
-											.getAttribute("CommandId");
-									ipc.ctrlid = Integer
-											.parseInt(ctrlid);
+									String ctrlid = e.getAttribute("CommandId");
+									ipc.ctrlid = Integer.parseInt(ctrlid);
 									break;
 								}
 							}
 						}
 						ipc.valuetype = 1;
 						ipc.value = "1";
-						lstCtrlDo2=new ArrayList<ipc_control>();
+						lstCtrlDo2 = new ArrayList<ipc_control>();
 						lstCtrlDo2.add(ipc);
 					}
 				}
 			}
 		});
-		
-		
-		
+
 		try {
-			SaveEquipt.save_time=Integer.parseInt(iniReader.getValue("SysConf", "SaveTime", "24"))*60*60;	
-			if(SaveEquipt.save_time<3600)
-			{
-				SaveEquipt.save_time=1*60*60;
+			SaveEquipt.save_time = Integer.parseInt(iniReader.getValue(
+					"SysConf", "SaveTime", "24")) * 60 * 60;
+			if (SaveEquipt.save_time < 3600) {
+				SaveEquipt.save_time = 1 * 60 * 60;
 			}
-			
-		} catch (Exception e) {	
-		
+
+		} catch (Exception e) {
+
 			try {
-				SaveEquipt.save_time=(int)Float.parseFloat(iniReader.getValue("SysConf", "SaveTime", "24"))*60*60;	
-				if(SaveEquipt.save_time<3600)
-				{
-					SaveEquipt.save_time=1*60*60;
+				SaveEquipt.save_time = (int) Float.parseFloat(iniReader
+						.getValue("SysConf", "SaveTime", "24")) * 60 * 60;
+				if (SaveEquipt.save_time < 3600) {
+					SaveEquipt.save_time = 1 * 60 * 60;
 				}
-				
+
 			} catch (Exception e2) {
-				Toast.makeText(this, "Mgrid.ini文件中SaveTime属性设置异常,已经恢复默认值", 1000).show();
-				SaveEquipt.save_time=24*60*60;
+				Toast.makeText(this, "Mgrid.ini文件中SaveTime属性设置异常,已经恢复默认值", 1000)
+						.show();
+				SaveEquipt.save_time = 24 * 60 * 60;
 			}
-			
+
 		}
-		
-		
+
 		String playWay = iniReader.getValue("SysConf", "playWay");
 		String time = iniReader.getValue("SysConf", "playTime");
 		if (time != null) {
@@ -495,6 +495,35 @@ public class MGridActivity extends Activity {
 		} catch (Exception e) {
 			m_bTakeEMail = false;
 		}
+
+		try {
+			String login = iniReader.getValue("SysConf", "IsLogin");
+			if (login != null)
+				isLogin = Boolean.parseBoolean(login);
+			if (isLogin) {
+				final File loginFile = new File(logeFilePath);
+				if (!loginFile.exists())
+					loginPassWord = iniReader.getValue("SysConf",
+							"LoginPassWord", "12345678");
+				else {
+					MGridActivity.xianChengChi.execute(new Runnable() {
+
+						@Override
+						public void run() {
+
+							loginPassWord = readText(loginFile);
+						}
+					});
+				}
+			} else {
+				final File loginFile = new File(logeFilePath);
+				if (loginFile.exists())
+					loginFile.delete();
+			}
+		} catch (Exception e) {
+			isLogin = false;
+		}
+
 		try {
 
 			mailProtocol = iniReader.getValue("SysConf", "MailProtocol");
@@ -505,10 +534,14 @@ public class MGridActivity extends Activity {
 					"ReceiveMailAccount");
 			Subject = iniReader.getValue("SysConf", "Subject");
 			fromName = iniReader.getValue("SysConf", "FromName");
-			
-			if(m_bTakeEMail==true&&(mailProtocol==null||myEmailSMTPHost==null||myEmailAccount==null||myEmailPassword==null||receiveMailAccount==null||Subject==null||fromName==null))
-			{
-				Toast.makeText(getApplicationContext(), "ini文件邮箱填写不规范", 1000).show();
+
+			if (m_bTakeEMail == true
+					&& (mailProtocol == null || myEmailSMTPHost == null
+							|| myEmailAccount == null
+							|| myEmailPassword == null
+							|| receiveMailAccount == null || Subject == null || fromName == null)) {
+				Toast.makeText(getApplicationContext(), "ini文件邮箱填写不规范", 1000)
+						.show();
 				m_bTakeEMail = false;
 			}
 
@@ -538,7 +571,20 @@ public class MGridActivity extends Activity {
 		return true;
 	}
 
-	
+	private String readText(File f) {
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(f), "gb2312"));
+			String str = reader.readLine();
+			reader.close();
+			return str;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	public void acquireWakeLock() {
 		if (mWakeLock == null) {
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -558,14 +604,12 @@ public class MGridActivity extends Activity {
 
 	private void parseView() {
 
-		if(parsePageList())
-		{
-		   loadOtherPage();
-		}else
-		{
+		if (parsePageList()) {
+			loadOtherPage();
+		} else {
 			showTaskUI(true);
 		}
-                
+
 	}
 
 	private void runDataGetter() {
@@ -601,20 +645,20 @@ public class MGridActivity extends Activity {
 					continue;
 
 				m_oPageList.add(line);
-				
+
 				if (!line.equals(m_sMainPage)) {
 					continue;
 				}
-				
+
 				page = new MainWindow(this);
-				page.m_strRootFolder = m_sRootFolder;//路径
-				page.m_bHasRandomData = m_bHasRandomData;//是否使用随机数据
+				page.m_strRootFolder = m_sRootFolder;// 路径
+				page.m_bHasRandomData = m_bHasRandomData;// 是否使用随机数据
 				page.loadPage(line);
 				page.active(false);
 
 				page.setVisibility(View.GONE);
-				m_oViewGroups.put(line, page); 
-				mContainer.addView(page, 1024, 768); 
+				m_oViewGroups.put(line, page);
+				mContainer.addView(page, 1024, 768);
 
 			}
 
@@ -622,22 +666,20 @@ public class MGridActivity extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 			new AlertDialog.Builder(this)
-			.setTitle("错误")
-			.setMessage(
-					"读取配置文件 [ pagelist ] 异常，停止加载！\n详情：" + e.toString())
-			.show();
-			return false;
-		}
-		
-		m_oSgSgRenderManager = m_oViewGroups.get(m_sMainPage);
-		if (null == m_oSgSgRenderManager) {
-			new AlertDialog.Builder(this).setTitle("错误")
-					.setMessage("找不到主页 [ " + m_sMainPage + " ] ！")
+					.setTitle("错误")
+					.setMessage(
+							"读取配置文件 [ pagelist ] 异常，停止加载！\n详情：" + e.toString())
 					.show();
 			return false;
 		}
-		if (0 != mContainer.getChildCount()
-				&& null != m_oSgSgRenderManager) {
+
+		m_oSgSgRenderManager = m_oViewGroups.get(m_sMainPage);
+		if (null == m_oSgSgRenderManager) {
+			new AlertDialog.Builder(this).setTitle("错误")
+					.setMessage("找不到主页 [ " + m_sMainPage + " ] ！").show();
+			return false;
+		}
+		if (0 != mContainer.getChildCount() && null != m_oSgSgRenderManager) {
 			// m_oPageList.trimToSize();
 
 			m_oSgSgRenderManager.active(true);
@@ -662,7 +704,7 @@ public class MGridActivity extends Activity {
 
 			setContentView(mContainer);
 			mContainer.requestFocus();
-		
+
 			showTaskUI(false);
 
 			getWindow().setSoftInputMode(
@@ -675,33 +717,30 @@ public class MGridActivity extends Activity {
 			setProgressBarVisibility(true);
 			setProgressBarIndeterminateVisibility(true);
 			return false;
-		}			
-		
-		
+		}
+
 		return true;
 	}
 
-	
-	 
-		//	判断程序是否进入后台
+	// 判断程序是否进入后台
 
-	private boolean isAppOnForeground()
-	{
-		ActivityManager activityManager=(ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-		String packageName=getApplicationContext().getPackageName();
-		
-		List<RunningAppProcessInfo> appProcesses=activityManager.getRunningAppProcesses();
-		if(appProcesses==null) return false;
-		for(RunningAppProcessInfo appProcess : appProcesses)
-		{
-			if(appProcess.processName.equals(packageName)&& appProcess.importance==RunningAppProcessInfo.IMPORTANCE_FOREGROUND){
+	private boolean isAppOnForeground() {
+		ActivityManager activityManager = (ActivityManager) getApplicationContext()
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		String packageName = getApplicationContext().getPackageName();
+
+		List<RunningAppProcessInfo> appProcesses = activityManager
+				.getRunningAppProcesses();
+		if (appProcesses == null)
+			return false;
+		for (RunningAppProcessInfo appProcess : appProcesses) {
+			if (appProcess.processName.equals(packageName)
+					&& appProcess.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	
 
 	private void loadOtherPage() {
 		final Handler handler = new Handler();
@@ -720,30 +759,27 @@ public class MGridActivity extends Activity {
 					tmp_load_prevpage = mainPage;
 
 					tmp_load_pageseek++;
-					if (m_oPageList.size() > tmp_load_pageseek)
-					{
-					//	bar.setProgress(tmp_load_pageseek*100/m_oPageList.size());
-						pagename = m_oPageList.get(tmp_load_pageseek);						
-					}				
-					else {
-						
+					if (m_oPageList.size() > tmp_load_pageseek) {
+						// bar.setProgress(tmp_load_pageseek*100/m_oPageList.size());
+						pagename = m_oPageList.get(tmp_load_pageseek);
+					} else {
+
 						tmp_flag_loading = false;
 						DataGetter.bIsLoading = false;
-//						Toast.makeText(MGridActivity.this, Load,
-//								Toast.LENGTH_LONG).show();
+						// Toast.makeText(MGridActivity.this, Load,
+						// Toast.LENGTH_LONG).show();
 						isLoading = false;
-					//	bar.finishLoad();
-					//	dialog.dismiss();						
-						return; 
+						// bar.finishLoad();
+						// dialog.dismiss();
+						return;
 					}
 					handler.postDelayed(this, tmp_load_int_time);
-				}else
-				{
+				} else {
 					System.out.println(tmp_load_pageseek);
 					MainWindow page = new MainWindow(MGridActivity.this);
 					page.m_strRootFolder = m_sRootFolder;
 					page.m_bHasRandomData = m_bHasRandomData;
- 
+
 					try {
 						page.loadPage(pagename);
 						page.active(false);
@@ -757,9 +793,10 @@ public class MGridActivity extends Activity {
 						new AlertDialog.Builder(MGridActivity.this)
 								.setTitle("错误")
 								.setMessage(
-										"加载页面 [ " + pagename + " ] 出现异常，停止加载！\n详情："
-												+ e.toString()).show(); 
-						return ;
+										"加载页面 [ " + pagename
+												+ " ] 出现异常，停止加载！\n详情："
+												+ e.toString()).show();
+						return;
 					}
 
 					page.m_oPrevPage = tmp_load_prevpage;
@@ -770,10 +807,10 @@ public class MGridActivity extends Activity {
 					tmp_load_pageseek++;
 
 					if (m_oPageList.size() > tmp_load_pageseek) {
-						
-						//bar.setProgress(tmp_load_pageseek*100/m_oPageList.size());
+
+						// bar.setProgress(tmp_load_pageseek*100/m_oPageList.size());
 						handler.postDelayed(this, tmp_load_int_time);
-						
+
 					} else {
 						tmp_flag_loading = false;
 						DataGetter.bIsLoading = false;
@@ -783,10 +820,10 @@ public class MGridActivity extends Activity {
 								Toast.LENGTH_LONG).show();
 						isLoading = false;
 						isNOChangPage = true;
-						
-//						bar.finishLoad();
-//						dialog.dismiss();
-						
+
+						// bar.finishLoad();
+						// dialog.dismiss();
+
 						System.out.println("所用时间："
 								+ (System.currentTimeMillis() - starttime));
 					}
@@ -795,7 +832,7 @@ public class MGridActivity extends Activity {
 		};
 
 		handler.postDelayed(runnable, tmp_load_int_time);
-        runDataGetter();
+		runDataGetter();
 	}
 
 	// 得到机器的IP地址
@@ -958,18 +995,17 @@ public class MGridActivity extends Activity {
 
 				svv = (SgVideoView) obj;
 				svv.startMv();
-			}else if (obj.getType().equals("ChangeLabelBtn")) {
+			} else if (obj.getType().equals("ChangeLabelBtn")) {
 
 				ChangeLabelBtn CLB = (ChangeLabelBtn) obj;
 				CLB.setText();
-			}else if(obj.getType().equals("AlarmShieldTime"))
-            {
-            	AlarmShieldTime ast=(AlarmShieldTime)obj;
-            	if(MGridActivity.AlarmShieldTimer.get(ast.equitId+"_"+ast.eventId)!=null)
-            	{
-            		ast.updateText();
-            	}
-            }
+			} else if (obj.getType().equals("AlarmShieldTime")) {
+				AlarmShieldTime ast = (AlarmShieldTime) obj;
+				if (MGridActivity.AlarmShieldTimer.get(ast.equitId + "_"
+						+ ast.eventId) != null) {
+					ast.updateText();
+				}
+			}
 			obj.initFinished();
 		}
 	}
@@ -981,11 +1017,13 @@ public class MGridActivity extends Activity {
 		if (bShow) {
 			m_oTaskIntent
 					.setAction("android.intent.action.STATUSBAR_VISIBILITY");
-			m_oSgSgRenderManager.getContext().sendBroadcast(m_oTaskIntent);
+			// m_oSgSgRenderManager.getContext().sendBroadcast(m_oTaskIntent);
+			getApplicationContext().sendBroadcast(m_oTaskIntent);
 		} else {
 			m_oTaskIntent
 					.setAction("android.intent.action.STATUSBAR_INVISIBILITY");
-			m_oSgSgRenderManager.getContext().sendBroadcast(m_oTaskIntent);
+			// m_oSgSgRenderManager.getContext().sendBroadcast(m_oTaskIntent);
+			getApplicationContext().sendBroadcast(m_oTaskIntent);
 		}
 	}
 
@@ -996,7 +1034,7 @@ public class MGridActivity extends Activity {
 		if (m_oSgSgRenderManager == null)
 			return;
 		showTaskUI(false);
-     
+
 	}
 
 	/** 消息提示显示 **/
@@ -1017,7 +1055,7 @@ public class MGridActivity extends Activity {
 		super.onDestroy();
 		// restartApplication();
 		releaseWakeLock();
-		
+
 	}
 
 	@Override
@@ -1025,20 +1063,17 @@ public class MGridActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onStop();
 
-		if(!isAppOnForeground())
-		{
-			
-            showTaskUI(true);
+		if (!isAppOnForeground()) {
+
+			showTaskUI(true);
 		}
-		 
+
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
-		
-		
+
 		// mWakeLock.acquire();
 
 	}
@@ -1051,16 +1086,12 @@ public class MGridActivity extends Activity {
 		startActivity(intent);
 	}
 
-
-	
-
 	public static Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			// handler接收到消息后就会执行此方法
 			switch (msg.what) {
 			case 1:
-				
-			
+
 				break;
 			case 2:
 				String s = (String) msg.obj;
@@ -1126,8 +1157,8 @@ public class MGridActivity extends Activity {
 
 			onPageChange(mPageName);
 
-			/*j
-			 * 两种切换角度的尝试 if (mPosition > -1) {
+			/*
+			 * j 两种切换角度的尝试 if (mPosition > -1) {
 			 * mPhotosList.setVisibility(View.GONE);
 			 * mImageView.setVisibility(View.VISIBLE);
 			 * mImageView.requestFocus();

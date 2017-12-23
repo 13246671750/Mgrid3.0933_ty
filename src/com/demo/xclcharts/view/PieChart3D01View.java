@@ -14,7 +14,7 @@
  * limitations under the License.
  * 	
  * @Project XCL-Charts 
- * @Description Android图表基类库
+ * @Description Android鍥捐〃鍩虹被搴�
  * @author XiongChuanLiang<br/>(xcl_168@aliyun.com)
  * @license http://www.apache.org/licenses/  Apache v2 License
  * @version 1.0
@@ -29,7 +29,6 @@ import org.xclcharts.chart.PieChart3D;
 import org.xclcharts.chart.PieData;
 import org.xclcharts.event.click.ArcPosition;
 import org.xclcharts.renderer.XChart;
-import org.xclcharts.renderer.XEnum;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -41,10 +40,10 @@ import android.widget.Toast;
 
 /**
  * @ClassName Pie3DChart01View
- * @Description  3D饼图的例子
- * 问动画效果的人太多了，其实图表库就应当只管绘图，动画效果就交给View或SurfaceView吧,
- * 	看看我弄的效果有多靓. ~_~ 
- *  依这个例子发挥发挥，可以让图从屏幕各个方向出现.
+ * @Description  3D楗煎浘鐨勪緥瀛�
+ * 闂姩鐢绘晥鏋滅殑浜哄お澶氫簡锛屽叾瀹炲浘琛ㄥ簱灏卞簲褰撳彧绠＄粯鍥撅紝鍔ㄧ敾鏁堟灉灏变氦缁橵iew鎴朣urfaceView鍚�,
+ * 	鐪嬬湅鎴戝紕鐨勬晥鏋滄湁澶氶潛. ~_~ 
+ *  渚濊繖涓緥瀛愬彂鎸ュ彂鎸ワ紝鍙互璁╁浘浠庡睆骞曞悇涓柟鍚戝嚭鐜�.
  * @author XiongChuanLiang<br/>(xcl_168@aliyun.com)
  */
 public class PieChart3D01View extends TouchView implements Runnable{
@@ -81,7 +80,7 @@ public class PieChart3D01View extends TouchView implements Runnable{
 	@Override  
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {  
         super.onSizeChanged(w, h, oldw, oldh);  
-       //图所占范围大小
+       //鍥炬墍鍗犺寖鍥村ぇ灏�
         chart.setChartRange(w,h);
     }  		
 	
@@ -89,21 +88,21 @@ public class PieChart3D01View extends TouchView implements Runnable{
 	private void chartRender()
 	{
 		try {						
-			//设置绘图区默认缩进px值
+			//璁剧疆缁樺浘鍖洪粯璁ょ缉杩沺x鍊�
 			int [] ltrb = getPieDefaultSpadding();
 			chart.setPadding(ltrb[0], ltrb[1], ltrb[2], ltrb[3]);	
 			
-			//设定数据源
+			//璁惧畾鏁版嵁婧�
 			//chart.setDataSource(chartData);		
 			
-			//标题
-			//chart.setTitle("个人专业技能分布");
+			//鏍囬
+			//chart.setTitle("涓汉涓撲笟鎶�鑳藉垎甯�");
 			//chart.addSubtitle("(XCL-Charts Demo)");
 			//chart.getPlotTitle().setTitlePosition(XEnum.Position.LOWER);
 			
-			//不显示key
+			//涓嶆樉绀簁ey
 			chart.getPlotLegend().hideLegend();
-			//标签文本显示为白色
+			//鏍囩鏂囨湰鏄剧ず涓虹櫧鑹�
 			chart.getLabelPaint().setColor(Color.WHITE);
 			
 			
@@ -115,8 +114,8 @@ public class PieChart3D01View extends TouchView implements Runnable{
 	}
 	private void chartDataSet()
 	{
-		//设置图表数据源			
-		//PieData(标签，百分比，在饼图中对应的颜色)
+		//璁剧疆鍥捐〃鏁版嵁婧�			
+		//PieData(鏍囩锛岀櫨鍒嗘瘮锛屽湪楗煎浘涓搴旂殑棰滆壊)
 		
 		chartData.add(new PieData("PHP(15%)",15,
 								(int)Color.rgb(1, 170, 255)));
@@ -125,9 +124,9 @@ public class PieChart3D01View extends TouchView implements Runnable{
 		chartData.add(new PieData("Oracle",40,(int)Color.rgb(241, 62, 1)));
 		chartData.add(new PieData("Java",15,(int)Color.rgb(242, 167, 69)));	
 		
-		//将此比例块突出显示
+		//灏嗘姣斾緥鍧楃獊鍑烘樉绀�
 		chartData.add(new PieData("C++(20%)",20,
-								(int)Color.rgb(164, 233, 0),true));
+								(int)Color.rgb(164, 233, 0),false));
 	
 		
 	}
@@ -160,10 +159,18 @@ public class PieChart3D01View extends TouchView implements Runnable{
          }  
 	}
 	
+	
+	public void setData(List<PieData> data)
+	{
+		 chart.setDataSource(data);
+		 postInvalidate(); 
+	}
+	
+	
 	private void chartAnimation()
 	{
 		  try {         
-			 //设置数据源
+			 //璁剧疆鏁版嵁婧�
 			  chart.setDataSource(chartData);
 			  
 			  for(int i=10;i>0;i--)
@@ -174,14 +181,15 @@ public class PieChart3D01View extends TouchView implements Runnable{
 				  
 				  if(1 == i)
 				  {
-					    //最末显示标题
-						chart.setTitle("个人专业技能分布");
-						chart.addSubtitle("(XCL-Charts Demo)");
-						chart.setTitleVerticalAlign(XEnum.VerticalAlign.BOTTOM);
+					    //鏈�鏈樉绀烘爣棰�
+					//	chart.setTitle("涓汉涓撲笟鎶�鑳藉垎甯�");
+					//	chart.addSubtitle("(XCL-Charts Demo)");
+					//	chart.setTitleVerticalAlign(XEnum.VerticalAlign.BOTTOM);
 						chart.setChartRange(0.0f, 0.0f,getWidth(),getHeight());
 						
-						//激活点击监听
-						chart.ActiveListenItemClick();											
+						//婵�娲荤偣鍑荤洃鍚�
+					//	chart.ActiveListenItemClick();	
+						chart.DeactiveListenItemClick();
 				  }
 				  postInvalidate(); 
 			  }
@@ -203,7 +211,7 @@ public class PieChart3D01View extends TouchView implements Runnable{
 	}
 	
 
-	//触发监听
+	//瑙﹀彂鐩戝惉
 	private void triggerClick(float x,float y)
 	{		
 		

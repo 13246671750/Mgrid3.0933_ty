@@ -42,6 +42,7 @@ public class UtTable extends ListView {
 			return;
 		int column = listTitles.size(); //得到标题的个数
 		int width = (m_nRight - m_nLeft) / column; //得到每个标题的宽度
+		
 		int updatecount = m_bUseTitle ? listContends.size() + 1 : listContends
 				.size();  //如果使用标题  列表行数为内容的数量+1，不然为内容数量。
 		int count = Math.min(m_tableAdapter.getCount(), updatecount); //
