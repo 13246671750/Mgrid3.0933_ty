@@ -37,6 +37,7 @@ import com.sg.common.Calculator;
 import com.sg.common.IObject;
 import com.sg.common.MutiThreadShareObject;
 import com.sg.common.SgRealTimeData;
+import com.sg.common.TotalVariable;
 import com.sg.common.UtExpressionParser;
 import com.sg.common.UtExpressionParser.stBindingExpression;
 import com.sg.common.UtExpressionParser.stExpression;
@@ -167,7 +168,7 @@ public class MainWindow extends ViewGroup {
 					Toast.makeText(context, "设置成功",
 							Toast.LENGTH_SHORT).show();
 					else
-						Toast.makeText(context, "Success",
+					Toast.makeText(context, "Success",
 								Toast.LENGTH_SHORT).show();
 					String uid=((String) msg.obj).replace("设置成功.", "");
 					if(uid==null) return;
@@ -211,7 +212,6 @@ public class MainWindow extends ViewGroup {
 				default:
 					break;
 				}
-
 			}
 		};
 
@@ -1340,8 +1340,9 @@ public class MainWindow extends ViewGroup {
 									.setSignalList(oBindingExpression.nEquipId,
 											m_strCurrentPage,
 											m_mapUIs.get(strUniqueID));
-						} else if (strUiType.equals("EventList")) {
+						} else if (strUiType.equals("EventList")||strUiType.equals("AlarmLevel")) {
 
+							System.out.println("我注册了"+strUniqueID);
 							DataGetter.setMainAlarmList(m_mapUIs
 									.get(strUniqueID));
 						} else if (strUiType.equals("LocalList")) {
@@ -2024,9 +2025,12 @@ public class MainWindow extends ViewGroup {
 								.next();
 						IObject io=entry.getKey();
 						String s=io.getType();
+					
 						
 						if (!entry.getKey().needupdate())
 							continue;
+						
+						
 						String strKey = entry.getKey().getUniqueID();
 
 						stExpression oExpression = entry.getValue();

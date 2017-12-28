@@ -3,6 +3,7 @@ package com.sg.uis.LsyNewView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,12 +27,16 @@ import android.widget.Toast;
 
 import com.demo.xclcharts.view.ClickPieChart01View;
 import com.mgrid.data.DataGetter;
+import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
+import com.mgrid.util.ExpressionUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
+import com.sg.common.TotalVariable;
 import com.sg.common.UtExpressionParser;
 import com.sg.common.UtExpressionParser.stBindingExpression;
 import com.sg.common.UtExpressionParser.stExpression;
+import comm_service.local_file;
 
 /** 饼图 */
 @SuppressLint({ "ShowToast", "InflateParams", "RtlHardcoded",
@@ -124,8 +129,7 @@ public class SgClickPieChart extends TextView implements IObject {
 		} else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("FontColor".equals(strName)) {
-			if(!strValue.isEmpty())
-			{
+			if (!strValue.isEmpty()) {
 				Pchart.getLabelPaint().setColor(Color.parseColor(strValue));
 			}
 		} else if ("ClickEvent".equals(strName))
@@ -146,11 +150,10 @@ public class SgClickPieChart extends TextView implements IObject {
 			parse_Color();
 		}
 	}
-	
+
 	private void parse_label() {
 		if (m_strContent == null || m_strContent.equals("")
-				|| m_strContent.equals("设置内容"))
-		{			
+				|| m_strContent.equals("设置内容")) {
 			return;
 		}
 		String[] s = m_strContent.split("\\|");
@@ -158,17 +161,16 @@ public class SgClickPieChart extends TextView implements IObject {
 			label_list.add(s[i]);
 		}
 	}
-	
 
 	private void parse_Color() {
-		if (colorCmd == null || colorCmd.equals("")||equAddSignl.size()==0)
+		if (colorCmd == null || colorCmd.equals("") || cmdList.size() == 0)
 			return;
 		String[] colors = colorCmd.split("\\|");
-		for (int i = 0; i < equAddSignl.size(); i++) {
-			if(i<colors.length)
-			colorData.add(colors[i]);
+		for (int i = 0; i < cmdList.size(); i++) {
+			if (i < colors.length)
+				colorData.add(colors[i]);
 			else
-			colorData.add(colors[colors.length-1]);	
+				colorData.add(colors[colors.length - 1]);
 		}
 	}
 
@@ -220,44 +222,50 @@ public class SgClickPieChart extends TextView implements IObject {
 
 	// fjw add 按钮控制命令功能的控制命令的绑定表达式解析
 	// 解析出控件表达式，返回控件表达式类
+	// public boolean parse_cmd() {
+	//
+	// if (mExpression.equals("") || mExpression == null)
+	// return false;
+	// stExpression oMathExpress = UtExpressionParser.getInstance()
+	// .parseExpression(mExpression);
+	// if (oMathExpress != null) {
+	// Iterator<HashMap.Entry<String, stBindingExpression>> it =
+	// oMathExpress.mapObjectExpress
+	// .entrySet().iterator();
+	// while (it.hasNext()) {
+	// stBindingExpression oBindingExpression = it.next().getValue();
+	// int equipt_id = oBindingExpression.nEquipId;
+	// int signal_id = oBindingExpression.nSignalId;
+	// equAddSignl.add(equipt_id + "_" + signal_id);
+	// }
+	// }
+	// return true;
+	// }
+
 	public boolean parse_cmd() {
 
 		if (mExpression.equals("") || mExpression == null)
 			return false;
-		// System.out.println(mExpression+":mExpression");
-		stExpression oMathExpress = UtExpressionParser.getInstance()
-				.parseExpression(mExpression);
-		if (oMathExpress != null) {
-			Iterator<HashMap.Entry<String, stBindingExpression>> it = oMathExpress.mapObjectExpress
-					.entrySet().iterator();
-			while (it.hasNext()) {
-				stBindingExpression oBindingExpression = it.next().getValue();
-				int equipt_id = oBindingExpression.nEquipId;
-				int signal_id = oBindingExpression.nSignalId;
-				equAddSignl.add(equipt_id + "_" + signal_id);
-			}
-		}
+		cmdList = ExpressionUtils.getExpressionUtils().parse(mExpression);
 		return true;
 	}
 
 	@Override
 	public void updateWidget() {
 
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				handler.sendEmptyMessage(0);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				m_bneedupdate = true;
-			}
-		}).start();
+		
 	}
 
+	
+	private Runnable runnable=new Runnable() {
+	
+		@Override
+		public void run() {
+			
+			m_bneedupdate = true;
+		}
+	};
+	
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -267,7 +275,8 @@ public class SgClickPieChart extends TextView implements IObject {
 				chart.invalidate();
 				break;
 			case 1:
-				Toast.makeText(getContext(), "SgClickPieChart配置报错", 1000).show();
+				Toast.makeText(getContext(), "SgClickPieChart配置报错", 1000)
+						.show();
 				m_bneedupdate = false;
 				break;
 			}
@@ -277,25 +286,47 @@ public class SgClickPieChart extends TextView implements IObject {
 
 	@Override
 	public boolean updateValue() {
-		if (equAddSignl.size() <= 0)
+		if(isAlarm)
+		{
+			System.out.println("我是告警");
+		}
+		if (cmdList.size() <= 0)
 			return false;
-	
+
 		ArrayList<Float> listCount = new ArrayList<Float>();
 		ArrayList<String> listName = new ArrayList<String>();
 		float value = 0, count = 0;
-		for (String s : equAddSignl) {
-			String[] spl = s.split("_");
-			equail = spl[0];
-			signal = spl[1];
-         //	newValue=DataGetter.getSignalValue(equail, signal);
-			newValue = Math.random() * 100 + "";
-			Name = DataGetter.getSignalName(equail, signal);
-			if (newValue == null || newValue.equals(""))
-				return false;
-			value = Float.parseFloat(newValue);
-			listCount.add(value);
-			listName.add(Name);
-			count += value;
+		for (String s : cmdList) {
+			String[] spl = s.split("-");
+			if (spl.length > 1) {
+				equail = spl[0];
+				signal = spl[2];
+				newValue = DataGetter.getSignalValue(equail, signal);
+				Name = DataGetter.getSignalName(equail, signal);
+				if (newValue == null || newValue.equals(""))
+					return false;
+				value = Float.parseFloat(newValue);
+				listCount.add(value);
+				listName.add(Name);
+				count += value;
+			} else {
+				isAlarm = true;
+				TotalVariable.ALARMPIEMAP.put(m_strID, this);
+				equail = spl[0];
+				String filename = "hisevent-" + equail;
+				local_file l_file = new local_file();
+				if (!l_file.has_file(filename, 3)) {
+					listCount.add(0f);
+					continue;
+				}
+				if (!l_file.read_all_line()) {
+					listCount.add(0f);
+					continue;
+				}
+				listCount.add((float) local_file.r_line_num);
+				System.out.println("行数：" + local_file.r_line_num);
+				count += local_file.r_line_num;
+			}
 		}
 		chartData = null;
 		chartData = new LinkedList<PieData>();
@@ -307,36 +338,50 @@ public class SgClickPieChart extends TextView implements IObject {
 			if (i == listCount.size() - 1)
 				score = 100 - allSore;
 			allSore += score;
-		
-		    try {
-		    	if (label_list.size()<=0) 	//	如果没有设定标签 则用获取的名字
+
+			try {
+				if (label_list.size() <= 0) // 如果没有设定标签 则用获取的名字
 				{
-					if(listName.size()==i+1)  	//如果到了最后一项
-					chartData.add(new PieData(listName.get(i), listName.get(i) + " "
-							+ score + "%", score, Color.parseColor(colorData.get(i))));
+					if (listName.size() == i + 1) // 如果到了最后一项
+						chartData.add(new PieData(listName.get(i), listName
+								.get(i) + " " + score + "%", score, Color
+								.parseColor(colorData.get(i))));
 					else
-					chartData.add(new PieData(listName.get(i), listName.get(i) + " "
-								+ score + "%", score, Color.parseColor(colorData.get(i))));	
-				}			
-				else
-				{
-					if(label_list.size()==i+1)
-				    chartData.add(new PieData(label_list.get(i), label_list.get(i) + " "
-						    + score + "%", score, Color.parseColor(colorData.get(i))));
+						chartData.add(new PieData(listName.get(i), listName
+								.get(i) + " " + score + "%", score, Color
+								.parseColor(colorData.get(i))));
+				} else {
+					if (label_list.size() == i + 1)
+						chartData.add(new PieData(label_list.get(i), label_list
+								.get(i) + " " + score + "%", score, Color
+								.parseColor(colorData.get(i))));
 					else
-					chartData.add(new PieData(label_list.get(i), label_list.get(i) + " "
-								+ score + "%", score, Color.parseColor(colorData.get(i))));	
+						chartData.add(new PieData(label_list.get(i), label_list
+								.get(i) + " " + score + "%", score, Color
+								.parseColor(colorData.get(i))));
 				}
 			} catch (Exception e) {
 				handler.sendEmptyMessage(1);
-				
 				return false;
 			}
-		
-		  }
-		
+
+		}
+
 		m_bneedupdate = false;
+		handler.sendEmptyMessage(0);
+		if (!isAlarm) {
+			
+			handler.postDelayed(runnable, 5000);
+			
+		}else
+		{
+			System.out.println("我更新了");
+		}
 		return true;
+	}
+
+	public void alarmUpdate() {
+
 	}
 
 	@Override
@@ -346,7 +391,13 @@ public class SgClickPieChart extends TextView implements IObject {
 
 	@Override
 	public void needupdate(boolean bNeedUpdate) {
-
+		if(isAlarm)
+		{		 
+		  if(!m_bneedupdate){
+		  m_bneedupdate = bNeedUpdate;
+		  System.out.println("饼图更新"+m_bneedupdate);		  
+		  }
+		}
 	}
 
 	public View getView() {
@@ -403,9 +454,11 @@ public class SgClickPieChart extends TextView implements IObject {
 	private String Name = "";
 	public boolean m_bneedupdate = true;
 	private String mExpression = "";
-	private ArrayList<String> equAddSignl = new ArrayList<String>();
+	// private ArrayList<String> equAddSignl = new ArrayList<String>();
 	private String colorCmd;
 	private ArrayList<String> colorData = new ArrayList<String>();
-	private List<String> label_list=new ArrayList<String>();
+	private List<String> label_list = new ArrayList<String>();
+	private List<String> cmdList = new ArrayList<String>();
+	public boolean isAlarm = false;
 
 }

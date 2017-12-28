@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import org.xclcharts.chart.SplineChart;
 import org.xclcharts.chart.SplineData;
@@ -70,9 +69,7 @@ public class SgSplineChart extends TextView implements IObject {
 		Schart = chart.getChart();
 		Schart.getDataAxis().setAxisMax(max_value);
 		Schart.getDataAxis().setAxisSteps(AxisSteps);
-
 		addRadio();
-
 	}
 
 	private void addRadio() {
@@ -771,7 +768,7 @@ public class SgSplineChart extends TextView implements IObject {
 	
 
 	private void waitTime() {
-		handler2.postDelayed(runnable2, 1000 * 60 * 30);
+		handler2.postDelayed(runnable2, 1000 * 60 * 60 * 4);
 	}
 
 	Handler handler2 = new Handler();

@@ -254,8 +254,7 @@ public class SgYTParameter extends TextView implements IObject {
 	@Override
 	public void initFinished()
 	{
-		setGravity(Gravity.CENTER);
-		
+		setGravity(Gravity.CENTER);		
 		double padSize = CFGTLS.getPadHeight(m_nHeight, MainWindow.FORM_HEIGHT, getTextSize())/2;
 		setPadding(0, (int) padSize, 0, (int) padSize);
 	}
@@ -284,12 +283,10 @@ public class SgYTParameter extends TextView implements IObject {
 			Double.parseDouble(editvalue);
 			} catch (NumberFormatException e) {
 				//new AlertDialog.Builder(this.getContext()).setTitle("错误") .setMessage("请输入合法数值！") .show();
-				m_oEditText.setText("");
-				
+				m_oEditText.setText("");		
 				Drawable d = m_oEditText.getResources().getDrawable(android.R.drawable.stat_notify_error);
 				d.setBounds(0, 0, 30, 30);
-				m_oEditText.setError("格式错误！", d);
-				
+				m_oEditText.setError("格式错误！", d);				
 				m_oEditText.requestFocus();
 			return;
 			} 

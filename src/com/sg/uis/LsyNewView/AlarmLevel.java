@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -33,6 +34,7 @@ import com.mgrid.main.SoundService;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
 import com.sg.common.MySimpleAdapter;
+import com.sg.common.TotalVariable;
 import com.sg.common.UtTable;
 
 /** 告警等级分类 */
@@ -72,7 +74,6 @@ public class AlarmLevel extends TextView implements IObject {
 			return;
 		if (m_rRenderWindow.isLayoutVisible(getBBox()) == false)
 			return;
-
 	}
 
 	@Override
@@ -480,7 +481,17 @@ public class AlarmLevel extends TextView implements IObject {
 
 	@Override
 	public void needupdate(boolean bNeedUpdate) {
-
+            
+            if(TotalVariable.ALARMPIEMAP.size()>0)
+     		{
+     			Iterator<Entry<String, IObject>> it=TotalVariable.ALARMPIEMAP.entrySet().iterator();
+     			while(it.hasNext())
+     			{
+     				Entry<String, IObject> entry=it.next();
+     				entry.getValue().needupdate(m_bneedupdate);
+     				
+     			}
+     		}
 	}
 
 	public View getView() {

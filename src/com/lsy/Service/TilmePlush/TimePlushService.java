@@ -38,7 +38,7 @@ public class TimePlushService extends Service
 			{
 				service.startCalibrateTime();
 			}
-			myHandler.postDelayed(runnable, 5000);
+			myHandler.postDelayed(runnable, 60*60*1000);
 			
 		}
 	};

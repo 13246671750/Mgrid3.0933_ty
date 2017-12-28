@@ -20,10 +20,17 @@ public class ExpressionUtils {
 		List<String> cmdList = new ArrayList<String>();
 		for (int i = 0; i < eachCmd.length; i++) {
 			String[] eachPart = eachCmd[i].split("-");
+			if(eachPart.length>1)
+			{
 			String equipId = eachPart[0].split(":")[1];
 			String tempId = eachPart[1].split(":")[1];
 			String signalId = eachPart[2].replace("]", "").split(":")[1];
 			cmdList.add(equipId + "-" + tempId + "-" + signalId);
+			}else
+			{
+				String equipId = eachPart[0].replace("]", "").split(":")[1];
+				cmdList.add(equipId);
+			}
 		}
 		return cmdList;
 	}

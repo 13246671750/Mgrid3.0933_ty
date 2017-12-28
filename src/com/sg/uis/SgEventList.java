@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import com.mgrid.main.MainWindow;
 import com.mgrid.main.SoundService;
 import com.mgrid.util.ExpressionUtils;
 import com.sg.common.IObject;
+import com.sg.common.TotalVariable;
 import com.sg.common.UtExpressionParser;
 import com.sg.common.UtExpressionParser.stBindingExpression;
 import com.sg.common.UtExpressionParser.stExpression;
@@ -531,6 +533,17 @@ public class SgEventList extends UtTable implements IObject {
 
 		// System.out.println("123Evenlit £¬"+bNeedUpdate);
 		m_bneedupdate = bNeedUpdate;
+		if(TotalVariable.ALARMPIEMAP.size()>0)
+		{
+			Iterator<Entry<String, IObject>> it=TotalVariable.ALARMPIEMAP.entrySet().iterator();
+			while(it.hasNext())
+			{
+				Entry<String, IObject> entry=it.next();
+				entry.getValue().needupdate(m_bneedupdate);
+				
+			}
+		}
+		
 		if ("".equals(m_strCmdExpression))
 			return;
 		if (m_strCmdExpression == null)

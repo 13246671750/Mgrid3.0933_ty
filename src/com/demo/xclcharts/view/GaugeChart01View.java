@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xclcharts.chart.GaugeChart;
-import org.xclcharts.renderer.XEnum;
 
-import android.R.color;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -53,8 +51,7 @@ public class GaugeChart01View  extends GraphicalView {
 
 	public String tColor="#B2D4E9";
 	public String pColor="#B2D4E9";
-	public String lColor="#B2D4E9";
-	
+	public String lColor="#B2D4E9";	
 	public int Tick=5;
 	
 	public List<String> colorData=new ArrayList<String>();
@@ -98,7 +95,7 @@ public class GaugeChart01View  extends GraphicalView {
      protected void onSizeChanged(int w, int h, int oldw, int oldh) {  
         super.onSizeChanged(w, h, oldw, oldh);          
         chart.setChartRange(w ,h);   
-        chart.setPadding(0, 10, 0, 0);
+        chart.setPadding(w/20,h/10,w/20, 0);
      }  
 	 
 	

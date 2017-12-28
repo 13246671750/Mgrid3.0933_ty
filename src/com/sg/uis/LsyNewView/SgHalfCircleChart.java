@@ -130,7 +130,7 @@ public class SgHalfCircleChart extends TextView implements IObject {
 			}
 		} else if ("ChassisColor".equals(strName)) {
 			colorData = strValue;
-			System.out.println(colorData);
+			
 			if(!strValue.isEmpty())
 			{
 				parse_color();	

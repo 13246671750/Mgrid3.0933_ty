@@ -90,7 +90,6 @@ public class SgBarChartView extends TextView implements IObject {
 			rButton.get(i).setTag(i + 1);
 			rButton.get(i).setOnClickListener(linClickListener);
 		}
-
 	}
 
 	private OnClickListener linClickListener = new OnClickListener() {
@@ -550,15 +549,16 @@ public class SgBarChartView extends TextView implements IObject {
 
 					}
 				}
-
 				Map<Double, Double> map = linePointListData.get(mode).get(i);
 				setData(dataSeriesA, map);
 				compareMax(dataSeriesA);
+			
+				
+				
 				BarData BarDataA = new BarData(data_label.get(i), dataSeriesA,
 						Color.parseColor(data_color.get(i)));
 				chartData.add(BarDataA);
-
-				i++;
+				i++;				
 			}
 			currentDay = Daytime;
 			currentMonth = Monthtime;
@@ -581,7 +581,7 @@ public class SgBarChartView extends TextView implements IObject {
 		if (!path.exists()) {
 			path.mkdir();
 		}
-
+ 
 		try {
 			switch (index) {
 
@@ -625,6 +625,7 @@ public class SgBarChartView extends TextView implements IObject {
 		if (mode == 3) {
 
 			for (double i = 1; i < map.size(); i++) {
+			
 				list.add(map.get(i + (double) startYear)
 						- map.get((double) startYear+i-1));
 			}
@@ -782,7 +783,7 @@ public class SgBarChartView extends TextView implements IObject {
 	// 记录触摸坐标，过滤滑动操作。解决滑动误操作点击问题。
 	public float m_xscal = 0;
 	public float m_yscal = 0;
-
+ 
 	Intent m_oHomeIntent = null;
 
 	private String signal = "";

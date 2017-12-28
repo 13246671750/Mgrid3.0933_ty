@@ -407,10 +407,10 @@ public class multi_Event_data extends TextView implements IObject {
 				if (!l_file.read_all_line()) {
 					return false;
 				}
-			}
-		
+			}		
 			list.add((double) local_file.r_line_num);
 			allCount += local_file.r_line_num;
+			
 		}
 
 		// if (old_list != null) {
