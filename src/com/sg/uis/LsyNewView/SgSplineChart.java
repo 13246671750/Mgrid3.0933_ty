@@ -28,20 +28,27 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.demo.xclcharts.view.SplineChart03View;
 import com.mgrid.data.DataGetter;
 import com.mgrid.main.MainWindow;
+import com.mgrid.main.R;
 import com.mgrid.util.ExpressionUtils;
 import com.mgrid.util.TimeUtils;
 import com.sg.common.CFGTLS;
 import com.sg.common.IObject;
+import com.sg.common.MyAdapter;
 import com.sg.common.SgRealTimeData;
 
 /** mPUE曲线图 */
@@ -52,13 +59,13 @@ public class SgSplineChart extends TextView implements IObject {
 	private SplineChart Schart;// 关键view
 	private LinkedList<String> labels = new LinkedList<String>();// X轴标签对象
 	private LinkedList<SplineData> chartData = new LinkedList<SplineData>();;// Y轴标签对象
-	// private LinkedHashMap<Double, Double> linePoint1 = new
-	// LinkedHashMap<Double, Double>();
-
 	private Map<Integer, List<LinkedHashMap<Double, Double>>> linePointMapData = new HashMap<Integer, List<LinkedHashMap<Double, Double>>>();
-	// private SplineData dataSeries1 = null;
-
+	private List<LinkedHashMap<Double, Double>> oldYearData = new ArrayList<LinkedHashMap<Double, Double>>();
 	private List<RadioButton> rButton = new ArrayList<RadioButton>();
+
+	private PopupWindow popupWindow = null;
+	private ArrayList<String> nameList = new ArrayList<String>();
+	private MyAdapter myAdapter = null;
 
 	public SgSplineChart(Context context) {
 		super(context);
@@ -70,6 +77,12 @@ public class SgSplineChart extends TextView implements IObject {
 		Schart.getDataAxis().setAxisMax(max_value);
 		Schart.getDataAxis().setAxisSteps(AxisSteps);
 		addRadio();
+		setData();
+	}
+
+	private void setData() {
+		nameList.add((Integer.parseInt(TimeUtils.getYear()) - 1) + " 年");
+		nameList.add(TimeUtils.getYear() + " 年");
 	}
 
 	private void addRadio() {
@@ -99,6 +112,42 @@ public class SgSplineChart extends TextView implements IObject {
 			rButton.get(i).setOnClickListener(linClickListener);
 		}
 		addLabels(mode);
+
+	}
+
+	private void showPopUpWin(final RadioButton btn) {
+
+		View view = m_rRenderWindow.m_oMgridActivity.getLayoutInflater()
+				.inflate(R.layout.pop, null);
+		popupWindow = new PopupWindow(view, (int) (btn.getWidth() * 0.3), 100,
+				true);
+		// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失
+		popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+		// 设置点击弹框外部，弹框消失
+		popupWindow.setOutsideTouchable(true);
+		popupWindow.setFocusable(true);
+		popupWindow.showAsDropDown(btn);
+
+		ListView lv = (ListView) view.findViewById(R.id.lv_list);
+		myAdapter = new MyAdapter(getContext(), nameList);
+
+		myAdapter.setTextColor("#000000");
+		myAdapter.setBtnColor("#DCDCDC");
+		lv.setAdapter(myAdapter);
+		lv.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				btn.setText(nameList.get(position));
+
+				popupWindow.dismiss();
+				
+				m_bneedupdate = true;
+			}
+		});
+
 	}
 
 	private OnClickListener linClickListener = new OnClickListener() {
@@ -112,6 +161,17 @@ public class SgSplineChart extends TextView implements IObject {
 			mode = tag;
 			rButton.get(mode - 1).setChecked(true);
 			addLabels(mode);
+			if (mode == 4 && selectYear.equals("")) {
+				selectYear = TimeUtils.getYear();
+				rButton.get(mode - 1).setText(selectYear + " 年");
+			} else if (mode == 4 && !selectYear.equals("")) {
+
+				showPopUpWin(rButton.get(mode - 1));
+
+			} else {
+				selectYear = "";
+				rButton.get(3).setText("年");
+			}
 			m_bneedupdate = true;
 		}
 	};
@@ -200,7 +260,7 @@ public class SgSplineChart extends TextView implements IObject {
 				if (!strValue.isEmpty() && strValue != null
 						&& !strValue.equals("")) {
 					isSave = Boolean.parseBoolean(strValue);
-					
+
 				}
 			} catch (Exception e) {
 				Toast.makeText(getContext(), "曲线控件Content属性错误", 200).show();
@@ -212,20 +272,20 @@ public class SgSplineChart extends TextView implements IObject {
 				Schart.getDataAxis().getTickLabelPaint()
 						.setColor(Color.parseColor(strValue));
 				for (int i = 0; i < rButton.size(); i++) {
-					rButton.get(i).setTextColor(Color.parseColor(strValue));	
-					
+					rButton.get(i).setTextColor(Color.parseColor(strValue));
+
 				}
 			}
 		} else if ("ScaleColor".equals(strName)) {
 			if (!strValue.isEmpty()) {
 				Schart.getPlotGrid().getHorizontalLinePaint()
 						.setColor(Color.parseColor(strValue));
-				
+
 			}
 		} else if ("ColorData".equals(strName)) {
 			if (!strValue.isEmpty()) {
 				parse_color(strValue);
-			}  
+			}
 		} else if ("ClickEvent".equals(strName))
 			m_strClickEvent = strValue;
 		else if ("Url".equals(strName))
@@ -256,13 +316,12 @@ public class SgSplineChart extends TextView implements IObject {
 				ycount = Integer.parseInt(strValue);
 				Schart.getDataAxis().setAxisSteps(max_value / ycount);
 			}
-		}else if("XColor".equals(strName))
-		{
+		} else if ("XColor".equals(strName)) {
 			if (!strValue.isEmpty()) {
 				Schart.getCategoryAxis().getAxisPaint()
 						.setColor(Color.parseColor(strValue));
 				Schart.getDataAxis().getAxisPaint()
-				.setColor(Color.parseColor(strValue));
+						.setColor(Color.parseColor(strValue));
 			}
 		}
 	}
@@ -319,7 +378,6 @@ public class SgSplineChart extends TextView implements IObject {
 		for (int i = 0; i < s.length; i++) {
 			label_data.add(s[i]);
 		}
-
 	}
 
 	@Override
@@ -345,7 +403,6 @@ public class SgSplineChart extends TextView implements IObject {
 					MainWindow.FORM_HEIGHT, getTextSize()) / 2f;
 			setPadding(0, (int) padSize, 0, (int) padSize);
 		}
-
 		setGravity(nFlag);
 	}
 
@@ -377,13 +434,15 @@ public class SgSplineChart extends TextView implements IObject {
 			return false;
 
 		if (containMath(mExpression)) {
-			isMath=true;
+			isMath = true;
 		} else {
-			isMath=false;
+			isMath = false;
 			cmdList = ExpressionUtils.getExpressionUtils().parse(mExpression);
 		}
+
 		
-		sizeMath=ExpressionUtils.getExpressionUtils().getSize(mExpression);
+		sizeMath = ExpressionUtils.getExpressionUtils().getSize(mExpression);
+		
 		for (int i = 1; i <= 4; i++) {
 			List<LinkedHashMap<Double, Double>> linePointData = new ArrayList<LinkedHashMap<Double, Double>>();
 			for (int j = 0; j < sizeMath; j++) {
@@ -392,6 +451,12 @@ public class SgSplineChart extends TextView implements IObject {
 			}
 			linePointMapData.put(i, linePointData);
 		}
+		//初始化去年数据的容器
+		for (int j = 0; j < sizeMath; j++) {
+			LinkedHashMap<Double, Double> linePoint = new LinkedHashMap<Double, Double>();
+			oldYearData.add(linePoint);
+		}
+		
 		return true;
 	}
 
@@ -415,17 +480,20 @@ public class SgSplineChart extends TextView implements IObject {
 			if (isDay) {
 				isDay = false;
 				handDay.postDelayed(runDay, 10 * 1000 * 60);
+				// handler.postDelayed(runDay, 30 * 1000);
 			}
 			if (isMon) {
 
 				isMon = false;
-				handMon.postDelayed(runMon, 12 * 60 * 1000 * 60);
+				handMon.postDelayed(runMon, 2 * 60 * 1000 * 60);
+				// handler.postDelayed(runMon, 30 * 1000);
 
 			}
 			if (isYear) {
 
 				isYear = false;
-				handYear.postDelayed(runYear, 24 * 60 * 60 * 1000);
+				handYear.postDelayed(runYear, 8 * 60 * 60 * 1000);
+				// handler.postDelayed(runYear, 30 * 1000);
 
 			}
 			if (isSave) {
@@ -490,37 +558,33 @@ public class SgSplineChart extends TextView implements IObject {
 	@Override
 	public boolean updateValue() {
 
-	
-
 		// linePoint1.clear();
 		// chartData.clear();
-	   if(isMath)
-	   {
-		  if (sizeMath <= 0 || mode == 0 || linePointMapData.size() <= 0)
+		if (isMath) {
+			if (sizeMath <= 0 || mode == 0 || linePointMapData.size() <= 0)
 				return false;
-	
-		  return updateMathData();
-		   
-	   }else
-	   {
-		   if (cmdList.size() <= 0 || mode == 0 || linePointMapData.size() <= 0)
+
+			return updateMathData();
+
+		} else {
+			if (cmdList.size() <= 0 || mode == 0
+					|| linePointMapData.size() <= 0)
 				return false;
-		  return updateData();
-	   }
-		
+			return updateData();
+		}
+
 	}
-	
-	private boolean updateMathData()
-	{
+
+	private boolean updateMathData() {
 		chartData = new LinkedList<SplineData>();
 		int i = 0;
-		for (;i<sizeMath;i++) {
-		
+		for (; i < sizeMath; i++) {
+
 			SgRealTimeData oRealTimeData = m_rRenderWindow.m_oShareObject.m_mapRealTimeDatas
 					.get(this.getUniqueID());
 			String value = oRealTimeData.strValue;
-//			Random random=new Random();
-//			String value = random.nextInt(5)+"";
+			// Random random=new Random();
+			// String value = random.nextInt(5)+"";
 			if (value == null || value.equals("") || value.equals("-999999")) {
 				return false;
 			}
@@ -537,9 +601,9 @@ public class SgSplineChart extends TextView implements IObject {
 					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
 							.get(j);
 
-					readData(linePointData.get(i), "PUE", "", j);
-				
+					readData(linePointData.get(i), "PUE", "", j);					
 				}
+				readData(oldYearData.get(i), "PUE", "", -1);				
 			}
 
 			double time = 0;
@@ -594,27 +658,50 @@ public class SgSplineChart extends TextView implements IObject {
 				}
 			}
 
-		//	String name = DataGetter.getSignalName(equail, signal);
+			// String name = DataGetter.getSignalName(equail, signal);
 			SplineData dataSeries = null;
-
-			if (label_data.size() <= 0) {
+//
+//			if (label_data.size() <= 0) {
+//				
+//			} else {
 //				if (colorData.size() - 1 >= i)
-//					dataSeries = new SplineData(name, linePointMapData
-//							.get(mode).get(i), Color.parseColor(colorData
-//							.get(i)));
+//					dataSeries = new SplineData(label_data.get(i),
+//							linePointMapData.get(mode).get(i),
+//							Color.parseColor(colorData.get(i)));
 //				else
-//					dataSeries = new SplineData(name, linePointMapData
-//							.get(mode).get(i),
+//					dataSeries = new SplineData(label_data.get(i),
+//							linePointMapData.get(mode).get(i),
 //							(int) Color.parseColor("#FF76A1EC"));
+//			}
+			
+			String year = rButton.get(mode - 1).getText().toString().replace("年", "").trim();
+			String currentYear=Integer.parseInt(Yeartime)-1+"";
+			// 绑定数据 （名字 颜色 内容 有多种不同的 情况）
+			if (label_data.size() <= 0) {
+				
 			} else {
-				if (colorData.size() - 1 >= i)
-					dataSeries = new SplineData(label_data.get(i),
-							linePointMapData.get(mode).get(i),
-							Color.parseColor(colorData.get(i)));
-				else
-					dataSeries = new SplineData(label_data.get(i),
-							linePointMapData.get(mode).get(i),
-							(int) Color.parseColor("#FF76A1EC"));
+				if (colorData.size() - 1 >= i) {
+					if (!currentYear.equals(year)) {
+						dataSeries = new SplineData(label_data.get(i),
+								linePointMapData.get(mode).get(i),
+								Color.parseColor(colorData.get(i)));
+						
+					} else {
+						System.out.println("oldYearData："+oldYearData.size());
+						dataSeries = new SplineData(label_data.get(i), oldYearData.get(i),
+								Color.parseColor(colorData.get(i)));
+					}
+				} else {
+					if (!currentYear.equals(year)) {
+						dataSeries = new SplineData(label_data.get(i),
+								linePointMapData.get(mode).get(i),
+								(int) Color.parseColor("#FF76A1EC"));
+					} else {
+						System.out.println("oldYearData："+oldYearData.size());
+						dataSeries = new SplineData(label_data.get(i), oldYearData.get(i),
+								Color.parseColor(colorData.get(i)));
+					}
+				}
 			}
 
 			dataSeries.setDotStyle(XEnum.DotStyle.HIDE);
@@ -636,20 +723,17 @@ public class SgSplineChart extends TextView implements IObject {
 		m_bneedupdate = false;
 		return true;
 	}
-	
-	
-	
-	private boolean updateData()
-	{
+
+	private boolean updateData() {
 		chartData = new LinkedList<SplineData>();
 		int i = 0;
 		for (String list : cmdList) {
 			String[] str = list.split("-");
 			equail = str[0];
 			signal = str[2];
-			
-//			Random random=new Random();
-//			String value = random.nextInt(100)+"";
+
+			// Random random=new Random();
+			// String value = random.nextInt(100)+"";
 			String value = DataGetter.getSignalValue(equail, signal);
 			if (value == null || value.equals("") || value.equals("-999999")) {
 				return false;
@@ -666,8 +750,9 @@ public class SgSplineChart extends TextView implements IObject {
 				for (int j = 1; j <= 4; j++) {
 					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
 							.get(j);
-					readData(linePointData.get(i), equail, signal, j);				
+					readData(linePointData.get(i), equail, signal, j);
 				}
+				readData(oldYearData.get(i), equail, signal, -1);
 			}
 
 			double time = 0;
@@ -724,25 +809,59 @@ public class SgSplineChart extends TextView implements IObject {
 
 			String name = DataGetter.getSignalName(equail, signal);
 			SplineData dataSeries = null;
-
+			String year = rButton.get(mode - 1).getText().toString().replace("年", "").trim();
+            String currentYear=Integer.parseInt(Yeartime)-1+"";
+			// 绑定数据 （名字 颜色 内容 有多种不同的 情况）
+          
 			if (label_data.size() <= 0) {
-				if (colorData.size() - 1 >= i)
-					dataSeries = new SplineData(name, linePointMapData
-							.get(mode).get(i), Color.parseColor(colorData
-							.get(i)));
-				else
-					dataSeries = new SplineData(name, linePointMapData
-							.get(mode).get(i),
-							(int) Color.parseColor("#FF76A1EC"));
+				if (colorData.size() - 1 >= i) {
+					
+					if (!currentYear.equals(year)) {
+						dataSeries = new SplineData(name, linePointMapData.get(
+								mode).get(i),
+								Color.parseColor(colorData.get(i)));
+					} else {
+						
+						dataSeries = new SplineData(name, oldYearData.get(i),
+								Color.parseColor(colorData.get(i)));
+					}
+
+				} else {
+				
+					if (!currentYear.equals(year)) {
+						dataSeries = new SplineData(name, linePointMapData.get(
+								mode).get(i),
+								(int) Color.parseColor("#FF76A1EC"));
+					} else {
+					
+						dataSeries = new SplineData(name, oldYearData.get(i),
+								Color.parseColor(colorData.get(i)));
+					}
+				}
 			} else {
-				if (colorData.size() - 1 >= i)
-					dataSeries = new SplineData(label_data.get(i),
-							linePointMapData.get(mode).get(i),
-							Color.parseColor(colorData.get(i)));
-				else
-					dataSeries = new SplineData(label_data.get(i),
-							linePointMapData.get(mode).get(i),
-							(int) Color.parseColor("#FF76A1EC"));
+			
+				if (colorData.size() - 1 >= i) {
+					
+					if (!currentYear.equals(year)) {
+						dataSeries = new SplineData(label_data.get(i),
+								linePointMapData.get(mode).get(i),
+								Color.parseColor(colorData.get(i)));
+					} else {
+						System.out.println(i+";;;;;;;"+oldYearData.get(i).size());
+						dataSeries = new SplineData(label_data.get(i), oldYearData.get(i),
+								Color.parseColor(colorData.get(i)));
+					}
+				} else {
+					
+					if (!currentYear.equals(year)) {
+						dataSeries = new SplineData(label_data.get(i),
+								linePointMapData.get(mode).get(i),
+								(int) Color.parseColor("#FF76A1EC"));
+					} else {
+						dataSeries = new SplineData(label_data.get(i), oldYearData.get(i),
+								Color.parseColor(colorData.get(i)));
+					}
+				}
 			}
 
 			dataSeries.setDotStyle(XEnum.DotStyle.HIDE);
@@ -750,7 +869,6 @@ public class SgSplineChart extends TextView implements IObject {
 			dataSeries.getLinePaint().setStrokeWidth(2);
 			chartData.add(dataSeries);
 
-			
 			if (isSave) {
 				for (int j = 1; j <= 4; j++) {
 					List<LinkedHashMap<Double, Double>> linePointData = linePointMapData
@@ -765,7 +883,6 @@ public class SgSplineChart extends TextView implements IObject {
 		m_bneedupdate = false;
 		return true;
 	}
-	
 
 	private void waitTime() {
 		handler2.postDelayed(runnable2, 1000 * 60 * 60 * 4);
@@ -838,6 +955,12 @@ public class SgSplineChart extends TextView implements IObject {
 		String fileName = "";
 		try {
 			switch (index) {
+			// 去年
+			case -1:
+				Yeartime = Integer.parseInt(Yeartime) - 1 + "";
+				fileName = RC_signal + Yeartime + "-" + eqstr + "-" + sistr;
+				System.out.println(fileName);
+				break;
 			case 1:// 一小时
 
 				currentHour = Double.parseDouble(Hourtime);
@@ -973,6 +1096,8 @@ public class SgSplineChart extends TextView implements IObject {
 	private boolean isHour = true, isDay = true, isMon = true, isYear = true;
 	private boolean isAuth = true;
 	private List<String> label_data = new ArrayList<String>();
-	private boolean isMath=false;
-	private int sizeMath=0;
+	private boolean isMath = false;
+	private int sizeMath = 0;
+	private String selectYear = "";
+
 }

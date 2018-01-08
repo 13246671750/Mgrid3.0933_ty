@@ -15,9 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -712,7 +710,14 @@ public class SgChangNamePhoneTypeState extends TextView implements IObject {
 		else if ("IsBold".equals(strName))
 			m_bIsBold = Boolean.parseBoolean(strValue);
 		else if ("BackgroundColor".equals(strName))
-			m_cBackgroundColor = Color.parseColor(strValue);
+			//m_cBackgroundColor = Color.parseColor(strValue);
+		{
+			if(strValue!=null&&!strValue.equals("#FF000000"))
+			{
+				btDelete.setBackgroundResource(android.R.drawable.btn_default_small);
+				setBackgroundResource(android.R.drawable.btn_default);
+			}
+		}
 		else if ("FontColor".equals(strName)) {
 			m_cFontColor = Color.parseColor(strValue);
 			this.setTextColor(m_cFontColor);

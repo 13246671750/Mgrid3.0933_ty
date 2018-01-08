@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.mgrid.data.DataGetter;
 import com.mgrid.data.EquipmentDataModel.Event;
 import com.mgrid.data.EquipmentDataModel.Signal;
+import com.mgrid.util.ExpressionUtils;
 import com.sg.common.Calculator;
 import com.sg.common.IObject;
 import com.sg.common.MutiThreadShareObject;
@@ -188,11 +189,12 @@ public class MainWindow extends ViewGroup {
 				            if(obj_Z.getType().equals("tigerLabel"))
 				            {
 
-				            	if(obj_Z.getBindingExpression().equals(obj_Y.getBindingExpression()))
+				            
+				            	if(obj_Y.getBindingExpression().contains(ExpressionUtils.getExpressionUtils().removeBindingString(obj_Z.getBindingExpression())))
 				            	{
 
 				            		obj_Z.needupdate(true);
-				            		//System.out.println("Ë¢ÐÂ");
+				            		
 				            	}
 				            }						
 						}						

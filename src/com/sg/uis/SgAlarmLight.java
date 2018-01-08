@@ -174,6 +174,7 @@ public class SgAlarmLight extends View implements IObject {
 	@Override
 	public void initFinished()
 	{
+		
 	}
 
 	public String getBindingExpression() {

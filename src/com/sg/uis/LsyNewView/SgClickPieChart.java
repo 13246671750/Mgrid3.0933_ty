@@ -286,10 +286,7 @@ public class SgClickPieChart extends TextView implements IObject {
 
 	@Override
 	public boolean updateValue() {
-		if(isAlarm)
-		{
-			System.out.println("我是告警");
-		}
+	
 		if (cmdList.size() <= 0)
 			return false;
 
@@ -324,7 +321,7 @@ public class SgClickPieChart extends TextView implements IObject {
 					continue;
 				}
 				listCount.add((float) local_file.r_line_num);
-				System.out.println("行数：" + local_file.r_line_num);
+			
 				count += local_file.r_line_num;
 			}
 		}
@@ -373,9 +370,6 @@ public class SgClickPieChart extends TextView implements IObject {
 			
 			handler.postDelayed(runnable, 5000);
 			
-		}else
-		{
-			System.out.println("我更新了");
 		}
 		return true;
 	}
@@ -395,7 +389,7 @@ public class SgClickPieChart extends TextView implements IObject {
 		{		 
 		  if(!m_bneedupdate){
 		  m_bneedupdate = bNeedUpdate;
-		  System.out.println("饼图更新"+m_bneedupdate);		  
+		
 		  }
 		}
 	}

@@ -73,22 +73,26 @@ public class FileUtil {
 			// int bytesum = 0;
 			int byteread = 0;
 			File oldfile = new File(oldPath);
+			File newfile = new File(newPath);
 			if (oldfile.exists()) { // 文件存在时
-				InputStream inStream = new FileInputStream(oldPath); // 读入原文件
-				FileOutputStream fs = new FileOutputStream(newPath);
-				byte[] buffer = new byte[1444];
-				// int length;
-				while ((byteread = inStream.read(buffer)) != -1) {
-					// bytesum += byteread; //字节数 文件大小
-					// System.out.println(bytesum);
-					fs.write(buffer, 0, byteread);
+				if (!newfile.exists()) {
+					InputStream inStream = new FileInputStream(oldPath); // 读入原文件
+					FileOutputStream fs = new FileOutputStream(newPath);
+					byte[] buffer = new byte[2097152];
+					// int length;
+					while ((byteread = inStream.read(buffer)) != -1) {
+						// bytesum += byteread; //字节数 文件大小
+						// System.out.println(bytesum);
+						fs.write(buffer, 0, byteread);
+					}
+					inStream.close();
+					fs.close();
 				}
-				inStream.close();
+				oldfile.delete();
 			}
 		} catch (Exception e) {
 			System.out.println("复制单个文件操作出错");
 			e.printStackTrace();
-
 		}
 
 	}

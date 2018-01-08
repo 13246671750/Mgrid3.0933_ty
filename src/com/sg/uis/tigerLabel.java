@@ -198,24 +198,7 @@ public class tigerLabel extends TextView implements IObject {
 		};
 		
 		
-		//该控件内定义一个内部线程
-		Thread mythread = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				while(true){
-					try{
-//						Log.e("tigerLabel->mythread-run>>","into！");
-						Thread.sleep(5000);
-						m_bneedupdate=true;
-					
-					}catch(Exception e){
-						Log.e("tigerLabel->mythread-run>>","线程异常抛出！");
-					}
-				}				
-			}
-		});
+
 		
 		@Override
 		public boolean updateValue()

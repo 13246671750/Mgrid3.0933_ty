@@ -48,7 +48,7 @@ import com.sg.common.IObject;
 public class SgBarChartView extends TextView implements IObject {
 
 	private BarChart Bchart = null;
-	private List<String> chartLabels = new LinkedList<String>();
+	private List<String>  chartLabels = new LinkedList<String>();
 	private List<BarData> chartData = new LinkedList<BarData>();
 
 	private Map<Integer, List<Map<Double, Double>>> linePointListData = new HashMap<Integer, List<Map<Double, Double>>>();
@@ -58,13 +58,12 @@ public class SgBarChartView extends TextView implements IObject {
 
 	public SgBarChartView(Context context) {
 		super(context);
-
+ 
 		m_oPaint = new Paint();
 		m_rBBox = new Rect();
 		chart = new BarChart01View(context);
-
 		chart.setTouch(false);
-		Bchart = chart.getBarChart();
+		Bchart = chart.getBarChart();		
 		addRadio(); 
 	}
 
@@ -405,7 +404,8 @@ public class SgBarChartView extends TextView implements IObject {
 			switch (msg.what) {
 			case 0:
 
-				Bchart.getDataAxis().setAxisMax((int) max_Value + 50);
+				Bchart.getDataAxis().setAxisMax((int) max_Value);
+				Bchart.getDataAxis().setAxisSteps((int) max_Value/5/2);
 				Bchart.setDataSource(chartData);
 				chart.invalidate();
 
@@ -695,7 +695,6 @@ public class SgBarChartView extends TextView implements IObject {
 		int i = 0;
 		for (List<String> list_cmd : data_cmd) {
 			dataSeriesA = new LinkedList<Double>();
-			// String label_name = "";
 			for (String s : list_cmd) {
 				String[] spl = s.split("-");
 				equail = spl[0];
@@ -727,6 +726,16 @@ public class SgBarChartView extends TextView implements IObject {
 			if (v > max_Value)
 				max_Value = v;
 		}
+//		Random random=new Random();
+//		max_Value=random.nextDouble()*1000;
+		if(max_Value==0d)
+		{
+			max_Value+=10;
+		}else
+		{
+			max_Value=max_Value*1.2+10;
+		}
+		
 	}
 
 	@Override

@@ -123,7 +123,7 @@ public class BarChart01View extends TouchView implements Runnable{
 			//数据轴
 			chart.getDataAxis().setAxisMax(100);
 			chart.getDataAxis().setAxisMin(0);
-			chart.getDataAxis().setAxisSteps(5);
+			//chart.getDataAxis().setAxisSteps(5);
 			
 			//定义数据轴标签显示格式
 			chart.getDataAxis().setLabelFormatter(new IFormatterTextCallBack(){

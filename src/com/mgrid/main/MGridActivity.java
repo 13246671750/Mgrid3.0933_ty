@@ -57,6 +57,7 @@ import com.lsy.Service.TilmePlush.TimePlushService;
 import com.mgrid.MyDialog.MyDialog;
 import com.mgrid.data.DataGetter;
 import com.mgrid.util.CameraUtils;
+import com.mgrid.util.FileUtil;
 import com.mgrid.util.LoginUtil;
 import com.mgrid.util.XmlUtils;
 import com.sg.common.CFGTLS;
@@ -95,6 +96,14 @@ public class MGridActivity extends Activity {
 	public WakeLock mWakeLock;// 锁屏类
 	public SgVideoView svv = null; // 播放视频
 	public Handler mTimeHandler = new Handler();
+
+	/**
+	 * 喇叭告警声音的路径 因为原路径会导致文件删除不干净 所以生成一个新的路径
+	 */
+	public static String oldWavPath = Environment.getExternalStorageDirectory()
+			.getPath() + "/vtu_pagelist/Alarm.wav";
+	public static String NewWavPath = Environment.getExternalStorageDirectory()
+			.getPath() + "/Alarm.wav";
 
 	public static boolean isPlaymv = false;
 	public static boolean isPlaygif = false;
@@ -334,6 +343,22 @@ public class MGridActivity extends Activity {
 		m_UserName = iniReader.getValue("SysConf", "UserName", "admin");
 		m_PassWord = iniReader.getValue("SysConf", "PassWord", "12348765");
 		alarmWay = iniReader.getValue("SysConf", "ControlAlarmWay");
+		if (alarmWay!=null&&alarmWay.equals("wav")) {
+			xianChengChi.execute(new Runnable() {
+
+				@Override
+				public void run() {
+					
+					synchronized (MGridActivity.NewWavPath) {
+
+						FileUtil file=new FileUtil();
+						file.copyFile(MGridActivity.oldWavPath,MGridActivity.NewWavPath);
+						
+					}
+
+				}
+			});
+		}
 		SIP = iniReader.getValue("SysConf", "SIP", "");
 
 		xianChengChi.execute(new Runnable() {
@@ -412,6 +437,14 @@ public class MGridActivity extends Activity {
 		}
 
 		String playWay = iniReader.getValue("SysConf", "playWay");
+		if (playWay != null) {
+			if (playWay.equals("gif")) {
+				isPlaygif = true;
+			} else if (playWay.equals("mv")) {
+				isPlaymv = true;
+			}
+		}
+
 		String time = iniReader.getValue("SysConf", "playTime");
 		if (time != null) {
 			try {
@@ -419,14 +452,6 @@ public class MGridActivity extends Activity {
 			} catch (Exception e) {
 
 				sleepTime = 2 * 60 * 60;
-			}
-		}
-
-		if (playWay != null) {
-			if (playWay.equals("gif")) {
-				isPlaygif = true;
-			} else if (playWay.equals("mv")) {
-				isPlaymv = true;
 			}
 		}
 

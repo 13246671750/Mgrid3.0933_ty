@@ -145,8 +145,8 @@ public class EventLabel extends TextView implements IObject {
 		if (m_rRenderWindow.isLayoutVisible(getBBox()) == false)
 			return;
 		
-		this.setTextSize(m_fFontSize);
-		this.setTextColor(m_cFontColor);
+	//	this.setTextSize(m_fFontSize);
+	//	this.setTextColor(m_cFontColor);
 
 	
 		super.onDraw(canvas);
@@ -198,13 +198,14 @@ public class EventLabel extends TextView implements IObject {
         }
         else if ("Content".equals(strName)) {
         	m_strContent = strValue;
-        	this.setText(m_strContent);
+        	this.setText("0");
         }
         else if ("FontFamily".equals(strName))
         	m_strFontFamily = strValue;
         else if ("FontSize".equals(strName)) {
         	float fWinScale = (float)MainWindow.SCREEN_WIDTH / (float)MainWindow.FORM_WIDTH;
-        	m_fFontSize = Float.parseFloat(strValue)*fWinScale;    		
+        	m_fFontSize = Float.parseFloat(strValue)*fWinScale;    
+        	this.setTextSize(m_fFontSize);
         }
         else if ("IsBold".equals(strName))
        	 	m_bIsBold = Boolean.parseBoolean(strValue);
