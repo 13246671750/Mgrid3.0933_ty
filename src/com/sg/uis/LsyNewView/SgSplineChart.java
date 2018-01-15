@@ -28,22 +28,21 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.demo.xclcharts.view.SplineChart03View;
 import com.mgrid.data.DataGetter;
 import com.mgrid.main.MainWindow;
 import com.mgrid.main.R;
+import com.mgrid.util.CustomPopWindow;
 import com.mgrid.util.ExpressionUtils;
 import com.mgrid.util.TimeUtils;
 import com.sg.common.CFGTLS;
@@ -62,8 +61,7 @@ public class SgSplineChart extends TextView implements IObject {
 	private Map<Integer, List<LinkedHashMap<Double, Double>>> linePointMapData = new HashMap<Integer, List<LinkedHashMap<Double, Double>>>();
 	private List<LinkedHashMap<Double, Double>> oldYearData = new ArrayList<LinkedHashMap<Double, Double>>();
 	private List<RadioButton> rButton = new ArrayList<RadioButton>();
-
-	private PopupWindow popupWindow = null;
+	private CustomPopWindow popupWindow = null;
 	private ArrayList<String> nameList = new ArrayList<String>();
 	private MyAdapter myAdapter = null;
 
@@ -112,28 +110,34 @@ public class SgSplineChart extends TextView implements IObject {
 			rButton.get(i).setOnClickListener(linClickListener);
 		}
 		addLabels(mode);
-
 	}
 
 	private void showPopUpWin(final RadioButton btn) {
 
 		View view = m_rRenderWindow.m_oMgridActivity.getLayoutInflater()
 				.inflate(R.layout.pop, null);
-		popupWindow = new PopupWindow(view, (int) (btn.getWidth() * 0.3), 100,
-				true);
-		// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失
-		popupWindow.setBackgroundDrawable(new BitmapDrawable());
-
-		// 设置点击弹框外部，弹框消失
-		popupWindow.setOutsideTouchable(true);
-		popupWindow.setFocusable(true);
-		popupWindow.showAsDropDown(btn);
+//		popupWindow = new PopupWindow(view, (int) (btn.getWidth() * 0.3), 100,
+//				true);
+//		// 设置一个透明的背景，不然无法实现点击弹框外，弹框消失
+//		popupWindow.setBackgroundDrawable(new BitmapDrawable());
+//
+//		// 设置点击弹框外部，弹框消失
+//		popupWindow.setOutsideTouchable(true);
+//		popupWindow.setFocusable(true);
+//		popupWindow.showAsDropDown(btn);
+		  popupWindow = new CustomPopWindow.PopupWindowBuilder(getContext())
+		 .size(100,100)
+         .setView(view)
+         .setFocusable(true)
+         .setOutsideTouchable(true)
+         .create();
+		  popupWindow.showAsDropDown(btn,5,0);
 
 		ListView lv = (ListView) view.findViewById(R.id.lv_list);
 		myAdapter = new MyAdapter(getContext(), nameList);
 
-		myAdapter.setTextColor("#000000");
-		myAdapter.setBtnColor("#DCDCDC");
+		myAdapter.setTextColor("#F0F0F0");
+		myAdapter.setBtnColor("#FF4D4D4D");
 		lv.setAdapter(myAdapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -142,7 +146,7 @@ public class SgSplineChart extends TextView implements IObject {
 					int position, long id) {
 				btn.setText(nameList.get(position));
 
-				popupWindow.dismiss();
+				popupWindow.onDismiss();
 				
 				m_bneedupdate = true;
 			}
@@ -216,7 +220,6 @@ public class SgSplineChart extends TextView implements IObject {
 		for (int i = 0; i < rButton.size(); i++) {
 			rWin.addView(rButton.get(i));
 		}
-
 	}
 
 	@Override

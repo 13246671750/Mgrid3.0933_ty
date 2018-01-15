@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mgrid.main.MGridActivity;
 import com.mgrid.main.MainWindow;
 import com.mgrid.main.R;
 import com.mgrid.util.XmlUtils;
@@ -86,8 +87,11 @@ public class LsyChangExpression extends TextView implements IObject {
 					String sId = element1.getAttribute("SignalId");
 					if (sId.equals(signalId+"")) {
 						element = element1;
-						element.setAttribute("Expression", value);						     
+						element.setAttribute("Expression", value);		
+						if(MGridActivity.whatLanguage)
 						Toast.makeText(context, "ÐÞ¸Ä³É¹¦", 500).show();
+						else
+						Toast.makeText(context, "Success", 500).show();	
 						break;
 					}
 				}

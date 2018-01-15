@@ -10,7 +10,7 @@
         android:background="#DCDCDC"
         android:gravity="center"
         android:text="123"
-        android:textSize="16dp"
+        android:textSize="14dp"
         android:textColor="#000"/>
 
 

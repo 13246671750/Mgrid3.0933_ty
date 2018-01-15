@@ -391,8 +391,9 @@ containing a value of this type.
         public static final int loading_bg=0x7f020010;
         public static final int loading_icon=0x7f020011;
         public static final int mgrid=0x7f020012;
-        public static final int popup_bg=0x7f020013;
-        public static final int twitter=0x7f020014;
+        public static final int pop_bg=0x7f020013;
+        public static final int popup_bg=0x7f020014;
+        public static final int twitter=0x7f020015;
     }
     public static final class id {
         public static final int FB1=0x7f07002b;

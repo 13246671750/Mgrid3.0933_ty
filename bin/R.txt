@@ -59,8 +59,9 @@ int drawable kstart 0x7f02000f
 int drawable loading_bg 0x7f020010
 int drawable loading_icon 0x7f020011
 int drawable mgrid 0x7f020012
-int drawable popup_bg 0x7f020013
-int drawable twitter 0x7f020014
+int drawable pop_bg 0x7f020013
+int drawable popup_bg 0x7f020014
+int drawable twitter 0x7f020015
 int id FB1 0x7f07002b
 int id bg_button 0x7f070012
 int id bottom 0x7f070003

@@ -1932,7 +1932,7 @@ public class DataGetter extends Thread {
 				Iterator<IObject> reglstobj_it = equipment.lstRegistedMainAlarmList
 						.iterator();
 				while (reglstobj_it.hasNext()) {
-					System.out.println("我更新了："+reglstobj_it.next().getType());
+					//System.out.println("我更新了："+reglstobj_it.next().getType());
 					reglstobj_it.next().needupdate(true);
 					try {
 
